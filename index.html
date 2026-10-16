@@ -14,20 +14,15 @@
     <div class="header-content">
       <div>
         <h1 id="header-school-name">AUTHENTICATING SCHOOL...</h1>
-        <div id="header-school-meta">UDISE: Loading... | District/Block: -</div>
+        <div id="header-school-meta">UDISE: Loading... | District/Block: --</div>
       </div>
       <div class="header-actions">
         <span id="license-pill" class="pill pill-trial">Active</span>
-        <button onclick="localStorage.clear(); indexedDB.deleteDatabase('PoshanCashBookDB'); location.reload();" 
-        style="background:#fee2e2; color:#b91c1c; border:1px solid #ef4444; border-radius:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; margin-left:8px; cursor:pointer;">
-  🔄 Reset App / Switch U-DISE
-        </button>
-        
       </div>
     </div>
   </header>
 
-  <!-- Step 1: Initial U-DISE Resolution Overlay (Shown only if unanchored) -->
+  <!-- Step 1: Initial U-DISE Resolution Overlay (Shown if unanchored) -->
   <section id="view-onboarding" class="modal-backdrop" style="display:none;">
     <div class="modal-card">
       <div class="modal-header">
@@ -37,8 +32,8 @@
         <p>Enter your 11-digit national school code to load and anchor statutory accounts.</p>
         <div class="form-group">
           <label for="input-udise"><b>11-Digit U-DISE Code *</b></label>
-          <input type="text" id="input-udise" maxlength="11" placeholder="e.g. 18150100101" inputmode="numeric">
-          <div id="udise-error" class="error-msg"></div>
+          <input type="text" id="input-udise" maxlength="11" placeholder="e.g. 18150301501" inputmode="numeric">
+          <div id="udise-error" class="error-msg" style="color:#dc2626; font-size:0.8rem; margin-top:4px;"></div>
         </div>
         <button id="btn-resolve-udise" class="btn btn-primary btn-block">
           Verify & Anchor School Profile
@@ -57,9 +52,21 @@
   <!-- Main Container -->
   <main class="container">
 
-    <!-- VIEW: CASH BOOK ENTRY -->
-    <section id="view-monthly-entry" class="view-panel active">
+    <!-- Active Profile & Instant Testing Reset Bar -->
+    <div id="school-reset-card" style="background:#fee2e2; border:1px solid #ef4444; border-radius:8px; padding:10px 14px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <b style="color:#991b1b; font-size:0.85rem;">Active School Session</b>
+        <div style="font-size:0.75rem; color:#b91c1c;">Testing mode: Tap button to wipe profile and test another U-DISE.</div>
+      </div>
+      <button type="button" onclick="localStorage.clear(); indexedDB.deleteDatabase('PoshanCashBookDB'); location.reload();" 
+              style="background:#dc2626; color:#ffffff; border:none; border-radius:6px; padding:8px 12px; font-weight:bold; font-size:0.8rem; cursor:pointer;">
+        🗑️ Delete Profile / Reset
+      </button>
+    </div>
 
+    <!-- VIEW 1: CASH BOOK ENTRY -->
+    <section id="view-monthly-entry" class="view-panel active">
+      
       <!-- 3-Drawer Account Selector -->
       <div class="drawer-tabs no-print">
         <button class="drawer-btn active" id="drawer-mdm" data-drawer="mdm">
@@ -72,158 +79,170 @@
           🏦 Canara / State SNA
         </button>
       </div>
-      
-      <!-- Period Selector & Lazy Baseline Card -->
+
+      <!-- Accounting Period Selector -->
       <div class="card card-period no-print">
         <div class="grid-2">
           <div class="form-group">
             <label for="sel-fy"><b>Financial Year</b></label>
-            <select id="sel-fy"></select>
+            <select id="sel-fy">
+              <option value="2026-27" selected>FY 2026-27</option>
+              <option value="2025-26">FY 2025-26</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="sel-month"><b>Accounting Month</b></label>
             <select id="sel-month">
-              <option value="04">April</option><option value="05">May</option><option value="06">June</option>
-              <option value="07">July</option><option value="08">August</option><option value="09">September</option>
-              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-              <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
             </select>
-          </div>
-        </div>
-
-        <!-- MDM Specific Verification Mandate (Visible only under MDM drawer) -->
-        <div id="box-mdm-mandate" class="mandate-card">
-          <div class="grid-3">
-            <div class="form-group">
-              <label for="inp-enrolled">Enrolled Students (E)</label>
-              <input type="number" id="inp-enrolled" min="1" placeholder="Locked Anchor" readonly>
-            </div>
-            <div class="form-group">
-              <label for="inp-working-days">Cooking Days (W) *</label>
-              <input type="number" id="inp-working-days" min="1" max="31" placeholder="e.g. 22">
-            </div>
-            <div class="form-group">
-              <label for="inp-total-meals">Total Meals Fed (M) *</label>
-              <input type="number" id="inp-total-meals" min="0" placeholder="e.g. 814">
-            </div>
-          </div>
-          <div id="ceiling-indicator" class="status-indicator">
-            Max Permissible Meals: <strong id="lbl-max-meals">0</strong> (Attendance: <span id="lbl-attendance-rate">0%</span>)
-          </div>
-        </div>
-
-        <!-- Opening Balances (O/B on 1st of Month) -->
-        <div id="box-opening-balances" class="grid-2 ob-row">
-          <div class="form-group">
-            <label for="inp-ob-cash">Opening Cash in Hand (₹)</label>
-            <input type="number" step="0.01" id="inp-ob-cash" placeholder="0.00">
-          </div>
-          <div class="form-group">
-            <label for="inp-ob-bank">Opening Bank Balance (₹)</label>
-            <input type="number" step="0.01" id="inp-ob-bank" placeholder="0.00">
           </div>
         </div>
       </div>
 
-      <!-- Single Smart Narration Input Form (Zero Dropdowns) -->
-      <div class="card tx-form-card no-print">
-        <div class="form-group" style="position:relative;">
-          <label for="inp-narration-search"><b>Enter Particulars / Purpose *</b></label>
-          <input type="text" id="inp-narration-search" autocomplete="off" placeholder="Type e.g. cooking cost for the month of..., grant, withdrawn, cook, repair...">
-          <div id="narration-suggestions" class="suggestions-dropdown" style="display:none;"></div>
+      <!-- Statutory Operational Parameter Card -->
+      <div class="card card-statutory" style="background:#f0fdf4; border:1px solid #bbf7d0;">
+        <div class="form-group">
+          <label for="inp-enrolled"><b>Enrolled Students (E)</b></label>
+          <input type="number" id="inp-enrolled" placeholder="Enter enrolled count from register" min="1">
         </div>
 
         <div class="grid-2">
           <div class="form-group">
-            <label for="inp-tx-date">Transaction Date *</label>
-            <input type="date" id="inp-tx-date">
+            <label for="inp-cooking-days"><b>Cooking Days (W) *</b></label>
+            <input type="number" id="inp-cooking-days" placeholder="e.g. 22" min="1" max="31">
           </div>
           <div class="form-group">
-            <label for="inp-tx-amount">Amount (₹) *</label>
-            <input type="number" step="0.01" id="inp-tx-amount" placeholder="0.00">
+            <label for="inp-meals-fed"><b>Total Meals Fed (M) *</b></label>
+            <input type="number" id="inp-meals-fed" placeholder="e.g. 880" min="0">
           </div>
         </div>
 
-        <!-- Standardized Narration Live Expansion Preview -->
-        <div class="narration-preview" id="box-narration-preview">
-          <div style="font-size:0.8rem; font-weight:bold; color:#1e40af; margin-bottom:4px;">
-            ✨ Standardized Statutory Voucher Preview:
+        <div id="ceiling-indicator" style="font-size:0.85rem; font-weight:bold; color:#166534; margin-top:4px;">
+          Max Permissible Meals: 0 (Attendance: 0%)
+        </div>
+      </div>
+
+      <!-- Opening Balance Ledger Card -->
+      <div class="card">
+        <h3>💰 Monthly Opening Balances</h3>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="inp-opening-cash">Opening Cash in Hand (₹)</label>
+            <input type="number" id="inp-opening-cash" step="0.01" value="0.00">
           </div>
-          <div id="lbl-narration-full" style="font-weight:600; color:#0f172a;">
-            (Type a purpose above to view auto-completed statutory text)
-          </div>
-          <div id="lbl-narration-meta" style="font-size:0.8rem; color:#475569; margin-top:6px;">
-            Side: - | Folio (LF): - | Mode: -
+          <div class="form-group">
+            <label for="inp-opening-bank">Opening Bank Balance (₹)</label>
+            <input type="number" id="inp-opening-bank" step="0.01" value="0.00">
           </div>
         </div>
+      </div>
 
-        <button id="btn-save-transaction" class="btn btn-secondary btn-block" style="margin-top:12px;">
-          ✓ Add Entry to Cash Book
+      <!-- Receipts & Expenditure Entries -->
+      <div class="card">
+        <h3>📥 Receipts (Grants / Inflows)</h3>
+        <div id="receipts-list"></div>
+        <button type="button" id="btn-add-receipt" class="btn btn-secondary btn-sm" style="margin-top:8px;">+ Add Receipt Voucher</button>
+      </div>
+
+      <div class="card">
+        <h3>📤 Expenditure (Vouchers / Payments)</h3>
+        <div id="expenditure-list"></div>
+        <button type="button" id="btn-add-expense" class="btn btn-secondary btn-sm" style="margin-top:8px;">+ Add Expense Voucher</button>
+      </div>
+
+      <div class="form-actions" style="margin-top:20px; margin-bottom:40px;">
+        <button id="btn-save-month" class="btn btn-primary btn-block" style="padding:14px; font-size:1rem; font-weight:bold;">
+          💾 Save & Compute Statutory Ledger
         </button>
       </div>
+    </section>
 
-      <!-- Current Month Cash Book Register -->
-      <div class="card ledger-summary-card">
-        <h3 id="current-drawer-title">Current Month Ledger Entries</h3>
-        <div class="table-responsive">
-          <table class="data-table" id="tbl-monthly-entries">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Particulars / Statutory Narration</th>
-                <th>LF</th>
-                <th>Voucher</th>
-                <th>Cash (₹)</th>
-                <th>Bank (₹)</th>
-                <th class="no-print">Action</th>
-              </tr>
-            </thead>
-            <tbody id="entries-table-body">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
+    <!-- VIEW 2: TWO-PAGE COPY HUD -->
+    <section id="view-copy-hud" class="view-panel" style="display:none;">
+      <div class="card">
+        <h2>📖 Physical Two-Page Cash Book Mirror</h2>
+        <p style="color:#64748b; font-size:0.85rem;">Formatted to match your physical double-column cash book spread.</p>
+        <div id="hud-spread-container" style="overflow-x:auto;">
+          <!-- Spread table dynamically rendered via two-page-hud.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: MDM STOCK REGISTER (BOTH MONEY & GRAINS) -->
+    <section id="view-stock-register" class="view-panel" style="display:none;">
+      
+      <!-- Part 1: Cooking Cost (Funds / Money) Stock -->
+      <div class="card" style="border-left: 4px solid #0284c7;">
+        <h3>💵 Cooking Cost Account (Financial ₹)</h3>
+        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Tracks statutory cooking cost grants, expenditures, and deficits (negative balances allowed).</p>
+        
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="stock-open-fund">Opening Cooking Cost (₹)</label>
+            <input type="number" id="stock-open-fund" step="0.01" placeholder="Can be negative (e.g. -450.00)">
+          </div>
+          <div class="form-group">
+            <label for="stock-rcvd-fund">Cooking Cost Received (₹)</label>
+            <input type="number" id="stock-rcvd-fund" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="form-group">
+            <label for="stock-expended-fund">Cooking Cost Expended (₹)</label>
+            <input type="number" id="stock-expended-fund" step="0.01" readonly style="background:#f1f5f9; font-weight:bold;">
+          </div>
+          <div class="form-group">
+            <label for="stock-closing-fund"><b>Closing Balance / Deficit (₹)</b></label>
+            <input type="number" id="stock-closing-fund" step="0.01" readonly style="background:#f8fafc; font-weight:bold;">
+          </div>
         </div>
       </div>
 
-    </section>
+      <!-- Part 2: Food Grain (Rice) Stock -->
+      <div class="card" style="border-left: 4px solid #16a34a; margin-top:15px;">
+        <h3>📦 Food Grain (Rice) Stock Register</h3>
+        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Statutory allotment: 100g/day (LP) or 150g/day (UP).</p>
 
-    <!-- VIEW: TWO-PAGE PHYSICAL COPY HUD -->
-    <section id="view-copy-hud" class="view-panel" style="display:none;">
-      <!-- Populated dynamically by src/copy-hud.js -->
-    </section>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="stock-open-grain">Opening Rice Balance (Kg)</label>
+            <input type="number" id="stock-open-grain" step="0.01" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label for="stock-rcvd-grain">Rice Lifted / Received (Kg)</label>
+            <input type="number" id="stock-rcvd-grain" step="0.01" placeholder="0.00">
+          </div>
+        </div>
 
-    <!-- VIEW: FOOD GRAIN REGISTER -->
-    <section id="view-stock-register" class="view-panel" style="display:none;">
-      <!-- Populated dynamically by src/accounting-engine.js -->
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="form-group">
+            <label for="stock-consumed-grain">Rice Consumed (Kg)</label>
+            <input type="text" id="stock-consumed-grain" readonly style="background:#f1f5f9; font-weight:bold;">
+          </div>
+          <div class="form-group">
+            <label for="stock-closing-grain"><b>Closing Rice Stock (Kg)</b></label>
+            <input type="text" id="stock-closing-grain" readonly style="background:#f8fafc; font-weight:bold;">
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </main>
 
-  <!-- Escalating Paywall / Toll Gate Modal -->
-  <div id="modal-paywall" class="modal-backdrop" style="display:none;">
-    <div class="modal-card">
-      <div class="modal-header toll-header">
-        <h2 id="toll-title">⚠️ Institutional Shift Detected</h2>
-      </div>
-      <div class="modal-body">
-        <p id="toll-message">Enrollment variance exceeds statutory limits for this U-DISE.</p>
-        <div class="toll-box">
-          <div>Required Toll Fee:</div>
-          <div class="toll-amount" id="toll-fee-display">₹100.00</div>
-        </div>
-        <div id="toll-qr-container" style="text-align:center; margin:15px 0;">
-          <!-- UPI QR injected here -->
-        </div>
-        <button id="btn-verify-toll" class="btn btn-primary btn-block">
-          Verify Payment & Unlock Calculation
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Application Bootstrap -->
+  <!-- Application Modules -->
   <script type="module" src="src/main.js"></script>
 </body>
 </html>
-
