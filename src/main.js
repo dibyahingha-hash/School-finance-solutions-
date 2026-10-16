@@ -16,6 +16,16 @@ class App {
   }
 
   async boot() {
+    // Wire Reset Button IMMEDIATELY so it always works
+    const btnReset = document.getElementById('btn-reset-profile');
+    if (btnReset) {
+      btnReset.onclick = () => {
+        localStorage.removeItem('poshan_anchored_school_profile');
+        localStorage.removeItem('poshan_school_profile');
+        location.reload();
+      };
+    }
+
     // 1. Resolve and anchor School Identity via U-DISE
     this.schoolProfile = await udiseResolver.init();
 
@@ -171,4 +181,3 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.boot();
 });
-
