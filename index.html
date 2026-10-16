@@ -3,246 +3,208 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Statutory School Cash Book & Register</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="theme-color" content="#1e3a8a">
+  <title>DHK PM POSHAN & School CashBook Pro</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #172554;
+      --accent: #0284c7;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
+    header { background: var(--primary); color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .header-badge { background: #f59e0b; color: #000; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
+    .header-meta { font-size: 0.8rem; color: #93c5fd; margin-top: 4px; }
+    nav.tab-bar { display: flex; background: #fff; border-bottom: 2px solid var(--border); overflow-x: auto; }
+    nav.tab-bar button { flex: 1; min-width: 110px; padding: 12px 8px; border: none; background: none; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+    nav.tab-bar button.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 12px; }
+    .card { background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .drawer-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .drawer-btn { padding: 10px 4px; border: 1px solid var(--border); border-radius: 6px; background: #fff; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center; }
+    .drawer-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+    .form-control { width: 100%; padding: 8px 10px; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+    .form-control:focus { border-color: var(--accent); ring: 2px var(--accent); }
+    .btn { padding: 10px 14px; font-size: 0.9rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .banner-reset { background: #fee2e2; border: 1px solid #f87171; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .banner-reset p { font-size: 0.8rem; color: #991b1b; }
+    .banner-reset button { background: var(--danger); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
+    
+    /* Cashbook Spread */
+    .hud-spread { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    @media (max-width: 850px) { .hud-spread { grid-template-columns: 1fr; } }
+    .hud-page { background: #fff; border: 1px solid #94a3b8; border-radius: 4px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+    .hud-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 8px; }
+    .hud-header h3 { font-size: 1.1rem; letter-spacing: 1px; font-weight: 800; }
+    .hud-header p { font-size: 0.8rem; font-weight: 600; color: #475569; }
+    table.cb-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    table.cb-table th, table.cb-table td { border: 1px solid #94a3b8; padding: 4px 6px; text-align: left; vertical-align: top; }
+    table.cb-table th { background: #f1f5f9; font-weight: 700; text-align: center; }
+    table.cb-table td.amt { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .audit-cert { border: 1px solid #0f172a; padding: 8px; font-size: 0.75rem; margin-top: 12px; border-radius: 4px; }
+    .sig-row { display: flex; justify-content: space-between; margin-top: 28px; font-weight: 600; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+    .modal-box { background: #fff; border-radius: 8px; padding: 20px; width: 100%; max-width: 440px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    @media print {
+      body { background: #fff; padding: 0; }
+      header, nav.tab-bar, .banner-reset, .drawer-nav, .no-print { display: none !important; }
+      .hud-spread { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .hud-page { border: 1px solid #000; box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Top School Institutional Bar -->
-  <header class="app-header no-print">
-    <div class="header-content">
-      <div>
-        <h1 id="header-school-name">AUTHENTICATING SCHOOL...</h1>
-        <div id="header-school-meta">UDISE: Loading... | District/Block: --</div>
-      </div>
-      <div class="header-actions">
-        <span id="license-pill" class="pill pill-trial">Active</span>
-      </div>
+  <header>
+    <div class="header-top">
+      <div class="header-title" id="header-school-name">AUTHENTICATING SCHOOL...</div>
+      <span class="header-badge" id="badge-status">ACTIVE</span>
     </div>
+    <div class="header-meta" id="header-school-meta">UDISE: Loading... | District/Block: --</div>
   </header>
 
-  <!-- Step 1: Initial U-DISE Resolution Overlay (Shown if unanchored) -->
-  <section id="view-onboarding" class="modal-backdrop" style="display:none;">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2>🏫 Enter School U-DISE</h2>
-      </div>
-      <div class="modal-body">
-        <p>Enter your 11-digit national school code to load and anchor statutory accounts.</p>
-        <div class="form-group">
-          <label for="input-udise"><b>11-Digit U-DISE Code *</b></label>
-          <input type="text" id="input-udise" maxlength="11" placeholder="e.g. 18150301501" inputmode="numeric">
-          <div id="udise-error" class="error-msg" style="color:#dc2626; font-size:0.8rem; margin-top:4px;"></div>
-        </div>
-        <button id="btn-resolve-udise" class="btn btn-primary btn-block">
-          Verify & Anchor School Profile
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Main View Navigation -->
-  <nav class="nav-bar no-print">
-    <button class="nav-btn active" id="tab-nav-entry" data-view="entry">📝 Cash Book Entry</button>
-    <button class="nav-btn" id="tab-nav-hud" data-view="hud">📖 Two-Page Copy HUD</button>
-    <button class="nav-btn" id="tab-nav-stock" data-view="stock">📦 MDM Stock Register</button>
+  <nav class="tab-bar no-print">
+    <button id="tab-nav-entry" class="active">📝 Cash Book Entry</button>
+    <button id="tab-nav-hud">📖 Two-Page Copy HUD</button>
+    <button id="tab-nav-stock">📦 MDM Stock Register</button>
   </nav>
 
-  <!-- Main Container -->
-  <main class="container">
-
-    <!-- Active Profile & Instant Testing Reset Bar -->
-    <div id="school-reset-card" style="background:#fee2e2; border:1px solid #ef4444; border-radius:8px; padding:10px 14px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+  <div class="container">
+    
+    <div class="banner-reset no-print">
       <div>
-        <b style="color:#991b1b; font-size:0.85rem;">Active School Session</b>
-        <div style="font-size:0.75rem; color:#b91c1c;">Testing mode: Tap button to wipe profile and test another U-DISE.</div>
+        <strong style="color:#991b1b; font-size:0.85rem;">Active School Session</strong>
+        <p>Testing/Wipe mode: Tap button to clear profile and switch school.</p>
       </div>
-      <button type="button" onclick="localStorage.clear(); indexedDB.deleteDatabase('PoshanCashBookDB'); location.reload();" 
-              style="background:#dc2626; color:#ffffff; border:none; border-radius:6px; padding:8px 12px; font-weight:bold; font-size:0.8rem; cursor:pointer;">
-        🗑️ Delete Profile / Reset
-      </button>
+      <button id="btn-reset-profile">🗑️ Delete Profile / Reset</button>
     </div>
 
-    <!-- VIEW 1: CASH BOOK ENTRY -->
-    <section id="view-monthly-entry" class="view-panel active">
-      
-      <!-- 3-Drawer Account Selector -->
-      <div class="drawer-tabs no-print">
-        <button class="drawer-btn active" id="drawer-mdm" data-drawer="mdm">
-          🍲 PM POSHAN (MDM)
-        </button>
-        <button class="drawer-btn" id="drawer-smc" data-drawer="smc">
-          🏫 SMC Savings
-        </button>
-        <button class="drawer-btn" id="drawer-sna" data-drawer="sna">
-          🏦 Canara / State SNA
-        </button>
+    <!-- VIEW 1: MONTHLY ENTRY FORM -->
+    <div id="view-monthly-entry">
+      <div class="drawer-nav no-print">
+        <button class="drawer-btn active" data-drawer="mdm">🍲 PM POSHAN (MDM)</button>
+        <button class="drawer-btn" data-drawer="smc">🏫 SMC Savings</button>
+        <button class="drawer-btn" data-drawer="sna">🏦 Canara / State SNA</button>
       </div>
 
-      <!-- Accounting Period Selector -->
-      <div class="card card-period no-print">
+      <div class="card">
         <div class="grid-2">
           <div class="form-group">
-            <label for="sel-fy"><b>Financial Year</b></label>
-            <select id="sel-fy">
-              <option value="2026-27" selected>FY 2026-27</option>
-              <option value="2025-26">FY 2025-26</option>
-            </select>
+            <label>Financial Year</label>
+            <select id="sel-fy" class="form-control"></select>
           </div>
           <div class="form-group">
-            <label for="sel-month"><b>Accounting Month</b></label>
-            <select id="sel-month">
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
+            <label>Accounting Month</label>
+            <select id="sel-month" class="form-control">
+              <option value="04">April</option>
+              <option value="05">May</option>
+              <option value="06">June</option>
+              <option value="07">July</option>
+              <option value="08">August</option>
+              <option value="09" selected>September</option>
               <option value="10">October</option>
               <option value="11">November</option>
               <option value="12">December</option>
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
+              <option value="01">January</option>
+              <option value="02">February</option>
+              <option value="03">March</option>
             </select>
           </div>
         </div>
-      </div>
 
-      <!-- Statutory Operational Parameter Card -->
-      <div class="card card-statutory" style="background:#f0fdf4; border:1px solid #bbf7d0;">
-        <div class="form-group">
-          <label for="inp-enrolled"><b>Enrolled Students (E)</b></label>
-          <input type="number" id="inp-enrolled" placeholder="Enter enrolled count from register" min="1">
+        <div id="sec-mdm-params" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:6px; margin-bottom:14px;">
+          <h4 style="color:#166534; font-size:0.85rem; margin-bottom:8px;">🍲 Statutory PM POSHAN Calculation Basis</h4>
+          <div class="grid-3">
+            <div class="form-group">
+              <label>Enrolled Students (E)</label>
+              <input type="number" id="inp-enrolled" class="form-control" value="25">
+            </div>
+            <div class="form-group">
+              <label>Cooking Days (W)</label>
+              <input type="number" id="inp-days" class="form-control" value="18">
+            </div>
+            <div class="form-group">
+              <label>Statutory Rate / Meal (₹)</label>
+              <input type="number" step="0.01" id="inp-rate" class="form-control" value="6.78">
+            </div>
+          </div>
+          <div style="font-size:0.8rem; font-weight:bold; color:#15803d; text-align:right;">
+            Total Meals: <span id="lbl-total-meals">450</span> | Mandate Cost: ₹<span id="lbl-mandate-cost">3051.00</span>
+          </div>
         </div>
 
         <div class="grid-2">
           <div class="form-group">
-            <label for="inp-cooking-days"><b>Cooking Days (W) *</b></label>
-            <input type="number" id="inp-cooking-days" placeholder="e.g. 22" min="1" max="31">
+            <label>Opening Cash in Hand (₹)</label>
+            <input type="number" step="0.01" id="inp-ob-cash" class="form-control" value="1488.00">
           </div>
           <div class="form-group">
-            <label for="inp-meals-fed"><b>Total Meals Fed (M) *</b></label>
-            <input type="number" id="inp-meals-fed" placeholder="e.g. 880" min="0">
-          </div>
-        </div>
-
-        <div id="ceiling-indicator" style="font-size:0.85rem; font-weight:bold; color:#166534; margin-top:4px;">
-          Max Permissible Meals: 0 (Attendance: 0%)
-        </div>
-      </div>
-
-      <!-- Opening Balance Ledger Card -->
-      <div class="card">
-        <h3>💰 Monthly Opening Balances</h3>
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="inp-opening-cash">Opening Cash in Hand (₹)</label>
-            <input type="number" id="inp-opening-cash" step="0.01" value="0.00">
-          </div>
-          <div class="form-group">
-            <label for="inp-opening-bank">Opening Bank Balance (₹)</label>
-            <input type="number" id="inp-opening-bank" step="0.01" value="0.00">
+            <label>Opening Bank Balance (₹)</label>
+            <input type="number" step="0.01" id="inp-ob-bank" class="form-control" value="1100.00">
           </div>
         </div>
       </div>
 
-      <!-- Receipts & Expenditure Entries -->
+      <!-- VOUCHERS -->
       <div class="card">
-        <h3>📥 Receipts (Grants / Inflows)</h3>
-        <div id="receipts-list"></div>
-        <button type="button" id="btn-add-receipt" class="btn btn-secondary btn-sm" style="margin-top:8px;">+ Add Receipt Voucher</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:0.95rem;">📋 Bank Transactions & Contra Operations</h3>
+          <button id="btn-add-voucher" class="btn btn-outline" style="font-size:0.8rem; padding:4px 8px;">+ Add Transaction</button>
+        </div>
+        <div id="voucher-list"></div>
       </div>
 
-      <div class="card">
-        <h3>📤 Expenditure (Vouchers / Payments)</h3>
-        <div id="expenditure-list"></div>
-        <button type="button" id="btn-add-expense" class="btn btn-secondary btn-sm" style="margin-top:8px;">+ Add Expense Voucher</button>
-      </div>
-
-      <div class="form-actions" style="margin-top:20px; margin-bottom:40px;">
-        <button id="btn-save-month" class="btn btn-primary btn-block" style="padding:14px; font-size:1rem; font-weight:bold;">
-          💾 Save & Compute Statutory Ledger
-        </button>
-      </div>
-    </section>
+      <button id="btn-save-period" class="btn btn-primary" style="width:100%; padding:12px; font-size:1rem;">💾 Save & Compile Cash Book</button>
+    </div>
 
     <!-- VIEW 2: TWO-PAGE COPY HUD -->
-    <section id="view-copy-hud" class="view-panel" style="display:none;">
-      <div class="card">
-        <h2>📖 Physical Two-Page Cash Book Mirror</h2>
-        <p style="color:#64748b; font-size:0.85rem;">Formatted to match your physical double-column cash book spread.</p>
-        <div id="hud-spread-container" style="overflow-x:auto;">
-          <!-- Spread table dynamically rendered via two-page-hud.js -->
-        </div>
+    <div id="view-copy-hud" style="display:none;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;" class="no-print">
+        <h3 style="font-size:1rem;">📖 Statutory Register Mirror (Physical Layout)</h3>
+        <button onclick="window.print()" class="btn btn-primary" style="padding:6px 12px; font-size:0.8rem;">🖨️ Print / Save PDF</button>
       </div>
-    </section>
+      <div id="hud-container"></div>
+    </div>
 
-    <!-- VIEW 3: MDM STOCK REGISTER (BOTH MONEY & GRAINS) -->
-    <section id="view-stock-register" class="view-panel" style="display:none;">
-      
-      <!-- Part 1: Cooking Cost (Funds / Money) Stock -->
-      <div class="card" style="border-left: 4px solid #0284c7;">
-        <h3>💵 Cooking Cost Account (Financial ₹)</h3>
-        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Tracks statutory cooking cost grants, expenditures, and deficits (negative balances allowed).</p>
-        
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="stock-open-fund">Opening Cooking Cost (₹)</label>
-            <input type="number" id="stock-open-fund" step="0.01" placeholder="Can be negative (e.g. -450.00)">
-          </div>
-          <div class="form-group">
-            <label for="stock-rcvd-fund">Cooking Cost Received (₹)</label>
-            <input type="number" id="stock-rcvd-fund" step="0.01" placeholder="0.00">
-          </div>
-        </div>
+    <!-- VIEW 3: STOCK REGISTER -->
+    <div id="view-stock-register" style="display:none;"></div>
 
-        <div class="grid-2" style="margin-top:10px;">
-          <div class="form-group">
-            <label for="stock-expended-fund">Cooking Cost Expended (₹)</label>
-            <input type="number" id="stock-expended-fund" step="0.01" readonly style="background:#f1f5f9; font-weight:bold;">
-          </div>
-          <div class="form-group">
-            <label for="stock-closing-fund"><b>Closing Balance / Deficit (₹)</b></label>
-            <input type="number" id="stock-closing-fund" step="0.01" readonly style="background:#f8fafc; font-weight:bold;">
-          </div>
-        </div>
+  </div>
+
+  <!-- ONBOARDING MODAL -->
+  <div class="modal-overlay" id="view-onboarding">
+    <div class="modal-box">
+      <h3 style="margin-bottom:8px; font-size:1.1rem; color:var(--primary);">🏫 School U-DISE Setup</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+        Enter your 11-digit school U-DISE code to initialize the cashbook profile.
+      </p>
+      <div class="form-group">
+        <label>11-Digit U-DISE Code</label>
+        <input type="text" id="input-udise" class="form-control" placeholder="e.g. 18150301501" maxlength="11">
       </div>
+      <div id="udise-error" style="color:var(--danger); font-size:0.8rem; margin-bottom:10px;"></div>
+      <button id="btn-resolve-udise" class="btn btn-primary" style="width:100%;">Verify & Anchor Profile</button>
+    </div>
+  </div>
 
-      <!-- Part 2: Food Grain (Rice) Stock -->
-      <div class="card" style="border-left: 4px solid #16a34a; margin-top:15px;">
-        <h3>📦 Food Grain (Rice) Stock Register</h3>
-        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Statutory allotment: 100g/day (LP) or 150g/day (UP).</p>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="stock-open-grain">Opening Rice Balance (Kg)</label>
-            <input type="number" id="stock-open-grain" step="0.01" placeholder="0.00">
-          </div>
-          <div class="form-group">
-            <label for="stock-rcvd-grain">Rice Lifted / Received (Kg)</label>
-            <input type="number" id="stock-rcvd-grain" step="0.01" placeholder="0.00">
-          </div>
-        </div>
-
-        <div class="grid-2" style="margin-top:10px;">
-          <div class="form-group">
-            <label for="stock-consumed-grain">Rice Consumed (Kg)</label>
-            <input type="text" id="stock-consumed-grain" readonly style="background:#f1f5f9; font-weight:bold;">
-          </div>
-          <div class="form-group">
-            <label for="stock-closing-grain"><b>Closing Rice Stock (Kg)</b></label>
-            <input type="text" id="stock-closing-grain" readonly style="background:#f8fafc; font-weight:bold;">
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- Application Modules -->
-  <script type="module" src="src/main.js"></script>
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
