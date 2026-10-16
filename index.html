@@ -18,6 +18,11 @@
       </div>
       <div class="header-actions">
         <span id="license-pill" class="pill pill-trial">Active</span>
+        <button onclick="localStorage.clear(); indexedDB.deleteDatabase('PoshanCashBookDB'); location.reload();" 
+        style="background:#fee2e2; color:#b91c1c; border:1px solid #ef4444; border-radius:4px; padding:3px 8px; font-size:0.75rem; font-weight:bold; margin-left:8px; cursor:pointer;">
+  🔄 Reset App / Switch U-DISE
+        </button>
+        
       </div>
     </div>
   </header>
