@@ -1,1 +1,570 @@
+/* ==========================================================================
+   style.css
+   PM POSHAN Statutory Cash Book & Physical Register HUD Suite
+   Responsive UI + Zero-Dropdown Smart Narration + Strict Legal Print Engine
+   ========================================================================== */
+
+:root {
+  --primary: #1e3a8a;
+  --primary-light: #0284c7;
+  --accent: #15803d;
+  --danger: #dc2626;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #cbd5e1;
+  --ink-focus: #fef08a; /* High-contrast yellow for Tap-to-Ink */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-main);
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   1. APP HEADER & TOP NAVIGATION
+   ========================================================================== */
+.app-header {
+  background: var(--primary);
+  color: #ffffff;
+  padding: 12px 16px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+#header-school-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+#header-school-meta {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.pill-trial {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.pill-active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.nav-bar {
+  display: flex;
+  background: #ffffff;
+  border-bottom: 2px solid var(--border-color);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 12px 6px;
+  border: none;
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #64748b;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 3px solid transparent;
+}
+
+.nav-btn.active {
+  color: var(--primary-light);
+  border-bottom: 3px solid var(--primary-light);
+  background: #ffffff;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.view-panel {
+  display: none;
+}
+
+.view-panel.active {
+  display: block;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 650px) {
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+input, select {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #ffffff;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   2. 3-DRAWER TAB SWITCHER
+   ========================================================================== */
+.drawer-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.drawer-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1.5px solid var(--border-color);
+  background: #f1f5f9;
+  color: #334155;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.drawer-btn.active {
+  background: var(--primary-light);
+  color: #ffffff;
+  border-color: var(--primary-light);
+}
+
+/* Mandate & Ceiling Card */
+.mandate-card {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.status-indicator {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+.ob-row {
+  border-top: 1px dashed var(--border-color);
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   3. SMART AUTO-COMPLETE NARRATION BAR
+   ========================================================================== */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1.5px solid var(--primary-light);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.suggestion-item {
+  padding: 9px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.suggestion-item:hover, .suggestion-item.selected {
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+.narration-preview {
+  background: #f8fafc;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   4. TWO-PAGE COPY HUD WITH TAP-TO-INK HIGHLIGHTER
+   ========================================================================== */
+.hud-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.hud-spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .hud-spread {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hud-page {
+  background: #ffffff;
+  border: 1.5px solid #94a3b8;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.hud-header {
+  text-align: center;
+  font-weight: 800;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #0f172a;
+}
+
+.hud-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.hud-row:hover {
+  background-color: #f1f5f9;
+}
+
+/* Tap-to-Ink focus state: Highlights exact line to write */
+.hud-row.active-ink-target {
+  background-color: var(--ink-focus) !important;
+  outline: 2px solid #ca8a04;
+  font-weight: 700;
+}
+
+.hud-row.active-ink-target td {
+  color: #000000 !important;
+}
+
+/* ==========================================================================
+   5. ESCALATING TOLL MODAL & PAYWALL
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 10px;
+  max-width: 440px;
+  width: 100%;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.toll-header {
+  border-bottom: 2px solid #fee2e2;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.toll-header h2 {
+  color: var(--danger);
+  font-size: 1.2rem;
+}
+
+.toll-box {
+  background: #fef2f2;
+  border: 1px dashed var(--danger);
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  margin: 12px 0;
+}
+
+.toll-amount {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--danger);
+}
+
+/* ==========================================================================
+   6. STATUTORY LEDGER TABLES & DUAL-INK ON SCREEN
+   ========================================================================== */
+table.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1.5px solid #334155;
+  font-size: 11px;
+  table-layout: fixed;
+  background: #ffffff;
+}
+
+table.ledger-table th,
+table.ledger-table td {
+  border: 1px solid #64748b;
+  padding: 4px 2px;
+  vertical-align: middle;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+table.ledger-table th {
+  background: #f1f5f9;
+  font-weight: 800;
+  text-align: center;
+}
+
+.th-date        { width: 56px; }
+.th-particulars { width: auto; }
+.th-lf          { width: 26px; }
+.th-group       { text-align: center; }
+.th-sub         { width: 44px; }
+.th-sub-p       { width: 22px; }
+
+.col-date { width: 56px; text-align: center; font-weight: 600; font-size: 9.5px; }
+.col-desc { width: auto; text-align: left; padding-left: 6px !important; white-space: normal; line-height: 1.2; }
+.col-lf   { width: 26px; text-align: center; font-weight: 700; }
+.col-rs   { width: 44px; text-align: right; padding-right: 3px !important; font-variant-numeric: tabular-nums; }
+.col-p    { width: 22px; text-align: center; font-variant-numeric: tabular-nums; }
+
+.ink-black td { color: #09090b; }
+.ink-red td   { color: #b91c1c; }
+
+table.ledger-table tr.empty-line td {
+  height: 22px;
+}
+
+table.ledger-table tr.total-row td {
+  border-top: 1.5px solid #000000 !important;
+  border-bottom: 3px double #000000 !important;
+  font-weight: 800;
+  background: #fafaf9;
+}
+
+.statutory-audit-cert {
+  margin-top: 8px;
+  border: 1px solid #475569;
+  padding: 6px 10px;
+  font-size: 9.5px;
+  background: #ffffff;
+  line-height: 1.35;
+  color: #0f172a;
+}
+
+.signature-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 24px;
+  padding: 0 16px;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.sign-box {
+  text-align: center;
+}
+
+.sign-line {
+  border-top: 1px dashed #000000;
+  width: 160px;
+  margin-bottom: 4px;
+}
+
+/* ==========================================================================
+   7. STRICT AUDIT-READY LEGAL PRINT ENGINE (Preserved from legacy)
+   ========================================================================== */
+@media print {
+  @page {
+    size: legal portrait;
+    margin-top: 15mm;
+    margin-bottom: 15mm;
+    margin-left: 22mm;
+    margin-right: 12mm;
+  }
+
+  @page :left {
+    margin-left: 12mm;
+    margin-right: 22mm;
+  }
+  @page :right {
+    margin-left: 22mm;
+    margin-right: 12mm;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  nav,
+  header,
+  .app-header,
+  .nav-bar,
+  .drawer-tabs,
+  .no-print,
+  button,
+  input,
+  select,
+  .modal-backdrop,
+  .narration-preview,
+  #recon-status-banner,
+  #box-mdm-mandate {
+    display: none !important;
+  }
+
+  .hud-spread {
+    display: block !important;
+  }
+
+  .hud-page {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+  }
+
+  .hud-page-receipts {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .hud-page-payments {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  table.ledger-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    font-size: 10px !important;
+    border: 1.5px solid #000000 !important;
+  }
+
+  table.ledger-table th,
+  table.ledger-table td {
+    border: 1px solid #333333 !important;
+    padding: 3px 2px !important;
+  }
+
+  .th-date, .col-date             { width: 12% !important; }
+  .th-particulars, .col-desc      { width: 44% !important; }
+  .th-lf, .col-lf                 { width: 6% !important; }
+  .th-sub, .col-rs                { width: 14% !important; }
+  .th-sub-p, .col-p               { width: 5% !important; }
+
+  .statutory-audit-cert {
+    font-size: 9px !important;
+    padding: 6px 10px !important;
+    margin-top: 8px !important;
+    border: 1px solid #000000 !important;
+  }
+
+  .signature-block {
+    margin-top: 24px !important;
+    font-size: 10.5px !important;
+  }
+  }
 
