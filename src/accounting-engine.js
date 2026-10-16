@@ -1,174 +1,155 @@
 /**
- * Double-Entry Accounting, Deficit Manager & Mandate Engine
+ * Statutory Assam School Double-Entry Accounting Engine
  */
 
 export class AccountingEngine {
-  constructor() {
-    this.EXACT_RECEIPT_LINES = 20;
-    this.EXACT_PAYMENT_LINES = 13;
-  }
+  computeLedger({
+    monthText = 'September',
+    yearText = '2026',
+    opCash = 0,
+    opBank = 0,
+    totalMeals = 0,
+    mealRate = 0,
+    vouchers = [],
+    drawer = 'mdm'
+  }) {
+    const receipts = [];
+    const payments = [];
 
-  splitAmount(num) {
-    if (num === null || num === undefined || isNaN(num) || num === 0) {
-      return { rs: '', p: '' };
-    }
-    const val = Number(Math.abs(num)).toFixed(2);
-    const parts = val.split('.');
-    return { rs: parts[0], p: parts[1] };
-  }
-
-  getDynamicInstallmentText(vouchers, totalMeals, monthText, yearText) {
-    let existingCount = 0;
-    for (const v of vouchers) {
-      const lfClean = String(v.lf || '').trim();
-      const isMealDesc = String(v.desc || '').toLowerCase().includes('cooking cost');
-      if (v.type === 'PAYMENT' && (lfClean === '1' || lfClean === '01' || isMealDesc)) {
-        existingCount++;
-      }
-    }
-    const inst = existingCount + 1;
-    if (totalMeals > 0) {
-      return `By Cooking Cost (Inst. ${inst}) towards ${totalMeals} meals sanctioned for ${monthText} ${yearText}`;
-    }
-    return `By Cooking Cost (Inst. ${inst}) for daily kitchen marketing in ${monthText} ${yearText}`;
-  }
-
-  calculateMandate({ rateLp = 0, mealsLp = 0, rateUp = 0, mealsUp = 0 }) {
-    const costLp = mealsLp * rateLp;
-    const costUp = mealsUp * rateUp;
-    const totalMeals = mealsLp + mealsUp;
-    const targetExpenditure = costLp + costUp;
-
-    return {
-      costLp,
-      costUp,
-      totalMeals,
-      targetExpenditure
-    };
-  }
-
-  computeLedger({ opCash = 0, opBank = 0, vouchers = [], mandateTarget = 0 }) {
-    let totRecCash = opCash;
-    let totRecBank = opBank;
-    let totPayCash = 0;
-    let totPayBank = 0;
-
-    const processedReceipts = [];
-    const processedPayments = [];
-
-    // Sort chronologically
-    const sorted = [...vouchers].sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    // Initial Opening Balance row
-    processedReceipts.push({
+    // 1. Initial Opening Balance (1st of month)
+    receipts.push({
       date: '1st',
-      particulars: '<strong>To Opening Balance (O/B)</strong>',
-      lf: '-',
-      voucherNo: '',
+      particulars: 'To Opening Balance (O/B)',
+      folio: '',
       cash: opCash,
       bank: opBank,
-      isContra: false
+      total: opCash + opBank
     });
 
-    for (const v of sorted) {
+    let runningCash = opCash;
+    let runningBank = opBank;
+
+    // 2. Process Vouchers (Bank credits, Contra withdrawals)
+    vouchers.forEach((v) => {
       const amt = parseFloat(v.amount) || 0;
-      const isBank = v.channel === 'BANK';
-
-      if (v.type === 'RECEIPT') {
-        if (isBank) totRecBank += amt;
-        else totRecCash += amt;
-
-        processedReceipts.push({
-          date: v.date,
-          particulars: v.desc,
-          lf: v.lf || '1',
-          voucherNo: v.vNo || '',
-          cash: isBank ? 0 : amt,
-          bank: isBank ? amt : 0,
-          isContra: false
-        });
-      } else if (v.type === 'WITHDRAWAL') {
-        // Dual Contra entries
-        totRecCash += amt;
-        totPayBank += amt;
-
-        processedReceipts.push({
-          date: v.date,
-          particulars: '<strong>To Bank Account (Contra)</strong><br><small style="color:#555;">(Cash drawn from bank for school expenses)</small>',
-          lf: 'C',
-          voucherNo: '',
+      if (v.type === 'contra_cash_withdrawal') {
+        // Receipt: Cash arrives
+        receipts.push({
+          date: v.date || `30/${monthText.slice(0,2)}/${yearText.slice(-2)}`,
+          particulars: 'To Bank Account (Contra)\n(Cash withdrawn from bank for school expenses)',
+          folio: 'C',
           cash: amt,
           bank: 0,
-          isContra: true
+          total: amt
         });
+        runningCash += amt;
 
-        processedPayments.push({
-          date: v.date,
-          particulars: '<strong>By Cash in Hand (Contra)</strong><br><small style="color:#555;">(Contra cash withdrawn from bank)</small>',
-          lf: 'C',
-          voucherNo: '',
+        // Payment: Bank decreases
+        payments.push({
+          date: v.date || `30/${monthText.slice(0,2)}/${yearText.slice(-2)}`,
+          particulars: 'By Cash in Hand (Contra)\n(Contra cash withdrawn from bank)',
+          folio: 'C',
           cash: 0,
           bank: amt,
-          isContra: true
+          total: amt
         });
-      } else if (v.type === 'PAYMENT') {
-        if (isBank) totPayBank += amt;
-        else totPayCash += amt;
-
-        processedPayments.push({
-          date: v.date,
-          particulars: v.desc,
-          lf: v.lf || '1',
-          voucherNo: v.vNo || '',
-          cash: isBank ? 0 : amt,
-          bank: isBank ? amt : 0,
-          isContra: false
+        runningBank -= amt;
+      } else if (v.type === 'bank_credit') {
+        receipts.push({
+          date: v.date || `15/${monthText.slice(0,2)}/${yearText.slice(-2)}`,
+          particulars: v.particulars || 'To Funds Credited to Bank Account',
+          folio: v.folio || '',
+          cash: 0,
+          bank: amt,
+          total: amt
         });
+        runningBank += amt;
       }
+    });
+
+    // 3. Statutory Cooking Cost Expenditure (for MDM drawer)
+    let cookingCostTotal = 0;
+    if (drawer === 'mdm' && totalMeals > 0 && mealRate > 0) {
+      cookingCostTotal = Math.round(totalMeals * mealRate);
+      
+      // Auto-Deficit Balance (Folio 8)
+      // If cash on hand is less than cooking cost, teacher funded the difference out-of-pocket
+      if (runningCash < cookingCostTotal) {
+        const outOfPocketAdvance = cookingCostTotal - runningCash;
+        receipts.push({
+          date: `30/${monthText.slice(0,2)}/${yearText.slice(-2)}`,
+          particulars: 'To Temporary Advance from In-charge/Teacher (Out-of-pocket funding)',
+          folio: '8',
+          cash: outOfPocketAdvance,
+          bank: 0,
+          total: outOfPocketAdvance
+        });
+        runningCash += outOfPocketAdvance;
+      }
+
+      payments.push({
+        date: `30/${monthText.slice(0,2)}/${yearText.slice(-2)}`,
+        particulars: `By Cooking cost for the month of ${monthText} for ${totalMeals} meals at ${mealRate.toFixed(2)} (Being cash payment incurred towards Cooking cost for the month of ${monthText} for ${totalMeals} meals at ${mealRate.toFixed(2)} vide Sub-Voucher No.`,
+        folio: '1',
+        cash: cookingCostTotal,
+        bank: 0,
+        total: cookingCostTotal
+      });
+      runningCash -= cookingCostTotal;
     }
 
-    // Cash Deficit Check
-    const rawCloseCash = totRecCash - totPayCash;
-    const rawCloseBank = totRecBank - totPayBank;
-    const isDeficit = rawCloseCash < 0;
-    const pendingAdvance = isDeficit ? Math.abs(rawCloseCash) : 0;
+    // 4. Subtotals (Total Receipts & Total Payments)
+    const totalReceiptsCash = receipts.slice(1).reduce((s, r) => s + r.cash, 0);
+    const totalReceiptsBank = receipts.slice(1).reduce((s, r) => s + r.bank, 0);
+    const totalReceiptsAll = receipts.slice(1).reduce((s, r) => s + r.total, 0);
 
-    // Cooking Cost Gap Check
-    let bookedCooking = 0;
-    for (const v of sorted) {
-      const lfClean = String(v.lf || '').trim();
-      const isMealDesc = String(v.desc || '').toLowerCase().includes('cooking cost');
-      if (v.type === 'PAYMENT' && (lfClean === '1' || lfClean === '01' || isMealDesc)) {
-        bookedCooking += parseFloat(v.amount) || 0;
-      }
-    }
-    const mandateGap = mandateTarget - bookedCooking;
+    const totalPaymentsCash = payments.reduce((s, p) => s + p.cash, 0);
+    const totalPaymentsBank = payments.reduce((s, p) => s + p.bank, 0);
+    const totalPaymentsAll = payments.reduce((s, p) => s + p.total, 0);
+
+    // 5. Closing Balances
+    const closingCash = Math.max(0, runningCash);
+    const closingBank = Math.max(0, runningBank);
+
+    payments.push({
+      date: 'End',
+      particulars: 'By Closing Balance (C/B)',
+      folio: '',
+      cash: closingCash,
+      bank: closingBank,
+      total: closingCash + closingBank
+    });
+
+    // 6. Grand Totals (G/T)
+    const grandReceiptCash = opCash + totalReceiptsCash;
+    const grandReceiptBank = opBank + totalReceiptsBank;
+    const grandReceiptTotal = grandReceiptCash + grandReceiptBank;
+
+    const grandPaymentCash = totalPaymentsCash + closingCash;
+    const grandPaymentBank = totalPaymentsBank + closingBank;
+    const grandPaymentTotal = grandPaymentCash + grandPaymentBank;
 
     return {
-      receipts: processedReceipts,
-      payments: processedPayments,
-      summary: {
-        opCash,
-        opBank,
-        totRecCash,
-        totRecBank,
-        totPayCash,
-        totPayBank,
-        trOnlyCash: totRecCash - opCash,
-        trOnlyBank: totRecBank - opBank,
-        closingCash: Math.max(0, rawCloseCash),
-        closingBank: Math.max(0, rawCloseBank),
-        rawCloseCash,
-        rawCloseBank,
-        isDeficit,
-        pendingAdvance,
-        bookedCooking,
-        mandateGap,
-        isAuditReady: Math.abs(mandateGap) <= 0.01 && !isDeficit
+      receipts,
+      payments,
+      totals: {
+        trCash: totalReceiptsCash,
+        trBank: totalReceiptsBank,
+        trTotal: totalReceiptsAll,
+        tpCash: totalPaymentsCash,
+        tpBank: totalPaymentsBank,
+        tpTotal: totalPaymentsAll,
+        gtReceiptCash: grandReceiptCash,
+        gtReceiptBank: grandReceiptBank,
+        gtReceiptTotal: grandReceiptTotal,
+        gtPaymentCash: grandPaymentCash,
+        gtPaymentBank: grandPaymentBank,
+        gtPaymentTotal: grandPaymentTotal,
+        closingCash,
+        closingBank
       }
     };
   }
 }
 
 export const accountingEngine = new AccountingEngine();
-        
