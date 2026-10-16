@@ -16,31 +16,30 @@ class App {
   }
 
   async boot() {
-    // Wire Reset Button IMMEDIATELY so it always works
+    // 1. Reset button handles immediate local wipe
     const btnReset = document.getElementById('btn-reset-profile');
     if (btnReset) {
       btnReset.onclick = () => {
-        localStorage.removeItem('poshan_anchored_school_profile');
-        localStorage.removeItem('poshan_school_profile');
+        localStorage.removeItem('dhk_anchored_profile');
         location.reload();
       };
     }
 
-    // 1. Resolve and anchor School Identity via U-DISE
-    this.schoolProfile = await udiseResolver.init();
-
-    // 2. Initialize FY Selector (Back 3 years, forward 1 year)
-    this._populateFinancialYears();
-
-    // 3. Instantiate Monthly Form Module
-    this.monthlyForm = new MonthlyForm();
-    this.monthlyForm.activeSchoolMeta = this.schoolProfile;
-    window.monthlyForm = this.monthlyForm; // Expose for inline UI actions (delete, etc.)
-
-    // 4. Wire View Navigation (Tabs)
+    // 2. Wire navigation tabs
     this._initNavigation();
 
-    // 5. Initial Period Load
+    // 3. Populate Financial Years (Full historical and future range)
+    this._populateFinancialYears();
+
+    // 4. Resolve School Profile
+    this.schoolProfile = await udiseResolver.init();
+
+    // 5. Initialize Monthly Form
+    this.monthlyForm = new MonthlyForm();
+    this.monthlyForm.activeSchoolMeta = this.schoolProfile;
+    window.monthlyForm = this.monthlyForm;
+
+    // 6. Load initial period
     await this.monthlyForm.loadActivePeriod();
   }
 
@@ -49,17 +48,17 @@ class App {
     if (!selFy) return;
 
     const currentYear = new Date().getFullYear();
-    const years = [
-      currentYear - 3,
-      currentYear - 2,
-      currentYear - 1,
-      currentYear,
-      currentYear + 1
-    ];
+    const startYear = 2020;
+    const endYear = currentYear + 4;
+    const years = [];
+
+    for (let y = startYear; y <= endYear; y++) {
+      years.push(y);
+    }
 
     selFy.innerHTML = years.map(y => {
       const nextY = String(y + 1).slice(-2);
-      const isSelected = y === currentYear ? 'selected' : '';
+      const isSelected = y === 2026 ? 'selected' : '';
       return `<option value="${y}" ${isSelected}>FY ${y}-${nextY}</option>`;
     }).join('');
   }
@@ -95,50 +94,43 @@ class App {
 
   async _onViewSwitched(view) {
     if (view === 'hud') {
-      await this._renderCopyHud();
+      this._renderCopyHud();
     } else if (view === 'stock') {
       this._renderStockRegister();
     }
   }
 
-  async _renderCopyHud() {
-    const m = this.monthlyForm.selMonth ? this.monthlyForm.selMonth.value : '04';
+  _renderCopyHud() {
+    const m = this.monthlyForm.selMonth ? this.monthlyForm.selMonth.value : '09';
     const y = this.monthlyForm.selFy ? this.monthlyForm.selFy.value : '2026';
     const drawer = this.monthlyForm.currentDrawer;
 
-    const rec = await storage.getRecord(this.schoolProfile.udise, drawer, y, m);
-    const vouchers = rec ? (rec.vouchers || []) : this.monthlyForm.currentVouchers;
+    const rec = storage.getRecord(this.schoolProfile.udise, drawer, y, m);
     const opCash = rec ? rec.opCash : (parseFloat(this.monthlyForm.inpObCash?.value) || 0);
     const opBank = rec ? rec.opBank : (parseFloat(this.monthlyForm.inpObBank?.value) || 0);
-
-    // Compute active double-entry ledger sheet
-    const ledgerData = accountingEngine.computeLedger({
-      opCash,
-      opBank,
-      vouchers,
-      mandateTarget: 0
-    });
+    const vouchers = rec ? rec.vouchers : this.monthlyForm.currentVouchers;
+    const enrolled = rec ? rec.enrolled : (parseInt(this.monthlyForm.inpEnrolled?.value, 10) || 0);
+    const days = rec ? rec.days : (parseInt(this.monthlyForm.inpDays?.value, 10) || 0);
+    const rate = rec ? rec.rate : (parseFloat(this.monthlyForm.inpRate?.value) || 0);
 
     const mSelect = this.monthlyForm.selMonth;
-    const monthText = mSelect ? mSelect.options[mSelect.selectedIndex].text : '';
+    const monthText = mSelect ? mSelect.options[mSelect.selectedIndex].text : 'September';
 
-    const drawerTitles = {
-      mdm: 'PM POSHAN Cooking Cost',
-      smc: 'SMC Normal Savings',
-      sna: 'Canara / State SNA Account'
-    };
+    const ledgerData = accountingEngine.computeLedger({
+      monthText,
+      yearText: y,
+      opCash,
+      opBank,
+      totalMeals: enrolled * days,
+      mealRate: rate,
+      vouchers,
+      drawer
+    });
 
     copyHud.render(
       ledgerData,
-      {
-        schoolName: this.schoolProfile.schoolName,
-        udise: this.schoolProfile.udise
-      },
-      {
-        monthText,
-        yearText: y,
-        drawerTitle: drawerTitles[drawer] || 'Cash Book'
-      }
+      this.schoolProfile,
+      { monthText, yearText: y }
     );
   }
 
@@ -146,7 +138,9 @@ class App {
     const stockContainer = document.getElementById('view-stock-register');
     if (!stockContainer) return;
 
-    const totalMeals = parseInt(this.monthlyForm.inpTotalMeals?.value, 10) || 0;
+    const e = parseInt(this.monthlyForm.inpEnrolled?.value, 10) || 0;
+    const w = parseInt(this.monthlyForm.inpDays?.value, 10) || 0;
+    const totalMeals = e * w;
     const grainGrams = this.schoolProfile.category === 'UP' ? 150 : 100;
     const statutoryKgDrawn = ((totalMeals * grainGrams) / 1000).toFixed(2);
     const statutoryQtlDrawn = (statutoryKgDrawn / 100).toFixed(3);
@@ -154,21 +148,21 @@ class App {
     stockContainer.innerHTML = `
       <div class="card">
         <h3>📦 PM POSHAN Food Grain (Rice) Stock Register</h3>
-        <p style="font-size:0.85rem; color:#64748b; margin-top:-4px;">
+        <p style="font-size:0.85rem; color:#64748b; margin-top:4px;">
           Statutory allotment calculated at ${grainGrams}g per student per meal.
         </p>
-        <div class="grid-3" style="margin-top:12px;">
+        <div class="grid-3" style="margin-top:14px;">
           <div class="form-group">
             <label>Total Meals Served</label>
-            <input type="text" value="${totalMeals}" readonly style="background:#f1f5f9; font-weight:bold;">
+            <input type="text" value="${totalMeals}" readonly class="form-control" style="background:#f1f5f9; font-weight:bold;">
           </div>
           <div class="form-group">
             <label>Grain Consumed (Kg)</label>
-            <input type="text" value="${statutoryKgDrawn} Kg" readonly style="background:#f1f5f9; font-weight:bold; color:var(--primary);">
+            <input type="text" value="${statutoryKgDrawn} Kg" readonly class="form-control" style="background:#f1f5f9; font-weight:bold; color:var(--primary);">
           </div>
           <div class="form-group">
             <label>Grain Consumed (Quintals)</label>
-            <input type="text" value="${statutoryQtlDrawn} Qtl" readonly style="background:#f1f5f9; font-weight:bold; color:var(--accent);">
+            <input type="text" value="${statutoryQtlDrawn} Qtl" readonly class="form-control" style="background:#f1f5f9; font-weight:bold; color:var(--accent);">
           </div>
         </div>
       </div>
@@ -176,7 +170,6 @@ class App {
   }
 }
 
-// Bootstrap once DOM content is parsed
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.boot();
