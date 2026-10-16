@@ -100,82 +100,51 @@ export class UdiseResolver {
   }
 
   async queryDirectory(udiseCode) {
-    // 1. Direct local catalog check
+    // 1. Direct local repository catalog check
     try {
-      const localRes = await fetch('./data/schools.json');
-      if (localRes.ok) {
-        const localList = await localRes.json();
-        if (localList[udiseCode]) {
+      const res = await fetch('./data/schools.json');
+      if (res.ok) {
+        const catalog = await res.json();
+        if (catalog[udiseCode]) {
           return {
             udise: udiseCode,
-            ...localList[udiseCode],
+            schoolName: catalog[udiseCode].schoolName,
+            district: catalog[udiseCode].district,
+            block: catalog[udiseCode].block,
+            category: catalog[udiseCode].category || 'LP',
             anchoredAt: new Date().toISOString()
           };
         }
       }
     } catch (_) {}
 
-    // 2. Attempt online proxies
-    let rawData = null;
-    const targetUrl = `https://src.udiseplus.gov.in/api/school-info/by-udise/${udiseCode}`;
-
-    try {
-      const p1 = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
-      if (p1.ok) {
-        const json = await p1.json();
-        rawData = typeof json.contents === 'string' ? JSON.parse(json.contents) : json.contents;
-      }
-    } catch (_) {}
-
-    if (!rawData) {
-      try {
-        const p2 = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
-        if (p2.ok) rawData = await p2.json();
-      } catch (_) {}
-    }
-
-    if (rawData && (rawData.schoolName || rawData.school_name)) {
-      const name = (rawData.schoolName || rawData.school_name || '').toUpperCase();
-      const district = (rawData.districtName || rawData.district_name || '').toUpperCase();
-      const block = (rawData.blockName || rawData.block_name || '').toUpperCase();
-      const catStr = rawData.categoryName || rawData.school_category || '';
-      const enrolled = parseInt(rawData.totalEnrolment || rawData.total_enrolment, 10);
-
-      return {
-        udise: udiseCode,
-        schoolName: name,
-        district: district || 'DIBRUGARH',
-        block: block || 'KHOWANG',
-        category: /Upper|ME|MES/i.test(catStr) ? 'UP' : 'LP',
-        enrolled: !isNaN(enrolled) && enrolled > 0 ? enrolled : null,
-        anchoredAt: new Date().toISOString()
-      };
-    }
-
-    // 3. Graceful Structural Fallback (Never halts or throws error)
-    const statePrefix = udiseCode.substring(0, 2);
+    // 2. Decode district & block hierarchy from U-DISE prefix
     const distPrefix = udiseCode.substring(2, 4);
     const blockPrefix = udiseCode.substring(4, 6);
 
-    let detectedDist = `DISTRICT-${distPrefix}`;
-    if (statePrefix === '18') {
-      const assamDistricts = {
-        '01': 'KOKRAJHAR', '02': 'DHUBRI', '03': 'GOALPARA', '04': 'BARPETA',
-        '05': 'MORIGAON', '06': 'NAGAON', '07': 'SONITPUR', '08': 'LAKHIMPUR',
-        '09': 'DHEMAJI', '10': 'TINSUKIA', '11': 'DIBRUGARH', '12': 'SIBSAGAR',
-        '13': 'JORHAT', '14': 'GOLAGHAT', '15': 'DIBRUGARH', '16': 'MAJULI',
-        '17': 'KAMRUP METRO', '18': 'KAMRUP RURAL'
-      };
-      detectedDist = assamDistricts[distPrefix] || 'ASSAM DISTRICT';
-    }
+    const assamDistricts = {
+      '01': 'KOKRAJHAR', '02': 'DHUBRI', '03': 'GOALPARA', '04': 'BARPETA',
+      '05': 'MORIGAON', '06': 'NAGAON', '07': 'SONITPUR', '08': 'LAKHIMPUR',
+      '09': 'DHEMAJI', '10': 'TINSUKIA', '11': 'DIBRUGARH', '12': 'SIBSAGAR',
+      '13': 'JORHAT', '14': 'GOLAGHAT', '15': 'DIBRUGARH', '16': 'MAJULI',
+      '17': 'KAMRUP METRO', '18': 'KAMRUP RURAL'
+    };
+
+    const district = assamDistricts[distPrefix] || 'ASSAM';
+    const block = blockPrefix === '03' ? 'KHOWANG' : `BLOCK-${blockPrefix}`;
+
+    // 3. Fallback: prompt for the school name once if missing from catalog
+    const enteredName = prompt(
+      `School not found in catalog for U-DISE ${udiseCode}.\nDetected: ${district}, ${block}.\n\nEnter Official School Name:`,
+      `GOVT. LPS (${udiseCode})`
+    );
 
     return {
       udise: udiseCode,
-      schoolName: udiseCode === '18150301501' ? 'NO. 79 BETONI LPS' : `GOVT. ELEMENTARY SCHOOL (${udiseCode})`,
-      district: detectedDist,
-      block: blockPrefix === '03' ? 'KHOWANG' : `BLOCK-${blockPrefix}`,
+      schoolName: (enteredName && enteredName.trim()) ? enteredName.trim().toUpperCase() : `GOVT. SCHOOL (${udiseCode})`,
+      district: district,
+      block: block,
       category: 'LP',
-      enrolled: null,
       anchoredAt: new Date().toISOString()
     };
   }
