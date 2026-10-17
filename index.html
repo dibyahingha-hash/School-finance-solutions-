@@ -205,16 +205,20 @@
       }
 
       /* PAGE 1 (RECEIPTS) & PAGE 2 (PAYMENTS): FULL SHEET DIMENSIONS */
-      .physical-page {
+         .physical-page {
         display: block !important;
         width: 100% !important;
-        min-height: 94vh !important;
+        height: auto !important;
+        min-height: 0 !important;
         box-sizing: border-box !important;
         border: 2px solid #000 !important;
         box-shadow: none !important;
-        padding: 12px 14px !important;
+        padding: 8px 10px !important;
         background: #fff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
+
 
       /* STRICT HARD PAGE BREAK: LOCKS PAYMENTS EXCLUSIVELY TO PAGE 2 */
       .physical-page:first-child {
@@ -228,7 +232,7 @@
       }
 
       .statutory-table tr.empty-ruled-row {
-        height: 28px !important; /* Fills physical ledger rulings properly */
+        height: 18px !important; /* Fills physical ledger rulings properly */
       }
     }
 
