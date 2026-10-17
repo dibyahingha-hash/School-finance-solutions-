@@ -3,20 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DHK PM POSHAN & Statutory School CashBook Pro</title>
+  <title>DHK PM POSHAN & School CashBook Pro</title>
   <style>
     :root {
       --primary: #1e3a8a;
       --primary-dark: #172554;
       --accent: #2563eb;
-      --bg-canvas: #f8fafc;
+      --bg-canvas: #f1f5f9;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #cbd5e1;
       --success: #15803d;
-      --danger: #ef4444;
-      --warning: #b45309;
+      --danger: #dc2626;
+
+      /* AUTHENTIC STATUTORY PHYSICAL REGISTER PALETTE */
+      --ledger-paper: #fbf9f1;
+      --ledger-border-dark: #1e293b;
+      --ledger-border-rule: #64748b;
+      --ledger-border-light: #94a3b8;
+      --ledger-header-bg: #f1ede4;
+      --ledger-subtotal-bg: #f8fafc;
+      --ledger-ink: #0f172a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -25,7 +33,7 @@
     /* Top Bar */
     .top-bar { background: var(--primary); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
     .school-info { flex: 1; min-width: 0; }
-    .school-info h1 { font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .school-info h1 { font-size: 1.05rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .school-info p { font-size: 0.72rem; color: #bfdbfe; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .top-actions { display: flex; gap: 6px; }
     .btn-top { background: #2563eb; color: #fff; border: 1px solid #60a5fa; padding: 6px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
@@ -40,41 +48,148 @@
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
     .card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .card-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: var(--primary-dark); }
+    .card-title { font-size: 1rem; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: var(--primary-dark); }
 
     /* Forms */
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
     .form-group { display: flex; flex-direction: column; gap: 4px; }
     .form-group label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-    .form-control { padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; color: var(--text-main); background: #fff; }
+    .form-control { padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; color: var(--text-main); background: #fff; }
     .form-control:focus { outline: none; border-color: var(--accent); }
 
     /* Buttons */
     .btn-submit { background: var(--success); color: #fff; border: none; padding: 12px 16px; font-size: 0.95rem; font-weight: 800; border-radius: 8px; cursor: pointer; width: 100%; }
-    .btn-primary { background: var(--primary); color: #fff; border: none; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    .btn-primary { background: var(--primary); color: #fff; border: none; padding: 9px 14px; font-size: 0.82rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
     .drawer-switcher { display: flex; gap: 8px; margin-bottom: 14px; }
     .drawer-btn { padding: 8px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
     .drawer-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* Physical Book Styles */
-    .physical-spread { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #525659; padding: 16px; border-radius: 6px; margin-top: 16px; }
-    @media (max-width: 900px) { .physical-spread { grid-template-columns: 1fr; padding: 8px; } }
-    .physical-page { background: #fffdf5; color: #0f172a; border: 1.5px solid #334155; padding: 14px; position: relative; min-height: 600px; }
-    .page-num { position: absolute; top: 10px; font-size: 0.85rem; font-weight: 800; }
-    .page-title { text-align: center; margin-bottom: 8px; font-family: serif; }
-    .sheet-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
-    .sheet-table th, .sheet-table td { border: 1px solid #475569; padding: 4px; text-align: left; }
-    .sheet-table th { background: #e2e8f0; text-align: center; font-weight: 800; }
-    .amt-col { text-align: right !important; font-variant-numeric: tabular-nums; }
-    .empty-row { height: 20px; }
-    .ink-checked { background: #dcfce7 !important; color: #14532d; }
+    /* STATUTORY TWO-PAGE PHYSICAL REGISTER SPREAD */
+    .physical-spread {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: #475569;
+      padding: 14px;
+      margin-top: 18px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 1024px) {
+      .physical-spread { grid-template-columns: 1fr; }
+    }
+
+    .physical-page {
+      background: var(--ledger-paper);
+      color: var(--ledger-ink);
+      border: 2px solid var(--ledger-border-dark);
+      padding: 14px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-family: "Courier New", Courier, monospace, serif;
+    }
+
+    .book-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid var(--ledger-border-dark);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+    }
+
+    .book-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: Georgia, serif;
+    }
+
+    .page-indicator {
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .subhead-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .statutory-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1.5px solid var(--ledger-border-dark);
+      font-size: 0.72rem;
+      line-height: 1.25;
+      background: var(--ledger-paper);
+    }
+
+    .statutory-table th, .statutory-table td {
+      border-right: 1px solid var(--ledger-border-rule);
+      border-bottom: 1px solid var(--ledger-border-light);
+      padding: 3px 2px;
+    }
+
+    .statutory-table th {
+      border-top: 1.5px solid var(--ledger-border-dark);
+      border-bottom: 1.5px solid var(--ledger-border-dark);
+      background: var(--ledger-header-bg);
+      text-align: center;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .statutory-table tr.empty-ruled-row {
+      height: 22px;
+    }
+
+    .statutory-table tr.subtotal-row td {
+      border-top: 1.5px solid var(--ledger-border-dark);
+      font-weight: 800;
+      background: var(--ledger-subtotal-bg);
+    }
+
+    .statutory-table tr.total-row td {
+      border-top: 2px solid var(--ledger-border-dark);
+      border-bottom: 3px double var(--ledger-border-dark);
+      font-weight: 900;
+      background: #e2e8f0;
+    }
+
+    .cell-rs {
+      text-align: right;
+      padding-right: 4px !important;
+      border-right: 1px dotted var(--ledger-border-light) !important;
+    }
+
+    .cell-p {
+      text-align: center;
+      width: 20px;
+    }
+
+    .ink-checked {
+      background-color: #e6f4ea !important;
+    }
 
     @media print {
-      @page { size: legal landscape; margin: 0.4in; }
-      body { background: #fff; }
+      @page { size: legal landscape; margin: 0.25in; }
+      body { background: #fff !important; }
       .no-print { display: none !important; }
-      .physical-spread { background: transparent; padding: 0; grid-template-columns: 1fr 1fr !important; }
-      .physical-page { border: 1.5px solid #000; box-shadow: none; min-height: 98vh; }
+      .physical-spread {
+        background: transparent !important;
+        padding: 0 !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+      .physical-page {
+        border: 2px solid #000 !important;
+        box-shadow: none !important;
+        min-height: 98vh;
+      }
     }
   </style>
 </head>
@@ -101,11 +216,11 @@
 
   <main class="main-content">
 
-    <!-- DAILY DESK -->
+    <!-- DAILY ATTENDANCE DESK -->
     <section id="tab-daily" class="tab-pane active">
       <div class="card" style="max-width: 500px; margin: 0 auto;">
         <div class="card-title"><span>⚡ Quick Daily Attendance Desk</span></div>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Log today's meal count in 10 seconds. Feeds directly into the MDM Stock Almirah.</p>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Log daily meals fed. Integrates directly into monthly registers and stock deductions.</p>
         <div class="form-group" style="margin-bottom: 14px;">
           <label>Select Date</label>
           <input type="date" id="daily-date" class="form-control">
@@ -129,13 +244,13 @@
       </div>
     </section>
 
-    <!-- STOCK ALMIRAH -->
+    <!-- MDM STOCK REGISTER -->
     <section id="tab-stock" class="tab-pane">
       <div class="card">
-        <div class="card-title"><span>📦 MDM Stock & Cost Register</span></div>
+        <div class="card-title"><span>📦 MDM Dual Stock & Cost Register</span></div>
         <div class="form-grid" style="margin-bottom: 16px;">
           <div class="form-group">
-            <label>Financial Year (Type any FY)</label>
+            <label>Financial Year (Unbound Text)</label>
             <input type="text" id="stock-fy" class="form-control" value="2026-27" placeholder="e.g. 2024-25" oninput="App.refreshStockView()">
           </div>
           <div class="form-group">
@@ -161,7 +276,7 @@
             <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;">💰 Cooking Cost Balance</h3>
             <div class="form-group" style="margin-bottom: 8px;"><label>Opening Balance (₹)</label><input type="number" step="0.01" id="stock-cost-ob" class="form-control" value="0" oninput="App.calcStock()"></div>
             <div class="form-group" style="margin-bottom: 8px;"><label>Grants Received (₹)</label><input type="number" step="0.01" id="stock-cost-rcvd" class="form-control" value="0" oninput="App.calcStock()"></div>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Expenditure Incurred (User-Editable ₹)</label><input type="number" step="0.01" id="stock-cost-spent" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Expenditure Incurred (₹)</label><input type="number" step="0.01" id="stock-cost-spent" class="form-control" value="0" oninput="App.calcStock()"></div>
             <div style="margin-top: 10px; font-weight: 700;" id="disp-cost-box">Closing Cost Balance: ₹<span id="disp-cost-closing">0.00</span></div>
           </div>
         </div>
@@ -184,7 +299,7 @@
 
         <div class="form-grid" style="margin-bottom: 12px;">
           <div class="form-group">
-            <label>Financial Year (Type any FY)</label>
+            <label>Financial Year (Unbound Text)</label>
             <input type="text" id="cb-fy" class="form-control" value="2026-27" placeholder="e.g. 2024-25" oninput="App.loadCurrentMonthRecord()">
           </div>
           <div class="form-group">
@@ -198,37 +313,37 @@
           </div>
           <div class="form-group">
             <label>Opening Cash (₹)</label>
-            <input type="number" step="0.01" id="cb-ob-cash" class="form-control" value="0.00" oninput="App.evaluateAudit()">
+            <input type="number" step="0.01" id="cb-ob-cash" class="form-control" value="1488.00" oninput="App.evaluateAudit()">
           </div>
           <div class="form-group">
             <label>Opening Bank (₹)</label>
-            <input type="number" step="0.01" id="cb-ob-bank" class="form-control" value="0.00" oninput="App.evaluateAudit()">
+            <input type="number" step="0.01" id="cb-ob-bank" class="form-control" value="1100.00" oninput="App.evaluateAudit()">
           </div>
         </div>
 
+        <!-- MDM PARAMETERS -->
         <div id="mdm-panel" style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:8px; margin-bottom:14px;">
-  <div style="font-size:0.85rem; font-weight:800; color:var(--primary); margin-bottom:10px;">PM POSHAN Cooking Cost Parameters</div>
-  <div class="form-grid">
-    <div class="form-group">
-      <label>Total Meals of the Month</label>
-      <input type="number" id="mdm-total-meals" class="form-control" placeholder="e.g. 520" oninput="App.calcMdmCost()">
-    </div>
-    <div class="form-group">
-      <label>Rate / Meal (₹)</label>
-      <input type="number" step="0.01" id="mdm-rate" class="form-control" value="6.78" oninput="App.calcMdmCost()">
-    </div>
-    <div class="form-group">
-      <label>Cooking Cost Expenditure (₹)</label>
-      <input type="number" step="0.01" id="mdm-cost-spent" class="form-control" placeholder="Total Meals × Rate" oninput="App.evaluateAudit()">
-    </div>
-    <div class="form-group">
-      <label>Sub-Voucher No. / Range</label>
-      <input type="text" id="mdm-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4">
-    </div>
-  </div>
-  <div id="mdm-calc-summary" style="font-size:0.78rem; font-weight:600; color:#475569; margin-top:8px;">Expenditure: 0 meals × ₹6.78 = ₹0.00</div>
+          <div style="font-size:0.85rem; font-weight:800; color:var(--primary); margin-bottom:10px;">PM POSHAN Cooking Cost Parameters</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Total Meals of the Month</label>
+              <input type="number" id="mdm-total-meals" class="form-control" value="450" placeholder="e.g. 450" oninput="App.calcMdmCost()">
+            </div>
+            <div class="form-group">
+              <label>Rate / Meal (₹)</label>
+              <input type="number" step="0.01" id="mdm-rate" class="form-control" value="6.78" oninput="App.calcMdmCost()">
+            </div>
+            <div class="form-group">
+              <label>Cooking Cost Expenditure (₹)</label>
+              <input type="number" step="0.01" id="mdm-cost-spent" class="form-control" value="3051.00" placeholder="Total Meals × Rate" oninput="App.evaluateAudit()">
+            </div>
+            <div class="form-group">
+              <label>Sub-Voucher No. / Range</label>
+              <input type="text" id="mdm-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4">
+            </div>
+          </div>
+          <div id="mdm-calc-summary" style="font-size:0.78rem; font-weight:600; color:#475569; margin-top:8px;">Expenditure: 450 meals × ₹6.78 = ₹3051.00</div>
         </div>
-        
 
         <div style="margin-bottom: 14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -238,7 +353,6 @@
           <div id="vouchers-container"></div>
         </div>
 
-        <!-- FRONT & CENTER AUDIT SHIELD -->
         <div id="audit-shield-banner" style="margin-bottom:14px;"></div>
 
         <button class="btn-submit" onclick="App.compileAndTranscribe()">⚡ Compile & Transcribe to Physical Legal Spread</button>
@@ -267,11 +381,13 @@
 
   <script>
     /**
-     * UNIFIED APP CONTROLLER (Zero external imports, completely self-contained)
+     * UNIFIED APP & STATUTORY ACCOUNTING CONTROLLER
      */
     const App = {
       drawer: 'mdm',
-      vouchers: [],
+      vouchers: [
+        { type: 'contra', no: '1', amt: 500, desc: 'Cash withdrawn from bank for school expenses' }
+      ],
       checkedRows: new Set(),
 
       init() {
@@ -296,7 +412,6 @@
         this.loadCurrentMonthRecord();
       },
 
-      // School Profile
       loadProfile() {
         const p = JSON.parse(localStorage.getItem('dhk_school_profile') || '{"udise":"18150301501","name":"79 BETONI LP","block":"KHOWANG","district":"DIBRUGARH","cat":"LP"}');
         document.getElementById('top-school-name').textContent = p.name;
@@ -321,7 +436,6 @@
         alert('✅ Profile saved.');
       },
 
-      // Daily Attendance Desk
       saveDailyAttendance() {
         const d = document.getElementById('daily-date').value;
         const st = document.getElementById('daily-status').value;
@@ -334,7 +448,6 @@
         alert(`✅ Logged ${lp + up} meals for ${d}`);
       },
 
-      // Stock Register
       refreshStockView() {
         const fy = document.getElementById('stock-fy').value.trim();
         const m = document.getElementById('stock-month').value;
@@ -375,8 +488,7 @@
         }
       },
 
-      // MDM Advisory Calculation
-            calcMdmCost() {
+      calcMdmCost() {
         const meals = parseInt(document.getElementById('mdm-total-meals').value, 10) || 0;
         const rate = parseFloat(document.getElementById('mdm-rate').value) || 0;
         const cost = Math.round((meals * rate) * 100) / 100;
@@ -389,9 +501,7 @@
 
         this.evaluateAudit();
       },
-      
 
-      // Vouchers
       addVoucherRow(data = null) {
         this.vouchers.push(data || { type: 'contra', no: `${this.vouchers.length + 1}`, amt: 0, desc: '' });
         this.renderVouchers();
@@ -426,7 +536,6 @@
         });
       },
 
-      // Synchronous Audit Shield
       evaluateAudit() {
         const opCash = parseFloat(document.getElementById('cb-ob-cash').value) || 0;
         const opBank = parseFloat(document.getElementById('cb-ob-bank').value) || 0;
@@ -456,62 +565,106 @@
       },
 
       loadCurrentMonthRecord() {
-        const fy = document.getElementById('cb-fy').value.trim();
+        const fy = document.getElementById('cb-fy').value.trim() || '2026-27';
         const m = document.getElementById('cb-month').value;
         const k = `cb_${this.drawer}_${fy}_${m}`;
         const rec = JSON.parse(localStorage.getItem(k) || 'null');
         if (rec) {
           document.getElementById('cb-ob-cash').value = rec.opCash;
           document.getElementById('cb-ob-bank').value = rec.opBank;
-                    if (this.drawer === 'mdm') {
+          if (this.drawer === 'mdm') {
             document.getElementById('mdm-total-meals').value = rec.totalMeals || '';
             document.getElementById('mdm-rate').value = rec.rate || 6.78;
             document.getElementById('mdm-cost-spent').value = rec.costSpent || '';
             document.getElementById('mdm-voucher-no').value = rec.vNo || '1';
-                    }
-          
+          }
           this.vouchers = rec.vouchers || [];
-        } else {
-          this.vouchers = [];
         }
         this.renderVouchers();
-        this.calcMdmAdvisory();
+        this.calcMdmCost();
       },
 
       compileAndTranscribe() {
-        const fy = document.getElementById('cb-fy').value.trim();
+        const fy = document.getElementById('cb-fy').value.trim() || '2026-27';
         const m = document.getElementById('cb-month').value;
         const mName = document.getElementById('cb-month').selectedOptions[0].text;
         const { opCash, opBank, cookingCost } = this.evaluateAudit();
 
-        // Build Rows
-        const receipts = [{ dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank }];
+        const mInt = parseInt(m, 10);
+        const yPrefix = fy.slice(0, 4);
+        const yInt = parseInt(yPrefix, 10) || 2026;
+        const lastDay = new Date(yInt, mInt, 0).getDate();
+        const shortYear = String(yInt).slice(2);
+        const paddedMonth = String(mInt).padStart(2, '0');
+        const statutoryDate = `${lastDay}/${paddedMonth}/${shortYear}`;
+
+        // 1. Receipts Setup
+        const receipts = [
+          { dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank, isOb: true }
+        ];
+
+        // 2. Payments Setup
         const payments = [];
 
         let runningCash = opCash;
         let runningBank = opBank;
 
-        // Process Vouchers
+        // Contra & Itemized Vouchers
         this.vouchers.forEach(v => {
-          const a = v.amt || 0;
+          const a = parseFloat(v.amt) || 0;
           if (v.type === 'contra') {
-            receipts.push({ dt: 'End', p: 'To Bank Account (Contra Cash Withdrawn)', f: 'C', c: a, b: 0, t: a });
-            payments.push({ dt: 'End', p: 'By Cash in Hand (Contra Cash Withdrawn)', f: 'C', c: 0, b: a, t: a });
+            receipts.push({
+              dt: statutoryDate,
+              p: 'To Bank Account (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Cash withdrawn from bank for school expenses)</span>',
+              f: 'C',
+              c: a,
+              b: 0,
+              t: a
+            });
+            payments.push({
+              dt: statutoryDate,
+              p: 'By Cash in Hand (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Contra cash withdrawn from bank)</span>',
+              f: 'C',
+              c: 0,
+              b: a,
+              t: a
+            });
             runningCash += a;
             runningBank -= a;
           } else if (v.type === 'credit') {
-            receipts.push({ dt: 'End', p: v.desc || 'To Grant / Sanction Received into Bank', f: 'G', c: 0, b: a, t: a });
+            receipts.push({
+              dt: statutoryDate,
+              p: v.desc || 'To Grant / Sanction Received into Bank',
+              f: 'G',
+              c: 0,
+              b: a,
+              t: a
+            });
             runningBank += a;
           } else if (v.type === 'cash_pmt') {
-            payments.push({ dt: 'End', p: v.desc || `By Contingency Exp. vide V-${v.no}`, f: '2', c: a, b: 0, t: a });
+            payments.push({
+              dt: statutoryDate,
+              p: v.desc || `By Contingency Exp. vide V-${v.no}`,
+              f: '2',
+              c: a,
+              b: 0,
+              t: a
+            });
             runningCash -= a;
           } else if (v.type === 'bank_pmt') {
-            payments.push({ dt: 'End', p: v.desc || `By Vendor Transfer vide Bill-${v.no}`, f: '3', c: 0, b: a, t: a });
+            payments.push({
+              dt: statutoryDate,
+              p: v.desc || `By Vendor Transfer vide Bill-${v.no}`,
+              f: '3',
+              c: 0,
+              b: a,
+              t: a
+            });
             runningBank -= a;
           }
         });
 
-                // Folio 1 Cooking Cost
+        // 3. Cooking Cost & Folio 8 Temporary Deficit Advance Handling
         if (this.drawer === 'mdm' && cookingCost > 0) {
           const meals = parseInt(document.getElementById('mdm-total-meals')?.value, 10) || 0;
           const rate = parseFloat(document.getElementById('mdm-rate')?.value) || 6.78;
@@ -519,109 +672,272 @@
 
           if (runningCash < cookingCost) {
             const deficit = Math.round((cookingCost - runningCash) * 100) / 100;
-            receipts.push({ dt: 'End', p: 'To Temporary Advance from Teacher (Deficit funding)', f: '8', c: deficit, b: 0, t: deficit });
+            receipts.push({
+              dt: statutoryDate,
+              p: 'To Temporary Advance from In-charge/Teacher (Out-of-pocket funding)',
+              f: '8',
+              c: deficit,
+              b: 0,
+              t: deficit
+            });
             runningCash += deficit;
           }
 
-          payments.push({ 
-            dt: 'End', 
-            p: `By Cooking Cost for the month of ${mName} for ${meals} meals at ₹${rate.toFixed(2)} vide Sub-Voucher No. ${vRange}`, 
-            f: '1', 
-            c: cookingCost, 
-            b: 0, 
-            t: cookingCost 
+          payments.push({
+            dt: statutoryDate,
+            p: `By Cooking cost for the month of ${mName} for ${meals} meals at ${rate.toFixed(2)}<br><span style="font-size:0.65rem; color:#475569;">(Being cash payment incurred towards Cooking cost for the month of ${mName} for ${meals} meals at ${rate.toFixed(2)} vide Sub-Voucher No. ${vRange})</span>`,
+            f: '1',
+            c: cookingCost,
+            b: 0,
+            t: cookingCost
           });
           runningCash -= cookingCost;
-    }
-              
+        }
 
-        const trC = receipts.slice(1).reduce((s, r) => s + r.c, 0);
-        const trB = receipts.slice(1).reduce((s, r) => s + r.b, 0);
+        // 4. Subtotals: T/R & T/P
+        const trC = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.c, 0);
+        const trB = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.b, 0);
+        const trT = trC + trB;
+
         const tpC = payments.reduce((s, p) => s + p.c, 0);
         const tpB = payments.reduce((s, p) => s + p.b, 0);
+        const tpT = tpC + tpB;
 
-        const closeCash = Math.max(0, runningCash);
-        const closeBank = runningBank;
+        // 5. Closing Balance (C/B)
+        const closeCash = Math.max(0, Math.round(runningCash * 100) / 100);
+        const closeBank = Math.round(runningBank * 100) / 100;
 
-        payments.push({ dt: 'End', p: 'By Closing Balance (C/B)', f: '', c: closeCash, b: closeBank, t: closeCash + closeBank });
+        payments.push({
+          dt: 'End',
+          p: 'By Closing Balance (C/B)',
+          f: '',
+          c: closeCash,
+          b: closeBank,
+          t: closeCash + closeBank,
+          isCb: true
+        });
 
-        // Save record & auto-carry forward
+        // 6. Grand Totals (G/T)
+        const gtRecCash = opCash + trC;
+        const gtRecBank = opBank + trB;
+        const gtRecTotal = gtRecCash + gtRecBank;
+
+        const gtPmtCash = tpC + closeCash;
+        const gtPmtBank = tpB + closeBank;
+        const gtPmtTotal = gtPmtCash + gtPmtBank;
+
+        // Save active month state
         const k = `cb_${this.drawer}_${fy}_${m}`;
         localStorage.setItem(k, JSON.stringify({
           opCash, opBank,
-          enrolled: document.getElementById('mdm-enrolled')?.value,
-          days: document.getElementById('mdm-days')?.value,
+          totalMeals: document.getElementById('mdm-total-meals')?.value,
           rate: document.getElementById('mdm-rate')?.value,
-          costOverride: document.getElementById('mdm-cost-override')?.value,
+          costSpent: document.getElementById('mdm-cost-spent')?.value,
           vNo: document.getElementById('mdm-voucher-no')?.value,
           vouchers: this.vouchers,
           closeCash, closeBank
         }));
 
-        this.renderPhysicalHUD(mName, fy, receipts, payments, { opCash, opBank, trC, trB, tpC, tpB, closeCash, closeBank });
+        this.renderPhysicalHUD(mName, yInt, receipts, payments, {
+          trC, trB, trT,
+          tpC, tpB, tpT,
+          closeCash, closeBank,
+          gtRecCash, gtRecBank, gtRecTotal,
+          gtPmtCash, gtPmtBank, gtPmtTotal
+        });
       },
 
-      renderPhysicalHUD(mName, fy, receipts, payments, t) {
+      renderPhysicalHUD(mName, fullYear, receipts, payments, t) {
         const hud = document.getElementById('physical-hud-container');
-        const rowsToHtml = (arr, prefix) => {
-          let h = '';
-          arr.forEach((r, idx) => {
+
+        const split = (val) => {
+          if (val === undefined || val === null || val === '') return { rs: '', p: '' };
+          const num = Number(val).toFixed(2);
+          const parts = num.split('.');
+          return { rs: parts[0], p: parts[1] };
+        };
+
+        const renderRows = (list, prefix) => {
+          let out = '';
+          list.forEach((r, idx) => {
             const id = `${prefix}-${idx}`;
-            h += `
-              <tr class="ledger-row ${this.checkedRows.has(id)?'ink-checked':''}" id="${id}" onclick="App.toggleRow('${id}')">
-                <td style="text-align:center;">${r.dt}</td>
-                <td>${r.p}</td>
-                <td style="text-align:center; font-weight:bold;">${r.f}</td>
-                <td class="amt-col">${r.c.toFixed(2)}</td>
-                <td class="amt-col">${r.b.toFixed(2)}</td>
-                <td class="amt-col">${r.t.toFixed(2)}</td>
+            const c = split(r.c);
+            const b = split(r.b);
+            const tot = split(r.t);
+
+            out += `
+              <tr class="ledger-row ${this.checkedRows.has(id) ? 'ink-checked' : ''}" id="${id}" onclick="App.toggleRow('${id}')">
+                <td style="text-align:center; vertical-align:top; font-size:0.75rem; font-weight:700;">${r.dt || ''}</td>
+                <td style="padding:4px 6px; vertical-align:top;">${r.p}</td>
+                <td style="text-align:center; vertical-align:top; font-weight:800;">${r.f || ''}</td>
+                <td class="cell-rs">${c.rs}</td>
+                <td class="cell-p">${c.p}</td>
+                <td class="cell-rs">${b.rs}</td>
+                <td class="cell-p">${b.p}</td>
+                <td class="cell-rs">${tot.rs}</td>
+                <td class="cell-p">${tot.p}</td>
               </tr>
             `;
           });
-          for (let i = 0; i < Math.max(0, 16 - arr.length); i++) {
-            h += '<tr class="empty-row"><td colspan="6">&nbsp;</td></tr>';
+
+          // Ruled empty rows to maintain physical ledger height
+          const remainingLines = Math.max(0, 14 - list.length);
+          for (let i = 0; i < remainingLines; i++) {
+            out += `
+              <tr class="empty-ruled-row">
+                <td></td><td></td><td></td>
+                <td class="cell-rs"></td><td class="cell-p"></td>
+                <td class="cell-rs"></td><td class="cell-p"></td>
+                <td class="cell-rs"></td><td class="cell-p"></td>
+              </tr>
+            `;
           }
-          return h;
+          return out;
         };
+
+        const trC = split(t.trC);
+        const trB = split(t.trB);
+        const trT = split(t.trT);
+
+        const tpC = split(t.tpC);
+        const tpB = split(t.tpB);
+        const tpT = split(t.tpT);
+
+        const gtRC = split(t.gtRecCash);
+        const gtRB = split(t.gtRecBank);
+        const gtRT = split(t.gtRecTotal);
+
+        const gtPC = split(t.gtPmtCash);
+        const gtPB = split(t.gtPmtBank);
+        const gtPT = split(t.gtPmtTotal);
 
         hud.innerHTML = `
           <div class="physical-spread">
+
+            <!-- LEFT SPREAD: RECEIPTS -->
             <div class="physical-page">
-              <span class="page-num" style="left:14px;">Receipts Page</span>
-              <div class="page-title"><h2>Cash Book</h2><div>for the month of ${mName} ${fy}</div></div>
-              <table class="sheet-table">
+              <div class="book-header-line">
+                <span class="page-indicator">4</span>
+                <span class="book-title">CASH BOOK</span>
+                <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
+              </div>
+              <div class="subhead-row">
+                <span style="font-size:0.9rem; font-weight:900;">RECEIPTS</span>
+              </div>
+
+              <table class="statutory-table">
                 <thead>
-                  <tr><th>Date</th><th>PARTICULARS</th><th>Folio</th><th>Cash (₹)</th><th>Bank (₹)</th><th>Total (₹)</th></tr>
+                  <tr>
+                    <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
+                    <th rowspan="2">PARTICULARS</th>
+                    <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
+                    <th colspan="2">Cash Amount</th>
+                    <th colspan="2">Bank Amount</th>
+                    <th colspan="2">Total Amount</th>
+                  </tr>
+                  <tr>
+                    <th style="width:46px;">Rs.</th>
+                    <th style="width:20px;">P.</th>
+                    <th style="width:46px;">Rs.</th>
+                    <th style="width:20px;">P.</th>
+                    <th style="width:52px;">Rs.</th>
+                    <th style="width:20px;">P.</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  ${rowsToHtml(receipts, 'rcpt')}
-                  <tr style="font-weight:bold; background:#e2e8f0;"><td colspan="3">Grand Total (G/T)</td><td class="amt-col">${(t.opCash + t.trC).toFixed(2)}</td><td class="amt-col">${(t.opBank + t.trB).toFixed(2)}</td><td class="amt-col">${(t.opCash + t.trC + t.opBank + t.trB).toFixed(2)}</td></tr>
+                  ${renderRows(receipts, 'rcpt')}
+                  <!-- T/R Row -->
+                  <tr class="subtotal-row">
+                    <td colspan="3" style="text-align:center;">T/R (Total Receipts)</td>
+                    <td class="cell-rs">${trC.rs}</td><td class="cell-p">${trC.p}</td>
+                    <td class="cell-rs">${trB.rs}</td><td class="cell-p">${trB.p}</td>
+                    <td class="cell-rs">${trT.rs}</td><td class="cell-p">${trT.p}</td>
+                  </tr>
+                  <!-- G/T Row -->
+                  <tr class="total-row">
+                    <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
+                    <td class="cell-rs">${gtRC.rs}</td><td class="cell-p">${gtRC.p}</td>
+                    <td class="cell-rs">${gtRB.rs}</td><td class="cell-p">${gtRB.p}</td>
+                    <td class="cell-rs">${gtRT.rs}</td><td class="cell-p">${gtRT.p}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
 
+            <!-- RIGHT SPREAD: PAYMENTS -->
             <div class="physical-page">
-              <span class="page-num" style="right:14px;">Payments Page</span>
-              <div class="page-title"><h2>Cash Book</h2><div style="visibility:hidden;">period</div></div>
-              <table class="sheet-table">
+              <div class="book-header-line">
+                <span class="book-title" style="margin-left:auto; margin-right:auto;">CASH BOOK</span>
+                <span class="page-indicator">5</span>
+              </div>
+              <div class="subhead-row">
+                <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
+                <span style="font-size:0.9rem; font-weight:900;">PAYMENTS</span>
+              </div>
+
+              <table class="statutory-table">
                 <thead>
-                  <tr><th>Date</th><th>PARTICULARS</th><th>Folio</th><th>Cash (₹)</th><th>Bank (₹)</th><th>Total (₹)</th></tr>
+                  <tr>
+                    <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
+                    <th rowspan="2">PARTICULARS</th>
+                    <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
+                    <th colspan="2">Cash Amount</th>
+                    <th colspan="2">Bank Amount</th>
+                    <th colspan="2">Total Amount</th>
+                  </tr>
+                  <tr>
+                    <th style="width:46px;">Rs.</th>
+                    <th style="width:20px;">P.</th>
+                    <th style="width:46px;">Rs.</th>
+                    <th style="width:20px;">P.</th>
+                    <th style="width:52px;">Rs.</th>
+                    <th style="width:20px;">P.</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  ${rowsToHtml(payments, 'pmt')}
-                  <tr style="font-weight:bold; background:#e2e8f0;"><td colspan="3">Grand Total (G/T)</td><td class="amt-col">${(t.tpC + t.closeCash).toFixed(2)}</td><td class="amt-col">${(t.tpB + t.closeBank).toFixed(2)}</td><td class="amt-col">${(t.tpC + t.closeCash + t.tpB + t.closeBank).toFixed(2)}</td></tr>
+                  ${renderRows(payments, 'pmt')}
+                  <!-- T/P Row -->
+                  <tr class="subtotal-row">
+                    <td colspan="3" style="text-align:center;">T/P (Total Payments)</td>
+                    <td class="cell-rs">${tpC.rs}</td><td class="cell-p">${tpC.p}</td>
+                    <td class="cell-rs">${tpB.rs}</td><td class="cell-p">${tpB.p}</td>
+                    <td class="cell-rs">${tpT.rs}</td><td class="cell-p">${tpT.p}</td>
+                  </tr>
+                  <!-- G/T Row -->
+                  <tr class="total-row">
+                    <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
+                    <td class="cell-rs">${gtPC.rs}</td><td class="cell-p">${gtPC.p}</td>
+                    <td class="cell-rs">${gtPB.rs}</td><td class="cell-p">${gtPB.p}</td>
+                    <td class="cell-rs">${gtPT.rs}</td><td class="cell-p">${gtPT.p}</td>
+                  </tr>
                 </tbody>
               </table>
-              <div style="border:1px solid #000; padding:6px; margin-top:10px; font-size:0.65rem;">
-                <strong>STATUTORY VERIFICATION CERTIFICATE:</strong> Certified that cash balance of ₹${t.closeCash.toFixed(2)} and bank balance of ₹${t.closeBank.toFixed(2)} have been physically verified and agree with the register.
-                <div style="display:flex; justify-content:space-between; margin-top:20px; font-weight:bold;">
-                  <span>SMC President</span>
-                  <span>Head Teacher</span>
+
+              <!-- Statutory Verification & Audit Certificate matching PDF -->
+              <div style="border:1.5px solid var(--ledger-border-dark); padding:8px 12px; margin-top:10px; font-size:0.68rem; line-height:1.4; background:#fff;">
+                <div style="font-weight:800; text-decoration:underline; margin-bottom:4px; font-size:0.7rem;">
+                  STATUTORY PHYSICAL VERIFICATION &amp; AUDIT CERTIFICATE:
+                </div>
+                <div>
+                  1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.
+                </div>
+                <div>
+                  2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/SNA Portal statement for ${mName} ${fullYear}.
+                </div>
+                <div>
+                  3. Certified that all cooking cost expenditures billed under Folio 1 conform to sanctioned per-child per-day allocation rules.
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:28px; font-weight:800; font-size:0.72rem;">
+                  <span>Signature of SMC President</span>
+                  <span>Signature of Head Teacher / Member Secretary</span>
                 </div>
               </div>
+
             </div>
+
           </div>
         `;
+
         hud.scrollIntoView({ behavior: 'smooth' });
       },
 
@@ -651,7 +967,7 @@
             Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
             alert('✅ Backup restored.');
             window.location.reload();
-          } catch (err) { alert('Invalid file'); }
+          } catch (err) { alert('Invalid backup file'); }
         };
         reader.readAsText(file);
       },
