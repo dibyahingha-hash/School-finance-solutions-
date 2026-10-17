@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DHK PM POSHAN & School CashBook Pro</title>
+  <meta name="theme-color" content="#1e3a8a">
   <style>
     :root {
       --primary: #1e3a8a;
       --primary-dark: #172554;
+      --secondary: #0284c7;
       --accent: #2563eb;
       --bg-canvas: #f1f5f9;
       --card-bg: #ffffff;
@@ -17,7 +19,7 @@
       --success: #15803d;
       --danger: #dc2626;
 
-      /* AUTHENTIC STATUTORY PHYSICAL REGISTER PALETTE */
+      /* STATUTORY PHYSICAL PARCHMENT PALETTE */
       --ledger-paper: #fbf9f1;
       --ledger-border-dark: #1e293b;
       --ledger-border-rule: #64748b;
@@ -30,41 +32,43 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-canvas); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Top Bar */
-    .top-bar { background: var(--primary); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
-    .school-info { flex: 1; min-width: 0; }
-    .school-info h1 { font-size: 1.05rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .school-info p { font-size: 0.72rem; color: #bfdbfe; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .top-actions { display: flex; gap: 6px; }
-    .btn-top { background: #2563eb; color: #fff; border: 1px solid #60a5fa; padding: 6px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    /* Top App Header */
+    .app-header { background: var(--primary); color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
+    .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; font-size: 0.85rem; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; }
+    .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; }
+    .btn-secondary { background: var(--secondary); color: #fff; }
+    .btn-submit { background: var(--success); color: #fff; }
 
     /* Navigation */
-    .nav-tabs { display: flex; background: #fff; border-bottom: 1.5px solid var(--border-color); overflow-x: auto; white-space: nowrap; }
-    .tab-btn { padding: 12px 14px; border: none; background: transparent; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; cursor: pointer; border-bottom: 3px solid transparent; }
+    .tabs-nav { display: flex; background: #fff; border-bottom: 1.5px solid var(--border-color); overflow-x: auto; white-space: nowrap; }
+    .tab-btn { padding: 12px 16px; border: none; background: transparent; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; cursor: pointer; border-bottom: 3px solid transparent; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #eff6ff; }
 
     /* Main Container */
     .main-content { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 14px; }
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
     .card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .card-title { font-size: 1rem; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: var(--primary-dark); }
+    .card-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 12px; color: var(--primary-dark); }
 
     /* Forms */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-    .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-    .form-control { padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; color: var(--text-main); background: #fff; }
-    .form-control:focus { outline: none; border-color: var(--accent); }
+    .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+    .form-control, input[type="text"], input[type="date"], input[type="number"], select, textarea {
+      padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; color: var(--text-main); background: #fff; font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
 
-    /* Buttons */
-    .btn-submit { background: var(--success); color: #fff; border: none; padding: 12px 16px; font-size: 0.95rem; font-weight: 800; border-radius: 8px; cursor: pointer; width: 100%; }
-    .btn-primary { background: var(--primary); color: #fff; border: none; padding: 9px 14px; font-size: 0.82rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
-    .drawer-switcher { display: flex; gap: 8px; margin-bottom: 14px; }
-    .drawer-btn { padding: 8px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
-    .drawer-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    /* INK COLORS */
+    .ink-receipt { color: #0f172a; }
+    .ink-payment { color: #b91c1c !important; font-weight: 600; }
 
-    /* STATUTORY TWO-PAGE PHYSICAL REGISTER SPREAD */
+    /* TWO-PAGE PHYSICAL REGISTER SPREAD */
     .physical-spread {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -74,10 +78,7 @@
       margin-top: 18px;
       border-radius: 8px;
     }
-
-    @media (max-width: 1024px) {
-      .physical-spread { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 1024px) { .physical-spread { grid-template-columns: 1fr; } }
 
     .physical-page {
       background: var(--ledger-paper);
@@ -105,10 +106,7 @@
       font-family: Georgia, serif;
     }
 
-    .page-indicator {
-      font-size: 1rem;
-      font-weight: 900;
-    }
+    .page-indicator { font-size: 1rem; font-weight: 900; }
 
     .subhead-row {
       display: flex;
@@ -131,7 +129,7 @@
     .statutory-table th, .statutory-table td {
       border-right: 1px solid var(--ledger-border-rule);
       border-bottom: 1px solid var(--ledger-border-light);
-      padding: 3px 2px;
+      padding: 4px 2px;
     }
 
     .statutory-table th {
@@ -143,9 +141,7 @@
       color: #0f172a;
     }
 
-    .statutory-table tr.empty-ruled-row {
-      height: 22px;
-    }
+    .statutory-table tr.empty-ruled-row { height: 22px; }
 
     .statutory-table tr.subtotal-row td {
       border-top: 1.5px solid var(--ledger-border-dark);
@@ -166,13 +162,14 @@
       border-right: 1px dotted var(--ledger-border-light) !important;
     }
 
-    .cell-p {
-      text-align: center;
-      width: 20px;
-    }
+    .cell-p { text-align: center; width: 22px; }
 
-    .ink-checked {
-      background-color: #e6f4ea !important;
+    .ledger-page-card {
+      background: var(--ledger-paper);
+      border: 2px solid var(--ledger-border-dark);
+      padding: 14px;
+      margin-top: 16px;
+      font-family: "Courier New", Courier, monospace, serif;
     }
 
     @media print {
@@ -185,195 +182,415 @@
         grid-template-columns: 1fr 1fr !important;
         gap: 8px !important;
       }
-      .physical-page {
-        border: 2px solid #000 !important;
-        box-shadow: none !important;
-        min-height: 98vh;
-      }
+      .physical-page { border: 2px solid #000 !important; min-height: 98vh; }
     }
   </style>
 </head>
 <body>
 
-  <header class="top-bar no-print">
-    <div class="school-info">
-      <h1 id="top-school-name">79 BETONI LP</h1>
-      <p id="top-school-sub">UDISE: 18150301501 | BLOCK: KHOWANG/DIBRUGARH</p>
-    </div>
-    <div class="top-actions">
-      <button class="btn-top" onclick="App.exportBackup()">💾 Backup</button>
-      <button class="btn-top" onclick="document.getElementById('file-restore-input').click()">📂 Restore</button>
-      <input type="file" id="file-restore-input" accept=".json" style="display:none;" onchange="App.importBackup(event)">
+  <!-- Top App Header -->
+  <header class="app-header no-print">
+    <div class="header-content">
+      <div>
+        <h1 id="header-school-name" style="margin:0; font-size:1.1rem; font-weight:700;">ASSAM PRIMARY SCHOOL</h1>
+        <div id="header-udise" style="font-size:0.8rem; opacity:0.85;">UDISE: Not Set | District/Block: -</div>
+      </div>
+      <div>
+        <button class="btn btn-sm" onclick="exportFullBackup()" style="background:rgba(255,255,255,0.2); color:#fff; border:none; padding:6px 10px; font-size:0.75rem; border-radius:4px; cursor:pointer;">
+          💾 Backup
+        </button>
+      </div>
     </div>
   </header>
 
-  <nav class="nav-tabs no-print">
-    <button class="tab-btn active" onclick="App.showTab('tab-daily')">⚡ Daily Desk</button>
-    <button class="tab-btn" onclick="App.showTab('tab-stock')">📦 MDM Stock Almirah</button>
-    <button class="tab-btn" onclick="App.showTab('tab-cashbook')">📖 Cash Book Almirah</button>
-    <button class="tab-btn" onclick="App.showTab('tab-setup')">⚙️ Setup</button>
-  </nav>
+  <!-- 1. INITIAL SETUP GATEKEEPER -->
+  <section id="profile-gatekeeper" style="display:none; padding: 15px; max-width:650px; margin: 20px auto;">
+    <div class="card" style="border-top: 5px solid #0284c7; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      <h2 style="margin-top:0; color:#0369a1; font-size:1.25rem;">🏫 Register School Profile</h2>
+      <p style="font-size:0.9rem; color:#475569; margin-bottom:15px;">
+        Please set your permanent school credentials. Once locked, this profile remains secure and will stamp all statutory stock sheets and cash books.
+      </p>
 
-  <main class="main-content">
+      <div class="form-group">
+        <label><b>School Name *</b></label>
+        <input type="text" id="cfg-school-name" placeholder="e.g. 79 No. Betoni LP School" style="font-size:1rem; padding:8px; width:100%;">
+      </div>
 
-    <!-- DAILY ATTENDANCE DESK -->
-    <section id="tab-daily" class="tab-pane active">
-      <div class="card" style="max-width: 500px; margin: 0 auto;">
-        <div class="card-title"><span>⚡ Quick Daily Attendance Desk</span></div>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Log daily meals fed. Integrates directly into monthly registers and stock deductions.</p>
-        <div class="form-group" style="margin-bottom: 14px;">
-          <label>Select Date</label>
-          <input type="date" id="daily-date" class="form-control">
+      <div class="grid-2 form-group">
+        <div>
+          <label><b>UDISE Code *</b></label>
+          <input type="text" id="cfg-udise" placeholder="e.g. 18150301501" style="font-size:1rem; padding:8px; width:100%;">
         </div>
-        <div class="form-group" style="margin-bottom: 14px;">
-          <label>School Status</label>
-          <select id="daily-status" class="form-control">
-            <option value="open">🟢 School Open (MDM Served)</option>
-            <option value="closed">🔴 Sunday / Holiday / Closed</option>
+        <div>
+          <label><b>Education Block / District</b></label>
+          <input type="text" id="cfg-block" placeholder="e.g. Khowang, Dibrugarh" style="font-size:1rem; padding:8px; width:100%;">
+        </div>
+      </div>
+
+      <div class="grid-2 form-group">
+        <div>
+          <label><b>Head Teacher / In-charge Name</b></label>
+          <input type="text" id="cfg-ht-name" placeholder="e.g. Head Teacher" style="font-size:1rem; padding:8px; width:100%;">
+        </div>
+        <div>
+          <label><b>School Category</b></label>
+          <select id="cfg-cat" style="font-size:1rem; padding:8px; width:100%;">
+            <option value="LP">Lower Primary (LP: Classes 1 to 5)</option>
+            <option value="UP">Upper Primary (UP: Classes 6 to 8)</option>
+            <option value="COMPOSITE">Composite Elementary (Classes 1 to 8)</option>
           </select>
         </div>
-        <div class="form-group" style="margin-bottom: 14px;">
-          <label>LP Meals Fed (Classes 1–5)</label>
-          <input type="number" id="daily-lp-meals" class="form-control" value="0" min="0">
+      </div>
+
+      <button type="button" class="btn btn-secondary" onclick="ProfileModule.saveProfile()" style="width:100%; padding:12px; font-size:1.05rem; font-weight:bold; margin-top:10px;">
+        🚀 Save School Profile & Unlock Workspace
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. MAIN NAVIGATION -->
+  <nav class="tabs-nav no-print" id="app-navigation" style="display:flex;">
+    <button class="tab-btn active" id="tab-daily" onclick="switchTab('daily')">⚡ Daily Desk</button>
+    <button class="tab-btn" id="tab-stock" onclick="switchTab('stock')">📦 MDM Stock Almirah</button>
+    <button class="tab-btn" id="tab-cashbook" onclick="switchTab('cashbook')">📖 Cash Book Almirah</button>
+    <button class="tab-btn" id="tab-setup" onclick="switchTab('setup')">⚙️ Setup</button>
+  </nav>
+
+  <!-- 3. MAIN WORKSPACE PANELS -->
+  <main class="main-content" id="workspace-container">
+    
+    <!-- ROOM 1: THE QUICK DAILY DESK -->
+    <section id="view-daily" class="view-panel active">
+      <div class="card no-print">
+        <h2 class="card-title">⚡ Quick Daily Attendance Desk</h2>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:-6px;">
+          Log today's meal count in 10 seconds. Feeds directly into the MDM Stock Almirah.
+        </p>
+
+        <div class="form-group">
+          <label><b>Select Date</b></label>
+          <input type="date" id="daily-date" onchange="DailyLogModule.loadDate()" style="font-size:1.05rem; font-weight:bold; padding:8px; width:100%;">
         </div>
-        <div class="form-group" style="margin-bottom: 18px;">
-          <label>UP Meals Fed (Classes 6–8)</label>
-          <input type="number" id="daily-up-meals" class="form-control" value="0" min="0">
+
+        <div class="form-group">
+          <label><b>School Status</b></label>
+          <select id="daily-status" onchange="DailyLogModule.toggleStatus()" style="font-size:1rem; padding:8px; font-weight:600; width:100%;">
+            <option value="OPEN">🟢 School Open (MDM Served)</option>
+            <option value="CLOSED">🏖️ Closed / Holiday / Vacation</option>
+          </select>
         </div>
-        <button class="btn-submit" onclick="App.saveDailyAttendance()">✓ Record Daily Attendance</button>
+
+        <div id="daily-meal-fields">
+          <div class="grid-2 form-group">
+            <div>
+              <label>LP Meals Fed (Classes 1–5)</label>
+              <input type="number" id="daily-lp" min="0" value="0" style="font-size:1.1rem; font-weight:bold; width:100%;">
+            </div>
+            <div>
+              <label>UP Meals Fed (Classes 6–8)</label>
+              <input type="number" id="daily-up" min="0" value="0" style="font-size:1.1rem; font-weight:bold; width:100%;">
+            </div>
+          </div>
+        </div>
+
+        <div id="daily-holiday-field" style="display:none;" class="form-group">
+          <label>Reason / Holiday Name</label>
+          <input type="text" id="daily-reason" placeholder="e.g. Sunday, Local Holiday, Puja Vacation" style="width:100%;">
+        </div>
+
+        <button class="btn btn-secondary" onclick="DailyLogModule.saveCurrentEntry()" style="padding:12px; font-size:1rem; font-weight:bold; width:100%; margin-top:8px;">
+          ✓ Record Daily Attendance
+        </button>
+        <div id="daily-save-msg" style="text-align:center; font-weight:bold; margin-top:8px; min-height:20px;"></div>
       </div>
     </section>
 
-    <!-- MDM STOCK REGISTER -->
-    <section id="tab-stock" class="tab-pane">
+    <!-- ROOM 2: ALMIRAH 1 (MDM STOCK & COST REGISTER) -->
+    <section id="view-stock" class="view-panel" style="display:none;">
       <div class="card">
-        <div class="card-title"><span>📦 MDM Dual Stock & Cost Register</span></div>
-        <div class="form-grid" style="margin-bottom: 16px;">
-          <div class="form-group">
-            <label>Financial Year (Unbound Text)</label>
-            <input type="text" id="stock-fy" class="form-control" value="2026-27" placeholder="e.g. 2024-25" oninput="App.refreshStockView()">
+        <h2 class="card-title">📦 MDM Dual Stock & Cost Register</h2>
+        <div class="grid-2 form-group">
+          <div>
+            <label><b>Financial Year (Unbound Text)</b></label>
+            <input type="text" id="stock-fy" value="2026-27" placeholder="e.g. 2024-25" oninput="StockModule.refreshStockView()">
           </div>
-          <div class="form-group">
-            <label>Month</label>
-            <select id="stock-month" class="form-control" onchange="App.refreshStockView()">
+          <div>
+            <label><b>Month</b></label>
+            <select id="stock-month" onchange="StockModule.refreshStockView()">
+              <option value="01">January</option><option value="02">February</option><option value="03">March</option>
               <option value="04">April</option><option value="05">May</option><option value="06">June</option>
               <option value="07">July</option><option value="08">August</option><option value="09" selected>September</option>
               <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-              <option value="01">January</option><option value="02">February</option><option value="03">March</option>
             </select>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+        <div class="grid-2">
           <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; background: #fafaf9;">
             <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;">🌾 Food Grain (Rice) Stock</h3>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Opening Stock (Kg)</label><input type="number" step="0.01" id="stock-grain-ob" class="form-control" value="0" oninput="App.calcStock()"></div>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Received (Kg)</label><input type="number" step="0.01" id="stock-grain-rcvd" class="form-control" value="0" oninput="App.calcStock()"></div>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Consumed (Kg)</label><input type="number" step="0.01" id="stock-grain-consumed" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group"><label>Opening Stock (Kg)</label><input type="number" step="0.01" id="stock-grain-ob" value="0" oninput="StockModule.calcStock()"></div>
+            <div class="form-group"><label>Received (Kg)</label><input type="number" step="0.01" id="stock-grain-rcvd" value="0" oninput="StockModule.calcStock()"></div>
+            <div class="form-group"><label>Consumed (Kg)</label><input type="number" step="0.01" id="stock-grain-consumed" value="0" oninput="StockModule.calcStock()"></div>
             <div style="margin-top: 10px; font-weight: 700; color: #1e3a8a;">Closing Grain Balance: <span id="disp-grain-closing">0.00</span> Kg</div>
           </div>
           <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; background: #fafaf9;">
             <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;">💰 Cooking Cost Balance</h3>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Opening Balance (₹)</label><input type="number" step="0.01" id="stock-cost-ob" class="form-control" value="0" oninput="App.calcStock()"></div>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Grants Received (₹)</label><input type="number" step="0.01" id="stock-cost-rcvd" class="form-control" value="0" oninput="App.calcStock()"></div>
-            <div class="form-group" style="margin-bottom: 8px;"><label>Expenditure Incurred (₹)</label><input type="number" step="0.01" id="stock-cost-spent" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group"><label>Opening Balance (₹)</label><input type="number" step="0.01" id="stock-cost-ob" value="0" oninput="StockModule.calcStock()"></div>
+            <div class="form-group"><label>Grants Received (₹)</label><input type="number" step="0.01" id="stock-cost-rcvd" value="0" oninput="StockModule.calcStock()"></div>
+            <div class="form-group"><label>Expenditure Incurred (₹)</label><input type="number" step="0.01" id="stock-cost-spent" value="0" oninput="StockModule.calcStock()"></div>
             <div style="margin-top: 10px; font-weight: 700;" id="disp-cost-box">Closing Cost Balance: ₹<span id="disp-cost-closing">0.00</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CASH BOOK ALMIRAH -->
-    <section id="tab-cashbook" class="tab-pane">
-      <div class="card">
-        <div class="drawer-switcher">
-          <button class="drawer-btn active" id="btn-drw-mdm" onclick="App.setDrawer('mdm')">PM POSHAN (MDM)</button>
-          <button class="drawer-btn" id="btn-drw-smc" onclick="App.setDrawer('smc')">SMC Savings</button>
-          <button class="drawer-btn" id="btn-drw-sna" onclick="App.setDrawer('sna')">Canara / SNA</button>
-        </div>
+    <!-- ROOM 3: ALMIRAH 2 (STATUTORY CASH BOOKS) -->
+    <section id="view-cashbook" class="view-panel">
+      <!-- Top Book / Ledger Toggle -->
+      <div class="card no-print" style="margin-bottom:12px; display:flex; gap:10px;">
+        <button id="btn-sub-cashbook" class="btn" onclick="switchSubView('cashbook')" style="flex:1; background:#1e3a8a; color:#fff;">
+          📖 Two-Page Cash Book Register
+        </button>
+        <button id="btn-sub-ledger" class="btn" onclick="switchSubView('ledger')" style="flex:1; background:#f8fafc; color:#334155;">
+          📑 General Ledger
+        </button>
+      </div>
 
-        <div class="card-title">
-          <span>📖 Monthly Accounting Ledger</span>
-          <button class="btn-top" onclick="App.shareWhatsApp()">📲 WhatsApp Share</button>
-        </div>
+      <!-- Account Drawer Selector -->
+      <div class="card no-print" style="margin-bottom:12px; padding:8px; display:flex; gap:8px;">
+        <button id="btn-drawer-mdm" class="btn btn-sm" onclick="switchDrawer('mdm')" style="flex:1; background:#0284c7; color:#fff; font-weight:bold; padding:8px;">MDM Cooking Cost</button>
+        <button id="btn-drawer-smc" class="btn btn-sm" onclick="switchDrawer('smc')" style="flex:1; background:#f1f5f9; color:#334155; font-weight:bold; padding:8px;">SMC Normal</button>
+        <button id="btn-drawer-sna" class="btn btn-sm" onclick="switchDrawer('sna')" style="flex:1; background:#f1f5f9; color:#334155; font-weight:bold; padding:8px;">Canara SNA</button>
+      </div>
 
-        <div class="form-grid" style="margin-bottom: 12px;">
-          <div class="form-group">
-            <label>Financial Year (Unbound Text)</label>
-            <input type="text" id="cb-fy" class="form-control" value="2026-27" placeholder="e.g. 2024-25" oninput="App.loadCurrentMonthRecord()">
-          </div>
-          <div class="form-group">
-            <label>Month</label>
-            <select id="cb-month" class="form-control" onchange="App.loadCurrentMonthRecord()">
+      <!-- Period, Blank Rates & Dual Mandate Card -->
+      <div class="card no-print" style="margin-bottom:14px;">
+        <div class="grid-2 form-group">
+          <div>
+            <label><b>Accounting Month</b></label>
+            <select id="cb-sel-month" onchange="onCashbookPeriodChange()" style="font-weight:bold; padding:8px; width:100%;">
+              <option value="01">January</option><option value="02">February</option><option value="03">March</option>
               <option value="04">April</option><option value="05">May</option><option value="06">June</option>
               <option value="07">July</option><option value="08">August</option><option value="09" selected>September</option>
               <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-              <option value="01">January</option><option value="02">February</option><option value="03">March</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Opening Cash (₹)</label>
-            <input type="number" step="0.01" id="cb-ob-cash" class="form-control" value="1488.00" oninput="App.evaluateAudit()">
-          </div>
-          <div class="form-group">
-            <label>Opening Bank (₹)</label>
-            <input type="number" step="0.01" id="cb-ob-bank" class="form-control" value="1100.00" oninput="App.evaluateAudit()">
+          <div>
+            <label><b>Financial Year (Unbound Text)</b></label>
+            <input type="text" id="cb-sel-year" value="2026-27" placeholder="e.g. 2024-25" oninput="onCashbookPeriodChange()" style="font-weight:bold; padding:8px; width:100%;">
           </div>
         </div>
 
-        <!-- MDM PARAMETERS -->
-        <div id="mdm-panel" style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:8px; margin-bottom:14px;">
-          <div style="font-size:0.85rem; font-weight:800; color:var(--primary); margin-bottom:10px;">PM POSHAN Cooking Cost Parameters</div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Total Meals of the Month</label>
-              <input type="number" id="mdm-total-meals" class="form-control" value="450" placeholder="e.g. 450" oninput="App.calcMdmCost()">
+        <!-- Statutory Cooking Mandate Targets -->
+        <div id="box-mdm-mandate" style="background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:12px; margin:10px 0;">
+          <b style="color:#166534; font-size:0.95rem; display:block; margin-bottom:8px;">🎯 Cooking Cost Mandate Targets</b>
+          <div class="grid-2">
+            <div>
+              <label style="font-size:11px; font-weight:bold;">Total Meals Served</label>
+              <input type="number" id="tx-total-meals" placeholder="e.g. 450" oninput="calculateMandate()" style="padding:6px; font-weight:bold; width:100%;">
             </div>
-            <div class="form-group">
-              <label>Rate / Meal (₹)</label>
-              <input type="number" step="0.01" id="mdm-rate" class="form-control" value="6.78" oninput="App.calcMdmCost()">
-            </div>
-            <div class="form-group">
-              <label>Cooking Cost Expenditure (₹)</label>
-              <input type="number" step="0.01" id="mdm-cost-spent" class="form-control" value="3051.00" placeholder="Total Meals × Rate" oninput="App.evaluateAudit()">
-            </div>
-            <div class="form-group">
-              <label>Sub-Voucher No. / Range</label>
-              <input type="text" id="mdm-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4">
+            <div>
+              <label style="font-size:11px; font-weight:bold;">Rate / Meal (₹)</label>
+              <input type="number" step="0.01" id="tx-meal-rate" value="6.78" oninput="calculateMandate()" style="padding:6px; font-weight:bold; width:100%;">
             </div>
           </div>
-          <div id="mdm-calc-summary" style="font-size:0.78rem; font-weight:600; color:#475569; margin-top:8px;">Expenditure: 450 meals × ₹6.78 = ₹3051.00</div>
-        </div>
-
-        <div style="margin-bottom: 14px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong style="font-size:0.85rem;">Itemized Vouchers & Contras</strong>
-            <button class="btn-primary" onclick="App.addVoucherRow()">+ Add Row</button>
+          <div style="margin-top:8px; display:flex; justify-content:space-between; font-size:12px; font-weight:800; background:#ecfdf5; padding:6px 10px; border-radius:4px; border:1px solid #a7f3d0; color:#065f46;">
+            <span>Calculated Expenditure: ₹<strong id="mandate-target-display">0.00</strong></span>
           </div>
-          <div id="vouchers-container"></div>
         </div>
 
-        <div id="audit-shield-banner" style="margin-bottom:14px;"></div>
-
-        <button class="btn-submit" onclick="App.compileAndTranscribe()">⚡ Compile & Transcribe to Physical Legal Spread</button>
+        <!-- Live Voucher Gap Tracker -->
+        <div id="voucher-gap-tracker" style="margin-top:10px; padding:10px; border-radius:6px; background:#eff6ff; border:1px solid #bfdbfe; font-size:0.9rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span><b>Vouchers Booked:</b> <span id="val-vouchers-booked">₹0.00</span></span>
+            <span><b>Mandate Target:</b> <span id="val-target-gap" style="font-weight:bold; color:#1e40af;">₹0.00</span></span>
+          </div>
+          <div id="msg-voucher-status" style="margin-top:5px; font-size:0.8rem; font-weight:600; color:#1e40af;">
+            Add itemized vouchers below to build the physical legal register.
+          </div>
+        </div>
+        
+        <!-- Opening Balances (O/B) -->
+        <div style="border-top:1px dashed #cbd5e1; padding-top:10px; margin-top:8px;">
+          <label style="font-weight:bold; color:#1e3a8a; margin-bottom:6px; display:block;">
+            Opening Balance on 1st of Month (To O/B)
+          </label>
+          <div class="grid-2">
+            <div>
+              <label style="font-size:0.75rem;">O/B Physical Cash in Hand (₹)</label>
+              <input type="number" step="0.01" id="cb-op-cash" placeholder="0.00" oninput="recalculateCashbook()" style="font-weight:bold; padding:8px; width:100%;">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">O/B Bank Balance (₹)</label>
+              <input type="number" step="0.01" id="cb-op-bank" placeholder="0.00" oninput="recalculateCashbook()" style="font-weight:bold; padding:8px; width:100%;">
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div id="physical-hud-container"></div>
+      <!-- Transaction Entry Form -->
+      <div class="card no-print" id="tx-entry-card" style="margin-bottom:14px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; margin-bottom:12px;">
+          <button id="btn-type-rcpt" type="button" class="btn btn-sm" onclick="setTransactionType('RECEIPT')" style="background:#15803d; color:#fff; font-size:0.8rem; padding:10px 4px; font-weight:bold; border:2px solid #15803d; border-radius:4px;">
+            + RECEIPT (To...)
+          </button>
+          <button id="btn-type-with" type="button" class="btn btn-sm" onclick="setTransactionType('WITHDRAWAL')" style="background:#f1f5f9; color:#0284c7; font-size:0.8rem; padding:10px 4px; font-weight:bold; border:2px solid transparent; border-radius:4px;">
+            WITHDRAWAL (Bank to Cash)
+          </button>
+          <button id="btn-type-pmt" type="button" class="btn btn-sm" onclick="setTransactionType('PAYMENT')" style="background:#f1f5f9; color:#dc2626; font-size:0.8rem; padding:10px 4px; font-weight:bold; border:2px solid transparent; border-radius:4px;">
+            - PAYMENT (By...)
+          </button>
+        </div>
+
+        <div class="grid-2 form-group">
+          <div>
+            <label><b>Day (DD) *</b></label>
+            <input type="text" id="tx-date-day" placeholder="e.g. 15 or 30" oninput="refreshModalPreview()" style="padding:8px; width:100%; font-weight:bold;">
+          </div>
+          <div>
+            <label><b>Ledger Folio (L/F)</b></label>
+            <input type="text" id="v-folio-input" placeholder="e.g. 1, 4, C" oninput="refreshModalPreview()" style="padding:8px; width:100%;">
+          </div>
+        </div>
+
+        <div class="grid-2 form-group">
+          <div>
+            <label><b>Amount (₹) *</b></label>
+            <input type="number" step="0.01" id="tx-amount" placeholder="0.00" oninput="refreshModalPreview()" style="font-weight:bold; padding:8px; width:100%;">
+          </div>
+          <div id="box-channel">
+            <label><b>Payment Channel *</b></label>
+            <select id="tx-channel" onchange="refreshModalPreview()" style="padding:8px; width:100%; font-weight:bold;">
+              <option value="CASH">Cash in Hand (Physical)</option>
+              <option value="BANK">Bank Account (Passbook)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Statutory Category & Custom Input -->
+        <div class="form-group" style="margin-top:10px;">
+          <label><b>Accounting Head / Preset Category</b></label>
+          <select id="v-category-select" onchange="applyCategoryPreset()" style="margin-bottom:8px; padding:8px; width:100%; border:1px solid #ccc; border-radius:4px; font-weight:600;">
+            <option value="MDM_COOKING">Folio 1: MDM Cooking Cost (Groceries, Veg, Eggs)</option>
+            <option value="UTENSILS">Folio 4: Kitchen Devices &amp; Utensils</option>
+            <option value="REPAIRS">Folio 5: School Infrastructure Repairs</option>
+            <option value="CONTINGENCY">Folio 2: Contingency &amp; Misc Office</option>
+            <option value="GRANT">Folio G: Grant / Sanction Received</option>
+            <option value="CUSTOM">-- Custom Purpose / Open Entry --</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="party-purpose-fields" style="margin-bottom:10px;">
+          <label style="font-size:0.85rem; font-weight:bold; color:#1e3a8a;">Grant Name / Custom Purpose / Particulars</label>
+          <input type="text" id="v-purpose-input" placeholder="e.g. Cooking Cost for 450 meals" oninput="refreshModalPreview()" style="padding:8px; width:100%; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:4px;">
+          
+          <div class="grid-2 form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label style="font-size:0.75rem;">Payee / Vendor Name</label>
+              <input type="text" id="v-payee-input" placeholder="e.g. Vendor / Self" oninput="refreshModalPreview()" style="padding:6px; width:100%; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+            <div>
+              <label style="font-size:0.75rem;">Voucher / Sub-Voucher No.</label>
+              <input type="text" id="v-ref-input" placeholder="e.g. 01, 1 to 4" oninput="refreshModalPreview()" style="padding:6px; width:100%; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><b>Audit-Compliant Narration (Auto-generated &amp; Fully Editable)</b></label>
+          <textarea id="v-narration-preview" rows="3" style="width:100%; padding:8px; font-size:12px; font-family:monospace; background:#fff; border:1px solid #94a3b8; border-radius:4px;" placeholder="Live narration will generate here..."></textarea>
+        </div>
+
+        <button type="button" class="btn btn-secondary" onclick="addCompleteTransaction()" style="width:100%; padding:11px; font-weight:bold; font-size:0.95rem; background:#0f172a; color:#fff; border:none; border-radius:4px; margin-top:4px; cursor:pointer;">
+          ➕ Add Entry to Cash Book &amp; Ledger
+        </button>
+
+        <div style="margin-top:14px;">
+          <label><b>Current Vouchers in Selected Month</b></label>
+          <div id="voucher-tray" style="margin-top:6px;"></div>
+        </div>
+      </div>
+
+      <!-- STANDALONE CASHBOOK & LEDGER PRINTABLE CONTAINERS -->
+      <div id="subview-cashbook-wrap">
+        <div id="cashbook-printable-area"></div>
+      </div>
+
+      <div id="subview-ledger-wrap" style="display:none;">
+        <div id="ledger-printable-area"></div>
+      </div>
+
+      <!-- Bottom Controls & Permanent Archives -->
+      <div class="card no-print" style="margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="saveCurrentMonthRecord()">
+            💾 Save &amp; Seal Month
+          </button>
+          <button class="btn" onclick="window.print()" style="background:#334155; color:#fff;">
+            🖨️ Print Statutory Legal Spread
+          </button>
+        </div>
+      </div>
     </section>
 
-    <!-- SETUP -->
-    <section id="tab-setup" class="tab-pane">
-      <div class="card" style="max-width: 500px; margin: 0 auto;">
-        <div class="card-title"><span>⚙️ School Institutional Profile</span></div>
-        <div class="form-group" style="margin-bottom: 12px;"><label>11-Digit U-DISE Code</label><input type="text" id="setup-udise" class="form-control" value="18150301501"></div>
-        <div class="form-group" style="margin-bottom: 12px;"><label>School Name</label><input type="text" id="setup-name" class="form-control" value="79 BETONI LP"></div>
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label>Category</label>
-          <select id="setup-cat" class="form-control"><option value="LP">LP (Classes 1–5)</option><option value="UP">UP (Classes 6–8)</option></select>
+    <!-- ROOM 4: SETUP, EDIT PROFILE & SAFE DATA RESET -->
+    <section id="view-setup" class="view-panel" style="display:none;">
+      <div class="card no-print">
+        <h2 class="card-title">⚙️ School Profile Details</h2>
+        <div class="form-group">
+          <label>School Name</label>
+          <input type="text" id="edit-school-name" style="width:100%;">
         </div>
-        <div class="form-group" style="margin-bottom: 12px;"><label>Block</label><input type="text" id="setup-block" class="form-control" value="KHOWANG"></div>
-        <div class="form-group" style="margin-bottom: 16px;"><label>District</label><input type="text" id="setup-dist" class="form-control" value="DIBRUGARH"></div>
-        <button class="btn-submit" onclick="App.saveProfile()">Save Profile</button>
+        <div class="grid-2 form-group">
+          <div>
+            <label>UDISE Code</label>
+            <input type="text" id="edit-udise" style="width:100%;">
+          </div>
+          <div>
+            <label>Block / District</label>
+            <input type="text" id="edit-block" style="width:100%;">
+          </div>
+        </div>
+        <div class="grid-2 form-group">
+          <div>
+            <label>Head Teacher Name</label>
+            <input type="text" id="edit-ht-name" style="width:100%;">
+          </div>
+          <div>
+            <label>Category</label>
+            <select id="edit-cat" style="width:100%;">
+              <option value="LP">LP (Classes 1-5)</option>
+              <option value="UP">UP (Classes 6-8)</option>
+              <option value="COMPOSITE">Composite (Classes 1-8)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="updateExistingProfile()" style="padding:10px; font-weight:bold;">
+          Update School Profile
+        </button>
+      </div>
+
+      <div class="card no-print">
+        <h3 class="card-title">Data Management &amp; Reset</h3>
+        <p style="font-size:0.85rem; color:#475569;">
+          You can experiment with test calculations safely.
+        </p>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" onclick="exportFullBackup()" style="background:#0284c7; color:#fff; padding:10px; flex:1;">
+            📥 Download Backup (JSON)
+          </button>
+          <label class="btn" style="background:#334155; color:#fff; padding:10px; flex:1; text-align:center; cursor:pointer;">
+            📤 Restore Backup
+            <input type="file" id="file-restore" style="display:none;" onchange="importFullBackup(event)">
+          </label>
+        </div>
+
+        <div style="margin-top: 18px; border-top: 1px dashed #cbd5e1; padding-top: 14px;">
+          <button type="button" class="btn" onclick="clearTestDataPreserveProfile()" style="background:#dc2626; color:#fff; width:100%; padding:12px; font-weight:bold; font-size:0.95rem;">
+            🗑️ Clear All Test Entries (Keep School Profile Safe)
+          </button>
+        </div>
       </div>
     </section>
 
@@ -381,82 +598,101 @@
 
   <script>
     /**
-     * UNIFIED APP & STATUTORY ACCOUNTING CONTROLLER
+     * UNIFIED ZERO-DEPENDENCY ENGINE & WORKSPACE CONTROLLER
      */
-    const App = {
-      drawer: 'mdm',
-      vouchers: [
-        { type: 'contra', no: '1', amt: 500, desc: 'Cash withdrawn from bank for school expenses' }
-      ],
-      checkedRows: new Set(),
 
+    // 1. Profile Module
+    const ProfileModule = {
+      KEY: 'dhk_school_profile',
+      getProfile() {
+        return JSON.parse(localStorage.getItem(this.KEY) || 'null');
+      },
+      isConfigured() {
+        const p = this.getProfile();
+        return p && p.schoolName && p.udise;
+      },
       init() {
-        document.getElementById('daily-date').value = new Date().toISOString().slice(0, 10);
-        this.loadProfile();
-        this.loadCurrentMonthRecord();
+        if (!this.isConfigured()) {
+          document.getElementById('profile-gatekeeper').style.display = 'block';
+          document.getElementById('app-navigation').style.display = 'none';
+          document.getElementById('workspace-container').style.display = 'none';
+        } else {
+          document.getElementById('profile-gatekeeper').style.display = 'none';
+          document.getElementById('app-navigation').style.display = 'flex';
+          document.getElementById('workspace-container').style.display = 'block';
+          this.applyHeader();
+        }
       },
-
-      showTab(tabId) {
-        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.target.classList.add('active');
-        if (tabId === 'tab-stock') this.refreshStockView();
-      },
-
-      setDrawer(d) {
-        this.drawer = d;
-        document.querySelectorAll('.drawer-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-drw-' + d).classList.add('active');
-        document.getElementById('mdm-panel').style.display = (d === 'mdm') ? 'block' : 'none';
-        this.loadCurrentMonthRecord();
-      },
-
-      loadProfile() {
-        const p = JSON.parse(localStorage.getItem('dhk_school_profile') || '{"udise":"18150301501","name":"79 BETONI LP","block":"KHOWANG","district":"DIBRUGARH","cat":"LP"}');
-        document.getElementById('top-school-name').textContent = p.name;
-        document.getElementById('top-school-sub').textContent = `UDISE: ${p.udise} | BLOCK: ${p.block}/${p.district}`;
-        document.getElementById('setup-udise').value = p.udise;
-        document.getElementById('setup-name').value = p.name;
-        document.getElementById('setup-block').value = p.block;
-        document.getElementById('setup-dist').value = p.district;
-        document.getElementById('setup-cat').value = p.cat;
-      },
-
       saveProfile() {
         const p = {
-          udise: document.getElementById('setup-udise').value.trim(),
-          name: document.getElementById('setup-name').value.trim(),
-          block: document.getElementById('setup-block').value.trim(),
-          district: document.getElementById('setup-dist').value.trim(),
-          cat: document.getElementById('setup-cat').value
+          schoolName: document.getElementById('cfg-school-name').value.trim(),
+          udise: document.getElementById('cfg-udise').value.trim(),
+          block: document.getElementById('cfg-block').value.trim(),
+          htName: document.getElementById('cfg-ht-name').value.trim(),
+          category: document.getElementById('cfg-cat').value,
+          configuredAt: new Date().toISOString()
         };
-        localStorage.setItem('dhk_school_profile', JSON.stringify(p));
-        this.loadProfile();
-        alert('✅ Profile saved.');
+        if (!p.schoolName || !p.udise) return alert("School name and UDISE cannot be blank.");
+        localStorage.setItem(this.KEY, JSON.stringify(p));
+        this.init();
       },
+      applyHeader() {
+        const p = this.getProfile();
+        if (!p) return;
+        document.getElementById('header-school-name').textContent = p.schoolName;
+        document.getElementById('header-udise').textContent = `UDISE: ${p.udise} | Block: ${p.block || '-'}`;
+      }
+    };
 
-      saveDailyAttendance() {
+    // 2. Daily Log Module
+    const DailyLogModule = {
+      KEY: 'dhk_attendance',
+      init() {
+        document.getElementById('daily-date').value = new Date().toISOString().slice(0, 10);
+        this.loadDate();
+      },
+      loadDate() {
+        const d = document.getElementById('daily-date').value;
+        const db = JSON.parse(localStorage.getItem(this.KEY) || '{}');
+        const rec = db[d] || { status: 'OPEN', lp: 0, up: 0, reason: '' };
+        document.getElementById('daily-status').value = rec.status;
+        document.getElementById('daily-lp').value = rec.lp || 0;
+        document.getElementById('daily-up').value = rec.up || 0;
+        document.getElementById('daily-reason').value = rec.reason || '';
+        this.toggleStatus();
+      },
+      toggleStatus() {
+        const st = document.getElementById('daily-status').value;
+        document.getElementById('daily-meal-fields').style.display = (st === 'OPEN') ? 'block' : 'none';
+        document.getElementById('daily-holiday-field').style.display = (st === 'CLOSED') ? 'block' : 'none';
+      },
+      saveCurrentEntry() {
         const d = document.getElementById('daily-date').value;
         const st = document.getElementById('daily-status').value;
-        const lp = parseInt(document.getElementById('daily-lp-meals').value, 10) || 0;
-        const up = parseInt(document.getElementById('daily-up-meals').value, 10) || 0;
+        const lp = parseInt(document.getElementById('daily-lp').value, 10) || 0;
+        const up = parseInt(document.getElementById('daily-up').value, 10) || 0;
+        const reason = document.getElementById('daily-reason').value.trim();
         if (!d) return alert('Select date');
-        const db = JSON.parse(localStorage.getItem('dhk_attendance') || '{}');
-        db[d] = { status: st, lp, up, total: lp + up };
-        localStorage.setItem('dhk_attendance', JSON.stringify(db));
-        alert(`✅ Logged ${lp + up} meals for ${d}`);
-      },
+        const db = JSON.parse(localStorage.getItem(this.KEY) || '{}');
+        db[d] = { status: st, lp, up, total: lp + up, reason };
+        localStorage.setItem(this.KEY, JSON.stringify(db));
+        const msg = document.getElementById('daily-save-msg');
+        msg.textContent = `✅ Saved ${lp + up} meals for ${d}`;
+        msg.style.color = '#15803d';
+        setTimeout(() => { msg.textContent = ''; }, 3000);
+      }
+    };
 
+    // 3. Stock Module
+    const StockModule = {
       refreshStockView() {
         const fy = document.getElementById('stock-fy').value.trim();
         const m = document.getElementById('stock-month').value;
-        const yearPrefix = fy.slice(0, 4);
-        const targetPrefix = `${yearPrefix}-${m}`;
+        const targetPrefix = `${fy.slice(0, 4)}-${m}`;
         const db = JSON.parse(localStorage.getItem('dhk_attendance') || '{}');
         let lp = 0, up = 0;
         Object.keys(db).forEach(k => {
-          if (k.startsWith(targetPrefix) && db[k].status === 'open') {
+          if (k.startsWith(targetPrefix) && db[k].status === 'OPEN') {
             lp += (db[k].lp || 0);
             up += (db[k].up || 0);
           }
@@ -465,521 +701,571 @@
         document.getElementById('stock-grain-consumed').value = consumedKg.toFixed(2);
         this.calcStock();
       },
-
       calcStock() {
         const gob = parseFloat(document.getElementById('stock-grain-ob').value) || 0;
         const grcvd = parseFloat(document.getElementById('stock-grain-rcvd').value) || 0;
         const gspent = parseFloat(document.getElementById('stock-grain-consumed').value) || 0;
-        const gclose = gob + grcvd - gspent;
-        document.getElementById('disp-grain-closing').textContent = gclose.toFixed(2);
+        document.getElementById('disp-grain-closing').textContent = (gob + grcvd - gspent).toFixed(2);
 
         const cob = parseFloat(document.getElementById('stock-cost-ob').value) || 0;
         const crcvd = parseFloat(document.getElementById('stock-cost-rcvd').value) || 0;
         const cspent = parseFloat(document.getElementById('stock-cost-spent').value) || 0;
         const cclose = cob + crcvd - cspent;
-        const dispCost = document.getElementById('disp-cost-closing');
-        const box = document.getElementById('disp-cost-box');
-        dispCost.textContent = cclose.toFixed(2);
-        if (cclose < 0) {
-          box.style.color = '#ef4444';
-          dispCost.innerHTML = `${cclose.toFixed(2)} (DEFICIT - Folio 8)`;
-        } else {
-          box.style.color = '#15803d';
+        document.getElementById('disp-cost-closing').textContent = cclose.toFixed(2);
+        document.getElementById('disp-cost-box').style.color = cclose < 0 ? '#ef4444' : '#15803d';
+      }
+    };
+
+    // 4. Statutory Cash Book & Multi-Folio Engine
+    let activeDrawer = 'mdm';
+    let currentTxType = 'RECEIPT';
+    let vouchersList = [];
+
+    function switchDrawer(d) {
+      activeDrawer = d;
+      ['mdm', 'smc', 'sna'].forEach(id => {
+        const btn = document.getElementById('btn-drawer-' + id);
+        if (btn) {
+          btn.style.background = (id === d) ? '#0284c7' : '#f1f5f9';
+          btn.style.color = (id === d) ? '#fff' : '#334155';
         }
-      },
+      });
+      document.getElementById('box-mdm-mandate').style.display = (d === 'mdm') ? 'block' : 'none';
+      loadCurrentMonthRecord();
+    }
 
-      calcMdmCost() {
-        const meals = parseInt(document.getElementById('mdm-total-meals').value, 10) || 0;
-        const rate = parseFloat(document.getElementById('mdm-rate').value) || 0;
-        const cost = Math.round((meals * rate) * 100) / 100;
+    function switchSubView(v) {
+      document.getElementById('subview-cashbook-wrap').style.display = (v === 'cashbook') ? 'block' : 'none';
+      document.getElementById('subview-ledger-wrap').style.display = (v === 'ledger') ? 'block' : 'none';
+      document.getElementById('btn-sub-cashbook').style.background = (v === 'cashbook') ? '#1e3a8a' : '#f8fafc';
+      document.getElementById('btn-sub-cashbook').style.color = (v === 'cashbook') ? '#fff' : '#334155';
+      document.getElementById('btn-sub-ledger').style.background = (v === 'ledger') ? '#1e3a8a' : '#f8fafc';
+      document.getElementById('btn-sub-ledger').style.color = (v === 'ledger') ? '#fff' : '#334155';
+    }
 
-        const costInput = document.getElementById('mdm-cost-spent');
-        costInput.value = cost > 0 ? cost.toFixed(2) : '';
+    function setTransactionType(type) {
+      currentTxType = type;
+      const bR = document.getElementById('btn-type-rcpt');
+      const bW = document.getElementById('btn-type-with');
+      const bP = document.getElementById('btn-type-pmt');
+      [bR, bW, bP].forEach(b => { b.style.background = '#f1f5f9'; b.style.border = '2px solid transparent'; });
 
-        document.getElementById('mdm-calc-summary').innerHTML = 
-          `Expenditure: <strong>${meals}</strong> meals × ₹<strong>${rate.toFixed(2)}</strong> = <strong>₹${cost.toFixed(2)}</strong>`;
+      if (type === 'RECEIPT') {
+        bR.style.background = '#15803d'; b.style.color = '#fff'; b.style.border = '2px solid #15803d';
+        document.getElementById('v-folio-input').value = 'G';
+      } else if (type === 'WITHDRAWAL') {
+        bW.style.background = '#0284c7'; bW.style.color = '#fff'; bW.style.border = '2px solid #0284c7';
+        document.getElementById('v-folio-input').value = 'C';
+      } else {
+        bP.style.background = '#dc2626'; bP.style.color = '#fff'; bP.style.border = '2px solid #dc2626';
+        document.getElementById('v-folio-input').value = '1';
+      }
+      refreshModalPreview();
+    }
 
-        this.evaluateAudit();
-      },
+    function calculateMandate() {
+      const meals = parseInt(document.getElementById('tx-total-meals').value, 10) || 0;
+      const rate = parseFloat(document.getElementById('tx-meal-rate').value) || 0;
+      const expenditure = Math.round((meals * rate) * 100) / 100;
+      document.getElementById('mandate-target-display').textContent = expenditure.toFixed(2);
+      document.getElementById('val-target-gap').textContent = `₹${expenditure.toFixed(2)}`;
+      recalculateCashbook();
+    }
 
-      addVoucherRow(data = null) {
-        this.vouchers.push(data || { type: 'contra', no: `${this.vouchers.length + 1}`, amt: 0, desc: '' });
-        this.renderVouchers();
-        this.evaluateAudit();
-      },
+    function applyCategoryPreset() {
+      const cat = document.getElementById('v-category-select').value;
+      const purpose = document.getElementById('v-purpose-input');
+      const folio = document.getElementById('v-folio-input');
+      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
 
-      removeVoucher(idx) {
-        this.vouchers.splice(idx, 1);
-        this.renderVouchers();
-        this.evaluateAudit();
-      },
+      if (cat === 'MDM_COOKING') {
+        folio.value = '1';
+        purpose.value = `Cooking cost for the month of ${mName}`;
+      } else if (cat === 'UTENSILS') {
+        folio.value = '4';
+        purpose.value = 'Purchase of Kitchen Devices & Utensils';
+      } else if (cat === 'REPAIRS') {
+        folio.value = '5';
+        purpose.value = 'School Infrastructure Repairs';
+      } else if (cat === 'CONTINGENCY') {
+        folio.value = '2';
+        purpose.value = 'Contingency & Miscellaneous expenses';
+      } else if (cat === 'GRANT') {
+        folio.value = 'G';
+        purpose.value = `Grant Received for ${mName}`;
+      }
+      refreshModalPreview();
+    }
 
-      renderVouchers() {
-        const c = document.getElementById('vouchers-container');
-        c.innerHTML = '';
-        this.vouchers.forEach((v, i) => {
-          const div = document.createElement('div');
-          div.style.cssText = 'display:flex; gap:6px; margin-bottom:8px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:8px; border:1px solid #cbd5e1; border-radius:6px;';
-          div.innerHTML = `
-            <select class="form-control" style="flex:2; min-width:180px;" onchange="App.vouchers[${i}].type=this.value; App.evaluateAudit();">
-              <option value="contra" ${v.type==='contra'?'selected':''}>Cash Withdrawn (Contra Folio C)</option>
-              <option value="credit" ${v.type==='credit'?'selected':''}>Bank Credit / Sanction</option>
-              <option value="cash_pmt" ${v.type==='cash_pmt'?'selected':''}>General Cash Contingency</option>
-              <option value="bank_pmt" ${v.type==='bank_pmt'?'selected':''}>Bank / Vendor Remittance</option>
-            </select>
-            <input type="text" class="form-control" style="flex:1; min-width:80px;" placeholder="Voucher #" value="${v.no||''}" oninput="App.vouchers[${i}].no=this.value;">
-            <input type="number" step="0.01" class="form-control" style="flex:1; min-width:100px; text-align:right;" placeholder="Amount" value="${v.amt||''}" oninput="App.vouchers[${i}].amt=parseFloat(this.value)||0; App.evaluateAudit();">
-            <input type="text" class="form-control" style="flex:2; min-width:160px;" placeholder="Particulars" value="${v.desc||''}" oninput="App.vouchers[${i}].desc=this.value;">
-            <button style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;" onclick="App.removeVoucher(${i})">✕</button>
-          `;
-          c.appendChild(div);
-        });
-      },
+    function refreshModalPreview() {
+      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
+      const purpose = document.getElementById('v-purpose-input').value.trim();
+      const payee = document.getElementById('v-payee-input').value.trim();
+      const ref = document.getElementById('v-ref-input').value.trim();
+      const preview = document.getElementById('v-narration-preview');
 
-      evaluateAudit() {
-        const opCash = parseFloat(document.getElementById('cb-ob-cash').value) || 0;
-        const opBank = parseFloat(document.getElementById('cb-ob-bank').value) || 0;
-        let cookingCost = 0;
+      if (currentTxType === 'WITHDRAWAL') {
+        preview.value = `By Cash in Hand (Contra)\n(Contra cash withdrawn from bank for school expenses)`;
+      } else if (currentTxType === 'RECEIPT') {
+        preview.value = `To ${purpose || 'Grant / Sanction Received into Bank'}`;
+      } else {
+        const payeeText = payee ? ` to ${payee}` : '';
+        const vText = ref ? ` vide Sub-Voucher No. ${ref}` : '';
+        preview.value = `By ${purpose || 'Expenditure'}${payeeText}${vText}`;
+      }
+    }
 
-        if (this.drawer === 'mdm') {
-          cookingCost = parseFloat(document.getElementById('mdm-cost-spent')?.value) || 0;
-        }
+    function addCompleteTransaction() {
+      const day = document.getElementById('tx-date-day').value.trim() || '30';
+      const folio = document.getElementById('v-folio-input').value.trim();
+      const amt = parseFloat(document.getElementById('tx-amount').value) || 0;
+      const channel = document.getElementById('tx-channel').value;
+      const desc = document.getElementById('v-narration-preview').value.trim();
 
-        let itemizedCash = 0, itemizedBank = 0;
-        this.vouchers.forEach(v => {
-          const a = v.amt || 0;
-          if (v.type === 'cash_pmt') itemizedCash += a;
-          if (v.type === 'bank_pmt') itemizedBank += a;
-        });
+      if (amt <= 0) return alert('Enter a valid amount.');
 
-        const totalPayments = itemizedCash + itemizedBank + cookingCost;
-        const banner = document.getElementById('audit-shield-banner');
+      vouchersList.push({
+        id: Date.now(),
+        type: currentTxType,
+        day, folio, amt, channel, desc
+      });
 
-        banner.innerHTML = `
-          <div style="background:#ecfdf5; border:1.5px solid #10b981; color:#065f46; padding:10px 14px; border-radius:6px; font-size:0.85rem; font-weight:700;">
-            ✅ VOUCHER TRACKER SYNCED: Total Monthly Payments = ₹${totalPayments.toFixed(2)} (Cooking Cost: ₹${cookingCost.toFixed(2)} | Vouchers: ₹${(itemizedCash + itemizedBank).toFixed(2)})
-          </div>
+      document.getElementById('tx-amount').value = '';
+      recalculateCashbook();
+    }
+
+    function removeVoucher(id) {
+      vouchersList = vouchersList.filter(v => v.id !== id);
+      recalculateCashbook();
+    }
+
+    function onCashbookPeriodChange() {
+      loadCurrentMonthRecord();
+    }
+
+    function loadCurrentMonthRecord() {
+      const fy = document.getElementById('cb-sel-year').value.trim() || '2026-27';
+      const m = document.getElementById('cb-sel-month').value;
+      const k = `cb_${activeDrawer}_${fy}_${m}`;
+      const rec = JSON.parse(localStorage.getItem(k) || 'null');
+
+      if (rec) {
+        document.getElementById('cb-op-cash').value = rec.opCash;
+        document.getElementById('cb-op-bank').value = rec.opBank;
+        document.getElementById('tx-total-meals').value = rec.meals || '';
+        document.getElementById('tx-meal-rate').value = rec.rate || 6.78;
+        vouchersList = rec.vouchers || [];
+      } else {
+        vouchersList = [];
+      }
+      calculateMandate();
+    }
+
+    function saveCurrentMonthRecord() {
+      const fy = document.getElementById('cb-sel-year').value.trim() || '2026-27';
+      const m = document.getElementById('cb-sel-month').value;
+      const k = `cb_${activeDrawer}_${fy}_${m}`;
+      const data = {
+        opCash: parseFloat(document.getElementById('cb-op-cash').value) || 0,
+        opBank: parseFloat(document.getElementById('cb-op-bank').value) || 0,
+        meals: document.getElementById('tx-total-meals').value,
+        rate: document.getElementById('tx-meal-rate').value,
+        vouchers: vouchersList
+      };
+      localStorage.setItem(k, JSON.stringify(data));
+      alert('✅ Cash Book & Ledger Saved to Permanent Storage.');
+    }
+
+    function recalculateCashbook() {
+      const fy = document.getElementById('cb-sel-year').value.trim() || '2026-27';
+      const m = document.getElementById('cb-sel-month').value;
+      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
+      const opCash = parseFloat(document.getElementById('cb-op-cash').value) || 0;
+      const opBank = parseFloat(document.getElementById('cb-op-bank').value) || 0;
+
+      const mInt = parseInt(m, 10);
+      const yInt = parseInt(fy.slice(0, 4), 10) || 2026;
+      const lastDay = new Date(yInt, mInt, 0).getDate();
+      const shortYear = String(yInt).slice(2);
+      const paddedMonth = String(mInt).padStart(2, '0');
+
+      // Build Vouchers Tray
+      const tray = document.getElementById('voucher-tray');
+      tray.innerHTML = '';
+      let totalVouchersBooked = 0;
+
+      vouchersList.forEach(v => {
+        if (v.type === 'PAYMENT') totalVouchersBooked += v.amt;
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 10px; border-radius:4px; margin-bottom:4px; font-size:0.8rem;';
+        item.innerHTML = `
+          <span><strong>Day ${v.day}:</strong> ${v.desc.split('\n')[0]} (LF: ${v.folio}) - <strong>₹${v.amt.toFixed(2)}</strong> via ${v.channel}</span>
+          <button onclick="removeVoucher(${v.id})" style="background:#dc2626; color:#fff; border:none; border-radius:4px; padding:2px 6px; cursor:pointer;">✕</button>
         `;
+        tray.appendChild(item);
+      });
 
-        return { opCash, opBank, cookingCost, totalPayments };
-      },
+      document.getElementById('val-vouchers-booked').textContent = `₹${totalVouchersBooked.toFixed(2)}`;
 
-      loadCurrentMonthRecord() {
-        const fy = document.getElementById('cb-fy').value.trim() || '2026-27';
-        const m = document.getElementById('cb-month').value;
-        const k = `cb_${this.drawer}_${fy}_${m}`;
-        const rec = JSON.parse(localStorage.getItem(k) || 'null');
-        if (rec) {
-          document.getElementById('cb-ob-cash').value = rec.opCash;
-          document.getElementById('cb-ob-bank').value = rec.opBank;
-          if (this.drawer === 'mdm') {
-            document.getElementById('mdm-total-meals').value = rec.totalMeals || '';
-            document.getElementById('mdm-rate').value = rec.rate || 6.78;
-            document.getElementById('mdm-cost-spent').value = rec.costSpent || '';
-            document.getElementById('mdm-voucher-no').value = rec.vNo || '1';
-          }
-          this.vouchers = rec.vouchers || [];
-        }
-        this.renderVouchers();
-        this.calcMdmCost();
-      },
+      // Compile Physical Ledgers
+      const receipts = [{ dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank, isOb: true }];
+      const payments = [];
 
-      compileAndTranscribe() {
-        const fy = document.getElementById('cb-fy').value.trim() || '2026-27';
-        const m = document.getElementById('cb-month').value;
-        const mName = document.getElementById('cb-month').selectedOptions[0].text;
-        const { opCash, opBank, cookingCost } = this.evaluateAudit();
+      const ledgers = {
+        '1': { title: 'Folio 1: MDM Cooking Cost Account', entries: [] },
+        '4': { title: 'Folio 4: Kitchen Devices & Utensils Account', entries: [] },
+        '5': { title: 'Folio 5: School Infrastructure Repairs Account', entries: [] },
+        '2': { title: 'Folio 2: Contingency & Miscellaneous Account', entries: [] },
+        '8': { title: 'Folio 8: Advances / Deficit In-charge Funding', entries: [] }
+      };
 
-        const mInt = parseInt(m, 10);
-        const yPrefix = fy.slice(0, 4);
-        const yInt = parseInt(yPrefix, 10) || 2026;
-        const lastDay = new Date(yInt, mInt, 0).getDate();
-        const shortYear = String(yInt).slice(2);
-        const paddedMonth = String(mInt).padStart(2, '0');
-        const statutoryDate = `${lastDay}/${paddedMonth}/${shortYear}`;
+      let runningCash = opCash;
+      let runningBank = opBank;
 
-        // 1. Receipts Setup
-        const receipts = [
-          { dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank, isOb: true }
-        ];
-
-        // 2. Payments Setup
-        const payments = [];
-
-        let runningCash = opCash;
-        let runningBank = opBank;
-
-        // Contra & Itemized Vouchers
-        this.vouchers.forEach(v => {
-          const a = parseFloat(v.amt) || 0;
-          if (v.type === 'contra') {
+      vouchersList.forEach(v => {
+        const vDate = `${v.day}/${paddedMonth}/${shortYear}`;
+        if (v.type === 'WITHDRAWAL') {
+          receipts.push({
+            dt: vDate,
+            p: 'To Bank Account (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Cash withdrawn from bank for school expenses)</span>',
+            f: 'C', c: v.amt, b: 0, t: v.amt
+          });
+          payments.push({
+            dt: vDate,
+            p: 'By Cash in Hand (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Contra cash withdrawn from bank)</span>',
+            f: 'C', c: 0, b: v.amt, t: v.amt, isRed: true
+          });
+          runningCash += v.amt;
+          runningBank -= v.amt;
+        } else if (v.type === 'RECEIPT') {
+          receipts.push({
+            dt: vDate,
+            p: v.desc,
+            f: v.folio || 'G',
+            c: v.channel === 'CASH' ? v.amt : 0,
+            b: v.channel === 'BANK' ? v.amt : 0,
+            t: v.amt
+          });
+          if (v.channel === 'CASH') runningCash += v.amt;
+          if (v.channel === 'BANK') runningBank += v.amt;
+        } else {
+          // Check Cash Deficit
+          if (v.channel === 'CASH' && runningCash < v.amt) {
+            const deficit = Math.round((v.amt - runningCash) * 100) / 100;
             receipts.push({
-              dt: statutoryDate,
-              p: 'To Bank Account (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Cash withdrawn from bank for school expenses)</span>',
-              f: 'C',
-              c: a,
-              b: 0,
-              t: a
-            });
-            payments.push({
-              dt: statutoryDate,
-              p: 'By Cash in Hand (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Contra cash withdrawn from bank)</span>',
-              f: 'C',
-              c: 0,
-              b: a,
-              t: a
-            });
-            runningCash += a;
-            runningBank -= a;
-          } else if (v.type === 'credit') {
-            receipts.push({
-              dt: statutoryDate,
-              p: v.desc || 'To Grant / Sanction Received into Bank',
-              f: 'G',
-              c: 0,
-              b: a,
-              t: a
-            });
-            runningBank += a;
-          } else if (v.type === 'cash_pmt') {
-            payments.push({
-              dt: statutoryDate,
-              p: v.desc || `By Contingency Exp. vide V-${v.no}`,
-              f: '2',
-              c: a,
-              b: 0,
-              t: a
-            });
-            runningCash -= a;
-          } else if (v.type === 'bank_pmt') {
-            payments.push({
-              dt: statutoryDate,
-              p: v.desc || `By Vendor Transfer vide Bill-${v.no}`,
-              f: '3',
-              c: 0,
-              b: a,
-              t: a
-            });
-            runningBank -= a;
-          }
-        });
-
-        // 3. Cooking Cost & Folio 8 Temporary Deficit Advance Handling
-        if (this.drawer === 'mdm' && cookingCost > 0) {
-          const meals = parseInt(document.getElementById('mdm-total-meals')?.value, 10) || 0;
-          const rate = parseFloat(document.getElementById('mdm-rate')?.value) || 6.78;
-          const vRange = document.getElementById('mdm-voucher-no')?.value || '1';
-
-          if (runningCash < cookingCost) {
-            const deficit = Math.round((cookingCost - runningCash) * 100) / 100;
-            receipts.push({
-              dt: statutoryDate,
+              dt: vDate,
               p: 'To Temporary Advance from In-charge/Teacher (Out-of-pocket funding)',
-              f: '8',
-              c: deficit,
-              b: 0,
-              t: deficit
+              f: '8', c: deficit, b: 0, t: deficit
             });
+            ledgers['8'].entries.push({ dt: vDate, p: `Advance towards ${v.desc.split('\n')[0]}`, cr: deficit, dr: 0 });
             runningCash += deficit;
           }
 
           payments.push({
-            dt: statutoryDate,
-            p: `By Cooking cost for the month of ${mName} for ${meals} meals at ${rate.toFixed(2)}<br><span style="font-size:0.65rem; color:#475569;">(Being cash payment incurred towards Cooking cost for the month of ${mName} for ${meals} meals at ${rate.toFixed(2)} vide Sub-Voucher No. ${vRange})</span>`,
-            f: '1',
-            c: cookingCost,
-            b: 0,
-            t: cookingCost
-          });
-          runningCash -= cookingCost;
-        }
-
-        // 4. Subtotals: T/R & T/P
-        const trC = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.c, 0);
-        const trB = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.b, 0);
-        const trT = trC + trB;
-
-        const tpC = payments.reduce((s, p) => s + p.c, 0);
-        const tpB = payments.reduce((s, p) => s + p.b, 0);
-        const tpT = tpC + tpB;
-
-        // 5. Closing Balance (C/B)
-        const closeCash = Math.max(0, Math.round(runningCash * 100) / 100);
-        const closeBank = Math.round(runningBank * 100) / 100;
-
-        payments.push({
-          dt: 'End',
-          p: 'By Closing Balance (C/B)',
-          f: '',
-          c: closeCash,
-          b: closeBank,
-          t: closeCash + closeBank,
-          isCb: true
-        });
-
-        // 6. Grand Totals (G/T)
-        const gtRecCash = opCash + trC;
-        const gtRecBank = opBank + trB;
-        const gtRecTotal = gtRecCash + gtRecBank;
-
-        const gtPmtCash = tpC + closeCash;
-        const gtPmtBank = tpB + closeBank;
-        const gtPmtTotal = gtPmtCash + gtPmtBank;
-
-        // Save active month state
-        const k = `cb_${this.drawer}_${fy}_${m}`;
-        localStorage.setItem(k, JSON.stringify({
-          opCash, opBank,
-          totalMeals: document.getElementById('mdm-total-meals')?.value,
-          rate: document.getElementById('mdm-rate')?.value,
-          costSpent: document.getElementById('mdm-cost-spent')?.value,
-          vNo: document.getElementById('mdm-voucher-no')?.value,
-          vouchers: this.vouchers,
-          closeCash, closeBank
-        }));
-
-        this.renderPhysicalHUD(mName, yInt, receipts, payments, {
-          trC, trB, trT,
-          tpC, tpB, tpT,
-          closeCash, closeBank,
-          gtRecCash, gtRecBank, gtRecTotal,
-          gtPmtCash, gtPmtBank, gtPmtTotal
-        });
-      },
-
-      renderPhysicalHUD(mName, fullYear, receipts, payments, t) {
-        const hud = document.getElementById('physical-hud-container');
-
-        const split = (val) => {
-          if (val === undefined || val === null || val === '') return { rs: '', p: '' };
-          const num = Number(val).toFixed(2);
-          const parts = num.split('.');
-          return { rs: parts[0], p: parts[1] };
-        };
-
-        const renderRows = (list, prefix) => {
-          let out = '';
-          list.forEach((r, idx) => {
-            const id = `${prefix}-${idx}`;
-            const c = split(r.c);
-            const b = split(r.b);
-            const tot = split(r.t);
-
-            out += `
-              <tr class="ledger-row ${this.checkedRows.has(id) ? 'ink-checked' : ''}" id="${id}" onclick="App.toggleRow('${id}')">
-                <td style="text-align:center; vertical-align:top; font-size:0.75rem; font-weight:700;">${r.dt || ''}</td>
-                <td style="padding:4px 6px; vertical-align:top;">${r.p}</td>
-                <td style="text-align:center; vertical-align:top; font-weight:800;">${r.f || ''}</td>
-                <td class="cell-rs">${c.rs}</td>
-                <td class="cell-p">${c.p}</td>
-                <td class="cell-rs">${b.rs}</td>
-                <td class="cell-p">${b.p}</td>
-                <td class="cell-rs">${tot.rs}</td>
-                <td class="cell-p">${tot.p}</td>
-              </tr>
-            `;
+            dt: vDate,
+            p: v.desc.replace('\n', '<br><span style="font-size:0.65rem; color:#475569;">') + (v.desc.includes('\n') ? '</span>' : ''),
+            f: v.folio,
+            c: v.channel === 'CASH' ? v.amt : 0,
+            b: v.channel === 'BANK' ? v.amt : 0,
+            t: v.amt,
+            isRed: true
           });
 
-          // Ruled empty rows to maintain physical ledger height
-          const remainingLines = Math.max(0, 14 - list.length);
-          for (let i = 0; i < remainingLines; i++) {
-            out += `
-              <tr class="empty-ruled-row">
-                <td></td><td></td><td></td>
-                <td class="cell-rs"></td><td class="cell-p"></td>
-                <td class="cell-rs"></td><td class="cell-p"></td>
-                <td class="cell-rs"></td><td class="cell-p"></td>
-              </tr>
-            `;
+          if (v.channel === 'CASH') runningCash -= v.amt;
+          if (v.channel === 'BANK') runningBank -= v.amt;
+
+          if (ledgers[v.folio]) {
+            ledgers[v.folio].entries.push({ dt: vDate, p: v.desc.split('\n')[0], dr: v.amt, cr: 0 });
           }
-          return out;
-        };
+        }
+      });
 
-        const trC = split(t.trC);
-        const trB = split(t.trB);
-        const trT = split(t.trT);
+      // Subtotals & Grand Totals
+      const trC = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.c, 0);
+      const trB = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.b, 0);
+      const trT = trC + trB;
 
-        const tpC = split(t.tpC);
-        const tpB = split(t.tpB);
-        const tpT = split(t.tpT);
+      const tpC = payments.reduce((s, p) => s + p.c, 0);
+      const tpB = payments.reduce((s, p) => s + p.b, 0);
+      const tpT = tpC + tpB;
 
-        const gtRC = split(t.gtRecCash);
-        const gtRB = split(t.gtRecBank);
-        const gtRT = split(t.gtRecTotal);
+      const closeCash = Math.max(0, Math.round(runningCash * 100) / 100);
+      const closeBank = Math.round(runningBank * 100) / 100;
 
-        const gtPC = split(t.gtPmtCash);
-        const gtPB = split(t.gtPmtBank);
-        const gtPT = split(t.gtPmtTotal);
+      payments.push({
+        dt: 'End', p: 'By Closing Balance (C/B)', f: '', c: closeCash, b: closeBank, t: closeCash + closeBank, isRed: true
+      });
 
-        hud.innerHTML = `
-          <div class="physical-spread">
+      const gtRecCash = opCash + trC;
+      const gtRecBank = opBank + trB;
+      const gtRecTotal = gtRecCash + gtRecBank;
 
-            <!-- LEFT SPREAD: RECEIPTS -->
-            <div class="physical-page">
-              <div class="book-header-line">
-                <span class="page-indicator">4</span>
-                <span class="book-title">CASH BOOK</span>
-                <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
-              </div>
-              <div class="subhead-row">
-                <span style="font-size:0.9rem; font-weight:900;">RECEIPTS</span>
-              </div>
+      const gtPmtCash = tpC + closeCash;
+      const gtPmtBank = tpB + closeBank;
+      const gtPmtTotal = gtPmtCash + gtPmtBank;
 
-              <table class="statutory-table">
-                <thead>
-                  <tr>
-                    <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
-                    <th rowspan="2">PARTICULARS</th>
-                    <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
-                    <th colspan="2">Cash Amount</th>
-                    <th colspan="2">Bank Amount</th>
-                    <th colspan="2">Total Amount</th>
-                  </tr>
-                  <tr>
-                    <th style="width:46px;">Rs.</th>
-                    <th style="width:20px;">P.</th>
-                    <th style="width:46px;">Rs.</th>
-                    <th style="width:20px;">P.</th>
-                    <th style="width:52px;">Rs.</th>
-                    <th style="width:20px;">P.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${renderRows(receipts, 'rcpt')}
-                  <!-- T/R Row -->
-                  <tr class="subtotal-row">
-                    <td colspan="3" style="text-align:center;">T/R (Total Receipts)</td>
-                    <td class="cell-rs">${trC.rs}</td><td class="cell-p">${trC.p}</td>
-                    <td class="cell-rs">${trB.rs}</td><td class="cell-p">${trB.p}</td>
-                    <td class="cell-rs">${trT.rs}</td><td class="cell-p">${trT.p}</td>
-                  </tr>
-                  <!-- G/T Row -->
-                  <tr class="total-row">
-                    <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
-                    <td class="cell-rs">${gtRC.rs}</td><td class="cell-p">${gtRC.p}</td>
-                    <td class="cell-rs">${gtRB.rs}</td><td class="cell-p">${gtRB.p}</td>
-                    <td class="cell-rs">${gtRT.rs}</td><td class="cell-p">${gtRT.p}</td>
-                  </tr>
-                </tbody>
-              </table>
+      renderStatutoryCashBookHUD(mName, yInt, receipts, payments, {
+        trC, trB, trT, tpC, tpB, tpT, closeCash, closeBank,
+        gtRecCash, gtRecBank, gtRecTotal, gtPmtCash, gtPmtBank, gtPmtTotal
+      });
+
+      renderStatutoryGeneralLedgerHUD(ledgers);
+    }
+
+    function renderStatutoryCashBookHUD(mName, fullYear, receipts, payments, t) {
+      const target = document.getElementById('cashbook-printable-area');
+
+      const split = (val) => {
+        if (val === undefined || val === null || val === '') return { rs: '', p: '' };
+        const num = Number(val).toFixed(2);
+        const parts = num.split('.');
+        return { rs: parts[0], p: parts[1] };
+      };
+
+      const renderRows = (list) => {
+        let out = '';
+        list.forEach(r => {
+          const c = split(r.c);
+          const b = split(r.b);
+          const tot = split(r.t);
+          const redClass = r.isRed ? 'ink-payment' : 'ink-receipt';
+
+          out += `
+            <tr>
+              <td style="text-align:center; vertical-align:top; font-size:0.75rem; font-weight:700;">${r.dt || ''}</td>
+              <td class="${redClass}" style="padding:4px 6px; vertical-align:top;">${r.p}</td>
+              <td style="text-align:center; vertical-align:top; font-weight:800;">${r.f || ''}</td>
+              <td class="cell-rs ${redClass}">${c.rs}</td><td class="cell-p ${redClass}">${c.p}</td>
+              <td class="cell-rs ${redClass}">${b.rs}</td><td class="cell-p ${redClass}">${b.p}</td>
+              <td class="cell-rs ${redClass}">${tot.rs}</td><td class="cell-p ${redClass}">${tot.p}</td>
+            </tr>
+          `;
+        });
+
+        const remaining = Math.max(0, 14 - list.length);
+        for (let i = 0; i < remaining; i++) {
+          out += `<tr class="empty-ruled-row"><td></td><td></td><td></td><td class="cell-rs"></td><td class="cell-p"></td><td class="cell-rs"></td><td class="cell-p"></td><td class="cell-rs"></td><td class="cell-p"></td></tr>`;
+        }
+        return out;
+      };
+
+      const trC = split(t.trC); const trB = split(t.trB); const trT = split(t.trT);
+      const tpC = split(t.tpC); const tpB = split(t.tpB); const tpT = split(t.tpT);
+      const gtRC = split(t.gtRecCash); const gtRB = split(t.gtRecBank); const gtRT = split(t.gtRecTotal);
+      const gtPC = split(t.gtPmtCash); const gtPB = split(t.gtPmtBank); const gtPT = split(t.gtPmtTotal);
+
+      target.innerHTML = `
+        <div class="physical-spread">
+          <!-- LEFT SPREAD: RECEIPTS -->
+          <div class="physical-page">
+            <div class="book-header-line">
+              <span class="page-indicator">4</span>
+              <span class="book-title">CASH BOOK</span>
+              <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
             </div>
-
-            <!-- RIGHT SPREAD: PAYMENTS -->
-            <div class="physical-page">
-              <div class="book-header-line">
-                <span class="book-title" style="margin-left:auto; margin-right:auto;">CASH BOOK</span>
-                <span class="page-indicator">5</span>
-              </div>
-              <div class="subhead-row">
-                <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
-                <span style="font-size:0.9rem; font-weight:900;">PAYMENTS</span>
-              </div>
-
-              <table class="statutory-table">
-                <thead>
-                  <tr>
-                    <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
-                    <th rowspan="2">PARTICULARS</th>
-                    <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
-                    <th colspan="2">Cash Amount</th>
-                    <th colspan="2">Bank Amount</th>
-                    <th colspan="2">Total Amount</th>
-                  </tr>
-                  <tr>
-                    <th style="width:46px;">Rs.</th>
-                    <th style="width:20px;">P.</th>
-                    <th style="width:46px;">Rs.</th>
-                    <th style="width:20px;">P.</th>
-                    <th style="width:52px;">Rs.</th>
-                    <th style="width:20px;">P.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${renderRows(payments, 'pmt')}
-                  <!-- T/P Row -->
-                  <tr class="subtotal-row">
-                    <td colspan="3" style="text-align:center;">T/P (Total Payments)</td>
-                    <td class="cell-rs">${tpC.rs}</td><td class="cell-p">${tpC.p}</td>
-                    <td class="cell-rs">${tpB.rs}</td><td class="cell-p">${tpB.p}</td>
-                    <td class="cell-rs">${tpT.rs}</td><td class="cell-p">${tpT.p}</td>
-                  </tr>
-                  <!-- G/T Row -->
-                  <tr class="total-row">
-                    <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
-                    <td class="cell-rs">${gtPC.rs}</td><td class="cell-p">${gtPC.p}</td>
-                    <td class="cell-rs">${gtPB.rs}</td><td class="cell-p">${gtPB.p}</td>
-                    <td class="cell-rs">${gtPT.rs}</td><td class="cell-p">${gtPT.p}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <!-- Statutory Verification & Audit Certificate matching PDF -->
-              <div style="border:1.5px solid var(--ledger-border-dark); padding:8px 12px; margin-top:10px; font-size:0.68rem; line-height:1.4; background:#fff;">
-                <div style="font-weight:800; text-decoration:underline; margin-bottom:4px; font-size:0.7rem;">
-                  STATUTORY PHYSICAL VERIFICATION &amp; AUDIT CERTIFICATE:
-                </div>
-                <div>
-                  1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.
-                </div>
-                <div>
-                  2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/SNA Portal statement for ${mName} ${fullYear}.
-                </div>
-                <div>
-                  3. Certified that all cooking cost expenditures billed under Folio 1 conform to sanctioned per-child per-day allocation rules.
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top:28px; font-weight:800; font-size:0.72rem;">
-                  <span>Signature of SMC President</span>
-                  <span>Signature of Head Teacher / Member Secretary</span>
-                </div>
-              </div>
-
-            </div>
-
+            <div class="subhead-row"><span style="font-size:0.9rem; font-weight:900;">RECEIPTS</span></div>
+            <table class="statutory-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
+                  <th rowspan="2">PARTICULARS</th>
+                  <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
+                  <th colspan="2">Cash Amount</th>
+                  <th colspan="2">Bank Amount</th>
+                  <th colspan="2">Total Amount</th>
+                </tr>
+                <tr>
+                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
+                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
+                  <th style="width:52px;">Rs.</th><th style="width:22px;">P.</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${renderRows(receipts)}
+                <tr class="subtotal-row">
+                  <td colspan="3" style="text-align:center;">T/R (Total Receipts)</td>
+                  <td class="cell-rs">${trC.rs}</td><td class="cell-p">${trC.p}</td>
+                  <td class="cell-rs">${trB.rs}</td><td class="cell-p">${trB.p}</td>
+                  <td class="cell-rs">${trT.rs}</td><td class="cell-p">${trT.p}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
+                  <td class="cell-rs">${gtRC.rs}</td><td class="cell-p">${gtRC.p}</td>
+                  <td class="cell-rs">${gtRB.rs}</td><td class="cell-p">${gtRB.p}</td>
+                  <td class="cell-rs">${gtRT.rs}</td><td class="cell-p">${gtRT.p}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        `;
 
-        hud.scrollIntoView({ behavior: 'smooth' });
-      },
+          <!-- RIGHT SPREAD: PAYMENTS -->
+          <div class="physical-page">
+            <div class="book-header-line">
+              <span class="book-title" style="margin-left:auto; margin-right:auto;">CASH BOOK</span>
+              <span class="page-indicator">5</span>
+            </div>
+            <div class="subhead-row">
+              <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
+              <span style="font-size:0.9rem; font-weight:900; color:#b91c1c;">PAYMENTS</span>
+            </div>
+            <table class="statutory-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
+                  <th rowspan="2">PARTICULARS</th>
+                  <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
+                  <th colspan="2">Cash Amount</th>
+                  <th colspan="2">Bank Amount</th>
+                  <th colspan="2">Total Amount</th>
+                </tr>
+                <tr>
+                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
+                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
+                  <th style="width:52px;">Rs.</th><th style="width:22px;">P.</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${renderRows(payments)}
+                <tr class="subtotal-row">
+                  <td colspan="3" style="text-align:center;">T/P (Total Payments)</td>
+                  <td class="cell-rs ink-payment">${tpC.rs}</td><td class="cell-p ink-payment">${tpC.p}</td>
+                  <td class="cell-rs ink-payment">${tpB.rs}</td><td class="cell-p ink-payment">${tpB.p}</td>
+                  <td class="cell-rs ink-payment">${tpT.rs}</td><td class="cell-p ink-payment">${tpT.p}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
+                  <td class="cell-rs ink-payment">${gtPC.rs}</td><td class="cell-p ink-payment">${gtPC.p}</td>
+                  <td class="cell-rs ink-payment">${gtPB.rs}</td><td class="cell-p ink-payment">${gtPB.p}</td>
+                  <td class="cell-rs ink-payment">${gtPT.rs}</td><td class="cell-p ink-payment">${gtPT.p}</td>
+                </tr>
+              </tbody>
+            </table>
 
-      toggleRow(id) {
-        if (this.checkedRows.has(id)) this.checkedRows.delete(id);
-        else this.checkedRows.add(id);
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('ink-checked');
-      },
+            <div style="border:1.5px solid var(--ledger-border-dark); padding:8px 12px; margin-top:10px; font-size:0.68rem; line-height:1.4; background:#fff;">
+              <div style="font-weight:800; text-decoration:underline; margin-bottom:4px; font-size:0.7rem;">
+                STATUTORY PHYSICAL VERIFICATION &amp; AUDIT CERTIFICATE:
+              </div>
+              <div>1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.</div>
+              <div>2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/SNA Portal statement for ${mName} ${fullYear}.</div>
+              <div>3. Certified that all cooking cost expenditures billed under Folio 1 conform to sanctioned per-child per-day allocation rules.</div>
+              <div style="display:flex; justify-content:space-between; margin-top:24px; font-weight:800; font-size:0.72rem;">
+                <span>Signature of SMC President</span>
+                <span>Signature of Head Teacher / Member Secretary</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
-      exportBackup() {
-        const dump = { ...localStorage };
-        const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `CASHBOOK_BACKUP_${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-      },
+    function renderStatutoryGeneralLedgerHUD(ledgers) {
+      const target = document.getElementById('ledger-printable-area');
+      let html = '';
+      Object.keys(ledgers).forEach(k => {
+        const led = ledgers[k];
+        if (led.entries.length > 0) {
+          let rows = '';
+          let totalDr = 0;
+          led.entries.forEach(e => {
+            totalDr += e.dr || 0;
+            rows += `<tr><td>${e.dt}</td><td>${e.p}</td><td style="text-align:right;">₹${(e.dr||0).toFixed(2)}</td><td style="text-align:right;">₹${(e.cr||0).toFixed(2)}</td></tr>`;
+          });
+          html += `
+            <div class="ledger-page-card">
+              <h3 style="border-bottom:1.5px solid #1e293b; padding-bottom:4px; margin-bottom:8px; font-size:0.95rem;">${led.title}</h3>
+              <table class="statutory-table">
+                <thead><tr><th style="width:90px;">Date</th><th>Particulars / Narration</th><th style="width:120px;">Debit (Exp ₹)</th><th style="width:120px;">Credit (Grant/Adv ₹)</th></tr></thead>
+                <tbody>${rows}<tr style="font-weight:bold; background:#edf2f7;"><td colspan="2" style="text-align:center;">Folio Balance Total</td><td style="text-align:right;">₹${totalDr.toFixed(2)}</td><td></td></tr></tbody>
+              </table>
+            </div>
+          `;
+        }
+      });
+      target.innerHTML = html || '<div class="card" style="margin-top:14px; color:#64748b;">No ledger postings recorded this month. Add payment vouchers to generate accounts.</div>';
+    }
 
-      importBackup(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const data = JSON.parse(event.target.result);
-            Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
-            alert('✅ Backup restored.');
-            window.location.reload();
-          } catch (err) { alert('Invalid backup file'); }
-        };
-        reader.readAsText(file);
-      },
+    // Tab Switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-panel').forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-      shareWhatsApp() {
-        const p = JSON.parse(localStorage.getItem('dhk_school_profile') || '{}');
-        const text = `*STATUTORY CASH BOOK REPORT*\nSchool: ${p.name || 'School'} (UDISE: ${p.udise || '--'})\nDrawer: ${this.drawer.toUpperCase()}\nStatus: Verified double-entry parity.`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-      }
-    };
+      const activeView = document.getElementById('view-' + tabId);
+      const activeBtn = document.getElementById('tab-' + tabId);
 
-    window.addEventListener('DOMContentLoaded', () => App.init());
+      if (activeView) { activeView.style.display = 'block'; activeView.classList.add('active'); }
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (tabId === 'stock') StockModule.refreshStockView();
+      if (tabId === 'cashbook') onCashbookPeriodChange();
+      if (tabId === 'setup') loadSetupEditor();
+    }
+
+    function loadSetupEditor() {
+      const p = ProfileModule.getProfile();
+      if (!p) return;
+      document.getElementById('edit-school-name').value = p.schoolName || '';
+      document.getElementById('edit-udise').value = p.udise || '';
+      document.getElementById('edit-block').value = p.block || '';
+      document.getElementById('edit-ht-name').value = p.htName || '';
+      if (p.category) document.getElementById('edit-cat').value = p.category;
+    }
+
+    function updateExistingProfile() {
+      const p = {
+        schoolName: document.getElementById('edit-school-name').value.trim(),
+        udise: document.getElementById('edit-udise').value.trim(),
+        block: document.getElementById('edit-block').value.trim(),
+        htName: document.getElementById('edit-ht-name').value.trim(),
+        category: document.getElementById('edit-cat').value,
+        configuredAt: new Date().toISOString()
+      };
+      if (!p.schoolName || !p.udise) return alert("School name and UDISE cannot be blank.");
+      localStorage.setItem(ProfileModule.KEY, JSON.stringify(p));
+      ProfileModule.applyHeader();
+      alert("✅ School profile updated successfully!");
+    }
+
+    function clearTestDataPreserveProfile() {
+      if (!confirm("Are you sure? This clears test attendance, stock, and vouchers while preserving your School Profile.")) return;
+      const profile = localStorage.getItem(ProfileModule.KEY);
+      localStorage.clear();
+      if (profile) localStorage.setItem(ProfileModule.KEY, profile);
+      alert("✅ All test entries wiped clean! Your school profile remains intact.");
+      location.reload();
+    }
+
+    function exportFullBackup() {
+      const dump = { ...localStorage };
+      const a = document.createElement('a');
+      a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dump, null, 2));
+      a.download = `DHK_School_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importFullBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+          alert("Backup restored successfully!");
+          location.reload();
+        } catch(err) { alert("Invalid backup file."); }
+      };
+      reader.readAsText(file);
+    }
+
+    // App Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      ProfileModule.init();
+      DailyLogModule.init();
+      setTransactionType('RECEIPT');
+      onCashbookPeriodChange();
+    });
   </script>
 </body>
 </html>
