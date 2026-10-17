@@ -1023,7 +1023,7 @@
       alert('✅ Cash Book & Ledger Saved to Permanent Storage.');
     }
 
-        function recalculateCashbook() {
+            function recalculateCashbook() {
       const fy = document.getElementById('cb-sel-year').value.trim() || '2026-27';
       const m = document.getElementById('cb-sel-month').value;
       const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
@@ -1035,58 +1035,48 @@
       const shortYear = String(yInt).slice(2);
       const paddedMonth = String(mInt).padStart(2, '0');
 
-      // 1. Sort vouchers chronologically by day
       vouchersList.sort((a, b) => (parseInt(a.day, 10) || 0) - (parseInt(b.day, 10) || 0));
 
-      // 2. Build Vouchers Tray & Tally Actual Payments
       const tray = document.getElementById('voucher-tray');
-      tray.innerHTML = '';
-      let totalVouchersBooked = 0;
+      if (tray) {
+        tray.innerHTML = '';
+        let totalVouchersBooked = 0;
+        vouchersList.forEach(v => {
+          if (v.type === 'PAYMENT') totalVouchersBooked += v.amt;
+          const item = document.createElement('div');
+          item.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 10px; border-radius:4px; margin-bottom:4px; font-size:0.8rem;';
+          item.innerHTML = `
+            <span><strong>Day ${v.day}:</strong> ${v.desc.split('\n')[0]} (LF: ${v.folio || '-'}) - <strong>₹${v.amt.toFixed(2)}</strong> via ${v.channel}</span>
+            <button onclick="removeVoucher(${v.id})" style="background:#dc2626; color:#fff; border:none; border-radius:4px; padding:2px 6px; cursor:pointer;">✕</button>
+          `;
+          tray.appendChild(item);
+        });
+        const badge = document.getElementById('val-vouchers-booked');
+        if (badge) badge.textContent = `₹${totalVouchersBooked.toFixed(2)}`;
+      }
 
-      vouchersList.forEach(v => {
-        if (v.type === 'PAYMENT') totalVouchersBooked += v.amt;
-        const item = document.createElement('div');
-        item.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 10px; border-radius:4px; margin-bottom:4px; font-size:0.8rem;';
-        item.innerHTML = `
-          <span><strong>Day ${v.day}:</strong> ${v.desc.split('\n')[0]} (LF: ${v.folio}) - <strong>₹${v.amt.toFixed(2)}</strong> via ${v.channel}</span>
-          <button onclick="removeVoucher(${v.id})" style="background:#dc2626; color:#fff; border:none; border-radius:4px; padding:2px 6px; cursor:pointer;">✕</button>
-        `;
-        tray.appendChild(item);
-      });
-
-      document.getElementById('val-vouchers-booked').textContent = `₹${totalVouchersBooked.toFixed(2)}`;
-
-      // 3. Build Receipts & Payments Ledgers
       const receipts = [
         { dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank, isOb: true }
       ];
-      const payments = [];
-
-      const ledgers = {
-        '1': { title: 'Folio 1: MDM Cooking Cost Account', entries: [] },
-        '4': { title: 'Folio 4: Kitchen Devices & Utensils Account', entries: [] },
-        '5': { title: 'Folio 5: School Infrastructure Repairs Account', entries: [] },
-        '2': { title: 'Folio 2: Contingency & Miscellaneous Account', entries: [] },
-        '8': { title: 'Folio 8: Advances / Deficit In-charge Funding', entries: [] },
-        'V': { title: 'Folio V: Canara SNA Vendor Account', entries: [] }
-      };
+      const actualPayments = [];
+      const dynamicLedgers = {};
 
       let runningCash = opCash;
       let runningBank = opBank;
 
-      // 4. Process Each Voucher
       vouchersList.forEach(v => {
         const vDate = `${String(v.day).padStart(2, '0')}/${paddedMonth}/${shortYear}`;
+        const cleanDesc = v.desc ? v.desc.replace(/\n/g, '<br>') : '';
 
         if (v.type === 'WITHDRAWAL') {
           receipts.push({
             dt: vDate,
-            p: 'To Bank Account (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Cash withdrawn from bank for school expenses)</span>',
+            p: 'To Bank Account (Contra)<br><span style="font-size:0.68rem; color:#475569;">(Cash withdrawn from bank)</span>',
             f: 'C', c: v.amt, b: 0, t: v.amt
           });
-          payments.push({
+          actualPayments.push({
             dt: vDate,
-            p: 'By Cash in Hand (Contra)<br><span style="font-size:0.65rem; color:#475569;">(Contra cash withdrawn from bank)</span>',
+            p: 'By Cash in Hand (Contra)<br><span style="font-size:0.68rem; color:#475569;">(Contra cash transfer)</span>',
             f: 'C', c: 0, b: v.amt, t: v.amt, isRed: true
           });
           runningCash += v.amt;
@@ -1095,15 +1085,18 @@
         } else if (v.type === 'RECEIPT') {
           const cAmt = v.channel === 'CASH' ? v.amt : 0;
           const bAmt = v.channel === 'BANK' ? v.amt : 0;
-
           receipts.push({
             dt: vDate,
-            p: v.desc.replace('\n', '<br><span style="font-size:0.65rem; color:#475569;">') + (v.desc.includes('\n') ? '</span>' : ''),
-            f: v.folio || 'G',
-            c: cAmt, b: bAmt, t: v.amt
+            p: `To ${cleanDesc}`,
+            f: v.folio || '', c: cAmt, b: bAmt, t: v.amt
           });
           runningCash += cAmt;
           runningBank += bAmt;
+
+          if (v.folio) {
+            if (!dynamicLedgers[v.folio]) dynamicLedgers[v.folio] = { title: `Folio ${v.folio}`, entries: [] };
+            dynamicLedgers[v.folio].entries.push({ dt: vDate, p: v.desc.split('\n')[0], cr: v.amt, dr: 0 });
+          }
 
         } else if (v.type === 'PAYMENT') {
           const cAmt = v.channel === 'CASH' ? v.amt : 0;
@@ -1113,55 +1106,39 @@
             const deficit = Math.round((cAmt - runningCash) * 100) / 100;
             receipts.push({
               dt: vDate,
-              p: 'To Temporary Advance from In-charge/Teacher (Out-of-pocket funding)',
-              f: '8', c: deficit, b: 0, t: deficit
+              p: 'To Temporary Advance (Deficit Cash Funding)',
+              f: 'Adv', c: deficit, b: 0, t: deficit
             });
-            ledgers['8'].entries.push({ dt: vDate, p: `Advance towards ${v.desc.split('\n')[0]}`, cr: deficit, dr: 0 });
             runningCash += deficit;
           }
 
-          payments.push({
+          actualPayments.push({
             dt: vDate,
-            p: v.desc.replace('\n', '<br><span style="font-size:0.65rem; color:#475569;">') + (v.desc.includes('\n') ? '</span>' : ''),
-            f: v.folio,
-            c: cAmt, b: bAmt, t: v.amt,
-            isRed: true
+            p: `By ${cleanDesc}`,
+            f: v.folio || '', c: cAmt, b: bAmt, t: v.amt, isRed: true
           });
-
           runningCash -= cAmt;
           runningBank -= bAmt;
 
-          if (ledgers[v.folio]) {
-            ledgers[v.folio].entries.push({ dt: vDate, p: v.desc.split('\n')[0], dr: v.amt, cr: 0 });
+          if (v.folio) {
+            if (!dynamicLedgers[v.folio]) dynamicLedgers[v.folio] = { title: `Folio ${v.folio}`, entries: [] };
+            dynamicLedgers[v.folio].entries.push({ dt: vDate, p: v.desc.split('\n')[0], dr: v.amt, cr: 0 });
           }
         }
       });
 
-      // 5. Calculate Subtotals: T/R and T/P
       const trC = receipts.filter(r => !r.isOb).reduce((sum, r) => sum + r.c, 0);
       const trB = receipts.filter(r => !r.isOb).reduce((sum, r) => sum + r.b, 0);
       const trT = trC + trB;
 
-      const tpC = payments.reduce((sum, p) => sum + p.c, 0);
-      const tpB = payments.reduce((sum, p) => sum + p.b, 0);
+      const tpC = actualPayments.reduce((sum, p) => sum + p.c, 0);
+      const tpB = actualPayments.reduce((sum, p) => sum + p.b, 0);
       const tpT = tpC + tpB;
 
-      // 6. Calculate Closing Balance (C/B)
       const closeCash = Math.round(runningCash * 100) / 100;
       const closeBank = Math.round(runningBank * 100) / 100;
       const closeTotal = closeCash + closeBank;
 
-      payments.push({
-        dt: 'End',
-        p: 'By Closing Balance (C/B)',
-        f: '',
-        c: closeCash,
-        b: closeBank,
-        t: closeTotal,
-        isRed: true
-      });
-
-      // 7. Grand Totals (G/T)
       const gtRecCash = opCash + trC;
       const gtRecBank = opBank + trB;
       const gtRecTotal = gtRecCash + gtRecBank;
@@ -1170,19 +1147,22 @@
       const gtPmtBank = tpB + closeBank;
       const gtPmtTotal = gtPmtCash + gtPmtBank;
 
-      renderStatutoryCashBookHUD(mName, yInt, receipts, payments, {
+      renderStatutoryCashBookHUD(mName, yInt, receipts, actualPayments, {
         trC, trB, trT,
         tpC, tpB, tpT,
-        closeCash, closeBank,
+        closeCash, closeBank, closeTotal,
         gtRecCash, gtRecBank, gtRecTotal,
         gtPmtCash, gtPmtBank, gtPmtTotal
       });
 
-      renderStatutoryGeneralLedgerHUD(ledgers);
+      if (typeof renderStatutoryGeneralLedgerHUD === 'function') {
+        renderStatutoryGeneralLedgerHUD(dynamicLedgers);
+      }
     }
 
-    function renderStatutoryCashBookHUD(mName, fullYear, receipts, payments, t) {
+    function renderStatutoryCashBookHUD(mName, fullYear, receipts, actualPayments, t) {
       const target = document.getElementById('cashbook-printable-area');
+      if (!target) return;
 
       const split = (val) => {
         if (val === undefined || val === null || val === '') return { rs: '', p: '' };
@@ -1191,141 +1171,211 @@
         return { rs: parts[0], p: parts[1] };
       };
 
+      const bBorder = 'border-right: 1.5px solid #000;';
+      const dBorder = 'border-right: 1px dotted #64748b;';
+      const rowBorder = 'border-bottom: 1px solid #94a3b8;';
+
       const renderRows = (list) => {
         let out = '';
         list.forEach(r => {
           const c = split(r.c);
           const b = split(r.b);
           const tot = split(r.t);
-          const redClass = r.isRed ? 'ink-payment' : 'ink-receipt';
+          const ink = r.isRed ? 'color:#b91c1c;' : 'color:#000;';
 
           out += `
-            <tr>
-              <td class="col-dt" style="vertical-align:top; font-weight:700;">${r.dt || ''}</td>
-              <td class="col-particulars ${redClass}" style="vertical-align:top;">${r.p}</td>
-              <td class="col-folio" style="vertical-align:top; font-weight:800;">${r.f || ''}</td>
-              <td class="col-rs ${redClass}">${c.rs}</td><td class="col-p ${redClass}">${c.p}</td>
-              <td class="col-rs ${redClass}">${b.rs}</td><td class="col-p ${redClass}">${b.p}</td>
-              <td class="col-rs ${redClass}">${tot.rs}</td><td class="col-p ${redClass}">${tot.p}</td>
+            <tr style="${rowBorder} height: 26px; ${ink}">
+              <td style="${bBorder} text-align:center; font-weight:700;">${r.dt || ''}</td>
+              <td style="${bBorder} padding-left: 6px; padding-right: 6px; text-align:left; word-break:break-word;">${r.p}</td>
+              <td style="${bBorder} text-align:center; font-weight:700;">${r.f || ''}</td>
+              <td style="${dBorder} text-align:right; padding-right:4px; font-variant-numeric:tabular-nums;">${c.rs}</td>
+              <td style="${bBorder} text-align:center; font-variant-numeric:tabular-nums;">${c.p}</td>
+              <td style="${dBorder} text-align:right; padding-right:4px; font-variant-numeric:tabular-nums;">${b.rs}</td>
+              <td style="${bBorder} text-align:center; font-variant-numeric:tabular-nums;">${b.p}</td>
+              <td style="${dBorder} text-align:right; padding-right:4px; font-variant-numeric:tabular-nums;">${tot.rs}</td>
+              <td style="text-align:center; font-variant-numeric:tabular-nums;">${tot.p}</td>
             </tr>
           `;
         });
 
-        const remaining = Math.max(0, 12 - list.length);
+        const remaining = Math.max(0, 16 - list.length);
         for (let i = 0; i < remaining; i++) {
-          out += `<tr class="empty-ruled-row"><td></td><td></td><td></td><td class="col-rs"></td><td class="col-p"></td><td class="col-rs"></td><td class="col-p"></td><td class="col-rs"></td><td class="col-p"></td></tr>`;
+          out += `
+            <tr style="${rowBorder} height: 26px;">
+              <td style="${bBorder}">&nbsp;</td>
+              <td style="${bBorder}"></td>
+              <td style="${bBorder}"></td>
+              <td style="${dBorder}"></td>
+              <td style="${bBorder}"></td>
+              <td style="${dBorder}"></td>
+              <td style="${bBorder}"></td>
+              <td style="${dBorder}"></td>
+              <td></td>
+            </tr>
+          `;
         }
         return out;
       };
 
       const trC = split(t.trC); const trB = split(t.trB); const trT = split(t.trT);
       const tpC = split(t.tpC); const tpB = split(t.tpB); const tpT = split(t.tpT);
+      const cbC = split(t.closeCash); const cbB = split(t.closeBank); const cbT = split(t.closeTotal);
       const gtRC = split(t.gtRecCash); const gtRB = split(t.gtRecBank); const gtRT = split(t.gtRecTotal);
       const gtPC = split(t.gtPmtCash); const gtPB = split(t.gtPmtBank); const gtPT = split(t.gtPmtTotal);
 
+      const colgroupDef = `
+        <colgroup>
+          <col style="width: 7%;">
+          <col style="width: 55%;">
+          <col style="width: 5%;">
+          <col style="width: 9%;">
+          <col style="width: 3.5%;">
+          <col style="width: 9%;">
+          <col style="width: 3.5%;">
+          <col style="width: 5%;">
+          <col style="width: 3%;">
+        </colgroup>
+      `;
+
       target.innerHTML = `
-        <div class="physical-spread">
-          <!-- LEFT SPREAD: RECEIPTS -->
-          <div class="physical-page">
-            <div class="book-header-line">
-              <span class="page-indicator">4</span>
-              <span class="book-title">CASH BOOK</span>
-              <span style="font-size:0.8rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
+        <div class="physical-spread" style="display:block; width:100%;">
+          
+          <!-- PAGE 4: RECEIPTS -->
+          <div class="physical-page" style="page-break-after:always; break-after:page; border:2px solid #000; padding:12px; background:#fff; margin-bottom:20px; box-sizing:border-box;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:6px;">
+              <span style="font-size:1.3rem; font-weight:900;">4</span>
+              <span style="font-size:1.5rem; font-weight:900; letter-spacing:2px; font-family:Georgia,serif;">Cash Book</span>
+              <span style="font-size:0.9rem; font-weight:700;">for the month of <u>${mName} ${fullYear}</u></span>
             </div>
-            <div class="subhead-row"><span style="font-size:0.85rem; font-weight:900;">RECEIPTS</span></div>
-            <table class="statutory-table">
+            <div style="font-size:0.95rem; font-weight:900; margin-bottom:4px;">RECEIPTS</div>
+            
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed; border:2px solid #000; font-size:0.75rem; background:#fff;">
+              ${colgroupDef}
               <thead>
-                <tr>
-                  <th rowspan="2" class="col-dt">Month &amp;<br>Date</th>
-                  <th rowspan="2" class="col-particulars">PARTICULARS</th>
-                  <th rowspan="2" class="col-folio">Ledger<br>Folio</th>
-                  <th colspan="2">Cash Amount</th>
-                  <th colspan="2">Bank Amount</th>
-                  <th colspan="2">Total Amount</th>
+                <tr style="background:#f8fafc; border-bottom:1px solid #000; height:24px;">
+                  <th rowspan="2" style="${bBorder} text-align:center;">Month<br>&amp; Date</th>
+                  <th rowspan="2" style="${bBorder} text-align:center;">PARTICULARS</th>
+                  <th rowspan="2" style="${bBorder} text-align:center; font-size:0.7rem; line-height:1.1;">Ledger<br>Folio</th>
+                  <th colspan="2" style="${bBorder} text-align:center;">Amount</th>
+                  <th colspan="2" style="${bBorder} text-align:center;">Bank Amount</th>
+                  <th colspan="2" style="text-align:center;">Total Amount</th>
                 </tr>
-                <tr>
-                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
-                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
-                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
+                <tr style="background:#f8fafc; border-bottom:2px solid #000; height:20px;">
+                  <th style="${dBorder} text-align:center;">Rs.</th>
+                  <th style="${bBorder} text-align:center;">P.</th>
+                  <th style="${dBorder} text-align:center;">Rs.</th>
+                  <th style="${bBorder} text-align:center;">P.</th>
+                  <th style="${dBorder} text-align:center;">Rs.</th>
+                  <th style="text-align:center;">P.</th>
                 </tr>
               </thead>
               <tbody>
                 ${renderRows(receipts)}
-                <tr class="subtotal-row">
-                  <td colspan="3" style="text-align:center;">T/R (Total Receipts)</td>
-                  <td class="col-rs">${trC.rs}</td><td class="col-p">${trC.p}</td>
-                  <td class="col-rs">${trB.rs}</td><td class="col-p">${trB.p}</td>
-                  <td class="col-rs">${trT.rs}</td><td class="col-p">${trT.p}</td>
+                <tr style="border-top:2px solid #000; background:#f1f5f9; font-weight:800; height:26px;">
+                  <td colspan="3" style="${bBorder} text-align:center;">T/R (Total Receipts)</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${trC.rs}</td>
+                  <td style="${bBorder} text-align:center;">${trC.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${trB.rs}</td>
+                  <td style="${bBorder} text-align:center;">${trB.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${trT.rs}</td>
+                  <td style="text-align:center;">${trT.p}</td>
                 </tr>
-                <tr class="total-row">
-                  <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
-                  <td class="col-rs">${gtRC.rs}</td><td class="col-p">${gtRC.p}</td>
-                  <td class="col-rs">${gtRB.rs}</td><td class="col-p">${gtRB.p}</td>
-                  <td class="col-rs">${gtRT.rs}</td><td class="col-p">${gtRT.p}</td>
+                <tr style="border-top:2px solid #000; border-bottom:3px double #000; background:#e2e8f0; font-weight:900; height:28px;">
+                  <td colspan="3" style="${bBorder} text-align:center;">G/T (Grand Total)</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${gtRC.rs}</td>
+                  <td style="${bBorder} text-align:center;">${gtRC.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${gtRB.rs}</td>
+                  <td style="${bBorder} text-align:center;">${gtRB.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${gtRT.rs}</td>
+                  <td style="text-align:center;">${gtRT.p}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- RIGHT SPREAD: PAYMENTS -->
-          <div class="physical-page">
-            <div class="book-header-line">
-              <span class="book-title" style="margin-left:auto; margin-right:auto;">CASH BOOK</span>
-              <span class="page-indicator">5</span>
+          <!-- PAGE 5: PAYMENTS -->
+          <div class="physical-page" style="border:2px solid #000; padding:12px; background:#fff; box-sizing:border-box;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:6px;">
+              <span style="font-size:0.9rem; font-weight:700;">for the month of <u>${mName} ${fullYear}</u></span>
+              <span style="font-size:1.5rem; font-weight:900; letter-spacing:2px; font-family:Georgia,serif;">Cash Book</span>
+              <span style="font-size:1.3rem; font-weight:900;">5</span>
             </div>
-            <div class="subhead-row">
-              <span style="font-size:0.8rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
-              <span style="font-size:0.85rem; font-weight:900; color:#b91c1c;">PAYMENTS</span>
-            </div>
-            <table class="statutory-table">
+            <div style="font-size:0.95rem; font-weight:900; color:#b91c1c; text-align:right; margin-bottom:4px;">PAYMENTS</div>
+            
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed; border:2px solid #000; font-size:0.75rem; background:#fff;">
+              ${colgroupDef}
               <thead>
-                <tr>
-                  <th rowspan="2" class="col-dt">Month &amp;<br>Date</th>
-                  <th rowspan="2" class="col-particulars">PARTICULARS</th>
-                  <th rowspan="2" class="col-folio">Ledger<br>Folio</th>
-                  <th colspan="2">Cash Amount</th>
-                  <th colspan="2">Bank Amount</th>
-                  <th colspan="2">Total Amount</th>
+                <tr style="background:#f8fafc; border-bottom:1px solid #000; height:24px;">
+                  <th rowspan="2" style="${bBorder} text-align:center;">Month<br>&amp; Date</th>
+                  <th rowspan="2" style="${bBorder} text-align:center;">PARTICULARS</th>
+                  <th rowspan="2" style="${bBorder} text-align:center; font-size:0.7rem; line-height:1.1;">Ledger<br>Folio</th>
+                  <th colspan="2" style="${bBorder} text-align:center;">Amount</th>
+                  <th colspan="2" style="${bBorder} text-align:center;">Bank Amount</th>
+                  <th colspan="2" style="text-align:center;">Total Amount</th>
                 </tr>
-                <tr>
-                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
-                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
-                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
+                <tr style="background:#f8fafc; border-bottom:2px solid #000; height:20px;">
+                  <th style="${dBorder} text-align:center;">Rs.</th>
+                  <th style="${bBorder} text-align:center;">P.</th>
+                  <th style="${dBorder} text-align:center;">Rs.</th>
+                  <th style="${bBorder} text-align:center;">P.</th>
+                  <th style="${dBorder} text-align:center;">Rs.</th>
+                  <th style="text-align:center;">P.</th>
                 </tr>
               </thead>
               <tbody>
-                ${renderRows(payments)}
-                <tr class="subtotal-row">
-                  <td colspan="3" style="text-align:center;">T/P (Total Payments)</td>
-                  <td class="col-rs ink-payment">${tpC.rs}</td><td class="col-p ink-payment">${tpC.p}</td>
-                  <td class="col-rs ink-payment">${tpB.rs}</td><td class="col-p ink-payment">${tpB.p}</td>
-                  <td class="col-rs ink-payment">${tpT.rs}</td><td class="col-p ink-payment">${tpT.p}</td>
+                ${renderRows(actualPayments)}
+                <tr style="border-top:2px solid #000; background:#f1f5f9; font-weight:800; height:26px; color:#b91c1c;">
+                  <td colspan="3" style="${bBorder} text-align:center;">T/P (Total Payments)</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${tpC.rs}</td>
+                  <td style="${bBorder} text-align:center;">${tpC.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${tpB.rs}</td>
+                  <td style="${bBorder} text-align:center;">${tpB.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${tpT.rs}</td>
+                  <td style="text-align:center;">${tpT.p}</td>
                 </tr>
-                <tr class="total-row">
-                  <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
-                  <td class="col-rs ink-payment">${gtPC.rs}</td><td class="col-p ink-payment">${gtPC.p}</td>
-                  <td class="col-rs ink-payment">${gtPB.rs}</td><td class="col-p ink-payment">${gtPB.p}</td>
-                  <td class="col-rs ink-payment">${gtPT.rs}</td><td class="col-p ink-payment">${gtPT.p}</td>
+                <tr style="border-top:1px solid #000; font-weight:700; height:26px; color:#b91c1c;">
+                  <td style="${bBorder} text-align:center;">End</td>
+                  <td style="${bBorder} padding-left:6px;">By Closing Balance (C/B)</td>
+                  <td style="${bBorder} text-align:center;"></td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${cbC.rs}</td>
+                  <td style="${bBorder} text-align:center;">${cbC.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${cbB.rs}</td>
+                  <td style="${bBorder} text-align:center;">${cbB.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${cbT.rs}</td>
+                  <td style="text-align:center;">${cbT.p}</td>
+                </tr>
+                <tr style="border-top:2px solid #000; border-bottom:3px double #000; background:#e2e8f0; font-weight:900; height:28px; color:#b91c1c;">
+                  <td colspan="3" style="${bBorder} text-align:center;">G/T (Grand Total)</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${gtPC.rs}</td>
+                  <td style="${bBorder} text-align:center;">${gtPC.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${gtPB.rs}</td>
+                  <td style="${bBorder} text-align:center;">${gtPB.p}</td>
+                  <td style="${dBorder} text-align:right; padding-right:4px;">${gtPT.rs}</td>
+                  <td style="text-align:center;">${gtPT.p}</td>
                 </tr>
               </tbody>
             </table>
 
-            <div style="border:1.5px solid var(--ledger-border-dark); padding:6px 10px; margin-top:8px; font-size:0.65rem; line-height:1.35; background:#fff;">
+            <!-- PHYSICAL VERIFICATION CERTIFICATE -->
+            <div style="border:1.5px solid #000; padding:6px 10px; margin-top:8px; font-size:0.68rem; line-height:1.35; background:#fff;">
               <div style="font-weight:800; text-decoration:underline; margin-bottom:2px;">
                 STATUTORY PHYSICAL VERIFICATION &amp; AUDIT CERTIFICATE:
               </div>
               <div>1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.</div>
-              <div>2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/SNA Portal statement for ${mName} ${fullYear}.</div>
-              <div>3. Certified that all cooking cost expenditures billed under Folio 1 conform to sanctioned per-child per-day allocation rules.</div>
-              <div style="display:flex; justify-content:space-between; margin-top:16px; font-weight:800; font-size:0.7rem;">
+              <div>2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/Statement for ${mName} ${fullYear}.</div>
+              <div style="display:flex; justify-content:space-between; margin-top:14px; font-weight:800; font-size:0.72rem;">
                 <span>Signature of SMC President</span>
                 <span>Signature of Head Teacher / Member Secretary</span>
               </div>
             </div>
           </div>
+
         </div>
       `;
     }
+    
+      
+     
 
     function renderStatutoryGeneralLedgerHUD(ledgers) {
       const target = document.getElementById('ledger-printable-area');
