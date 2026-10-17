@@ -376,17 +376,20 @@
       },
 
       // MDM Advisory Calculation
-      calcMdmAdvisory() {
-        const e = parseInt(document.getElementById('mdm-enrolled').value, 10) || 0;
-        const d = parseInt(document.getElementById('mdm-days').value, 10) || 0;
-        const r = parseFloat(document.getElementById('mdm-rate').value) || 0;
-        const meals = e * d;
-        const mandate = (meals * r).toFixed(2);
-        document.getElementById('mdm-advisory-note').textContent = `Meals: ${meals} | Statutory Mandate: ₹${mandate}`;
-        const overrideInput = document.getElementById('mdm-cost-override');
-        if (!overrideInput.value) overrideInput.placeholder = `Mandate: ₹${mandate}`;
+            calcMdmCost() {
+        const meals = parseInt(document.getElementById('mdm-total-meals').value, 10) || 0;
+        const rate = parseFloat(document.getElementById('mdm-rate').value) || 0;
+        const cost = Math.round((meals * rate) * 100) / 100;
+
+        const costInput = document.getElementById('mdm-cost-spent');
+        costInput.value = cost > 0 ? cost.toFixed(2) : '';
+
+        document.getElementById('mdm-calc-summary').innerHTML = 
+          `Expenditure: <strong>${meals}</strong> meals × ₹<strong>${rate.toFixed(2)}</strong> = <strong>₹${cost.toFixed(2)}</strong>`;
+
         this.evaluateAudit();
       },
+      
 
       // Vouchers
       addVoucherRow(data = null) {
@@ -430,15 +433,7 @@
         let cookingCost = 0;
 
         if (this.drawer === 'mdm') {
-          const overrideVal = document.getElementById('mdm-cost-override').value;
-          if (overrideVal !== '') {
-            cookingCost = parseFloat(overrideVal) || 0;
-          } else {
-            const e = parseInt(document.getElementById('mdm-enrolled').value, 10) || 0;
-            const d = parseInt(document.getElementById('mdm-days').value, 10) || 0;
-            const r = parseFloat(document.getElementById('mdm-rate').value) || 0;
-            cookingCost = Math.round((e * d * r) * 100) / 100;
-          }
+          cookingCost = parseFloat(document.getElementById('mdm-cost-spent')?.value) || 0;
         }
 
         let itemizedCash = 0, itemizedBank = 0;
@@ -468,13 +463,13 @@
         if (rec) {
           document.getElementById('cb-ob-cash').value = rec.opCash;
           document.getElementById('cb-ob-bank').value = rec.opBank;
-          if (this.drawer === 'mdm') {
-            document.getElementById('mdm-enrolled').value = rec.enrolled || 0;
-            document.getElementById('mdm-days').value = rec.days || 0;
+                    if (this.drawer === 'mdm') {
+            document.getElementById('mdm-total-meals').value = rec.totalMeals || '';
             document.getElementById('mdm-rate').value = rec.rate || 6.78;
-            document.getElementById('mdm-cost-override').value = rec.costOverride || '';
+            document.getElementById('mdm-cost-spent').value = rec.costSpent || '';
             document.getElementById('mdm-voucher-no').value = rec.vNo || '1';
-          }
+                    }
+          
           this.vouchers = rec.vouchers || [];
         } else {
           this.vouchers = [];
@@ -516,17 +511,29 @@
           }
         });
 
-        // Folio 1 Cooking Cost
+                // Folio 1 Cooking Cost
         if (this.drawer === 'mdm' && cookingCost > 0) {
+          const meals = parseInt(document.getElementById('mdm-total-meals')?.value, 10) || 0;
+          const rate = parseFloat(document.getElementById('mdm-rate')?.value) || 6.78;
+          const vRange = document.getElementById('mdm-voucher-no')?.value || '1';
+
           if (runningCash < cookingCost) {
-            const deficit = cookingCost - runningCash;
+            const deficit = Math.round((cookingCost - runningCash) * 100) / 100;
             receipts.push({ dt: 'End', p: 'To Temporary Advance from Teacher (Deficit funding)', f: '8', c: deficit, b: 0, t: deficit });
             runningCash += deficit;
           }
-          const vRange = document.getElementById('mdm-voucher-no').value || '1';
-          payments.push({ dt: 'End', p: `By Cooking Cost for ${mName} vide Sub-Voucher No. ${vRange}`, f: '1', c: cookingCost, b: 0, t: cookingCost });
+
+          payments.push({ 
+            dt: 'End', 
+            p: `By Cooking Cost for the month of ${mName} for ${meals} meals at ₹${rate.toFixed(2)} vide Sub-Voucher No. ${vRange}`, 
+            f: '1', 
+            c: cookingCost, 
+            b: 0, 
+            t: cookingCost 
+          });
           runningCash -= cookingCost;
-        }
+    }
+              
 
         const trC = receipts.slice(1).reduce((s, r) => s + r.c, 0);
         const trB = receipts.slice(1).reduce((s, r) => s + r.b, 0);
