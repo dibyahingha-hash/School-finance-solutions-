@@ -181,32 +181,54 @@
       background: #e2e8f0;
     }
 
-    /* PREVENT PAGE SPLIT ON PRINT */
+        /* STATUTORY TWO-PAGE PHYSICAL REGISTER PRINT ENGINE */
     @media print {
       @page {
-        size: legal landscape;
-        margin: 0.2in;
+        size: landscape; /* Or legal landscape */
+        margin: 0.3in 0.4in;
       }
-      body { background: #fff !important; }
-      .no-print { display: none !important; }
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      
+      /* UNBIND THE SIDE-BY-SIDE GRID: CONVERT TO 2 FULL PHYSICAL PAGES */
       .physical-spread {
         background: transparent !important;
         padding: 0 !important;
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 6px !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
+        display: block !important;
+        margin: 0 !important;
+        border: none !important;
       }
+
+      /* PAGE 1 (RECEIPTS) & PAGE 2 (PAYMENTS): FULL SHEET DIMENSIONS */
       .physical-page {
-        border: 1.5px solid #000 !important;
+        display: block !important;
+        width: 100% !important;
+        min-height: 94vh !important;
+        box-sizing: border-box !important;
+        border: 2px solid #000 !important;
         box-shadow: none !important;
-        padding: 6px 8px !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
+        padding: 12px 14px !important;
+        background: #fff !important;
       }
-      .statutory-table tr {
-        page-break-inside: avoid !important;
+
+      /* STRICT HARD PAGE BREAK: LOCKS PAYMENTS EXCLUSIVELY TO PAGE 2 */
+      .physical-page:first-child {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .statutory-table {
+        width: 100% !important;
+        font-size: 0.85rem !important; /* Crisp full-page readable text */
+      }
+
+      .statutory-table tr.empty-ruled-row {
+        height: 28px !important; /* Fills physical ledger rulings properly */
       }
     }
 
