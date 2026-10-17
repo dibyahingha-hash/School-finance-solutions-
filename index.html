@@ -207,16 +207,28 @@
         </div>
 
         <div id="mdm-panel" style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:8px; margin-bottom:14px;">
-          <div style="font-size:0.8rem; font-weight:800; color:var(--primary); margin-bottom:8px;">MDM Parameters (Full User Autonomy)</div>
-          <div class="form-grid">
-            <div class="form-group"><label>Enrolled Children</label><input type="number" id="mdm-enrolled" class="form-control" value="0" oninput="App.calcMdmAdvisory()"></div>
-            <div class="form-group"><label>Cooking Days</label><input type="number" id="mdm-days" class="form-control" value="0" oninput="App.calcMdmAdvisory()"></div>
-            <div class="form-group"><label>Rate / Meal (₹)</label><input type="number" step="0.01" id="mdm-rate" class="form-control" value="6.78" oninput="App.calcMdmAdvisory()"></div>
-            <div class="form-group"><label>Cooking Cost Spent (Override ₹)</label><input type="number" step="0.01" id="mdm-cost-override" class="form-control" placeholder="User entered amount" oninput="App.evaluateAudit()"></div>
-            <div class="form-group"><label>Sub-Voucher No. / Range</label><input type="text" id="mdm-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4"></div>
-          </div>
-          <div id="mdm-advisory-note" style="font-size:0.75rem; color:#64748b; margin-top:6px;">Meals: 0 | Statutory Mandate: ₹0.00</div>
+  <div style="font-size:0.85rem; font-weight:800; color:var(--primary); margin-bottom:10px;">PM POSHAN Cooking Cost Parameters</div>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Total Meals of the Month</label>
+      <input type="number" id="mdm-total-meals" class="form-control" placeholder="e.g. 520" oninput="App.calcMdmCost()">
+    </div>
+    <div class="form-group">
+      <label>Rate / Meal (₹)</label>
+      <input type="number" step="0.01" id="mdm-rate" class="form-control" value="6.78" oninput="App.calcMdmCost()">
+    </div>
+    <div class="form-group">
+      <label>Cooking Cost Expenditure (₹)</label>
+      <input type="number" step="0.01" id="mdm-cost-spent" class="form-control" placeholder="Total Meals × Rate" oninput="App.evaluateAudit()">
+    </div>
+    <div class="form-group">
+      <label>Sub-Voucher No. / Range</label>
+      <input type="text" id="mdm-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4">
+    </div>
+  </div>
+  <div id="mdm-calc-summary" style="font-size:0.78rem; font-weight:600; color:#475569; margin-top:8px;">Expenditure: 0 meals × ₹6.78 = ₹0.00</div>
         </div>
+        
 
         <div style="margin-bottom: 14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
