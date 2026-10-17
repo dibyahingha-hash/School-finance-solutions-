@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statutory Cash Book Volume Opening Certificate</title>
+  <style>
+    @page {
+      size: legal portrait;
+      margin: 0.75in 0.8in;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      font-family: "Times New Roman", Times, Georgia, serif;
+      color: #0f172a;
+      background: #f8fafc;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .cert-sheet {
+      background: #fffdf7;
+      width: 100%;
+      max-width: 800px;
+      min-height: 1050px;
+      border: 3px double #1e293b;
+      padding: 36px 40px;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sheet-inner-border {
+      border: 1px solid #475569;
+      height: 100%;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cert-header {
+      text-align: center;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 14px;
+    }
+
+    .cert-header .govt-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #334155;
+      margin: 0 0 4px 0;
+    }
+
+    .cert-header h1 {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 4px 0;
+      color: #0f172a;
+    }
+
+    .cert-header .sub-caption {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: #475569;
+      margin: 2px 0 0 0;
+    }
+
+    .school-profile-box {
+      margin: 20px 0;
+      border: 1.5px solid #334155;
+      background: #fafaf9;
+      padding: 12px 16px;
+    }
+
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .profile-row:last-child {
+      border-bottom: none;
+    }
+
+    .profile-label {
+      font-weight: 700;
+      color: #334155;
+      width: 35%;
+    }
+
+    .profile-value {
+      font-weight: 800;
+      color: #0f172a;
+      width: 65%;
+      text-transform: uppercase;
+    }
+
+    .declaration-block {
+      margin: 20px 0;
+      line-height: 1.8;
+      font-size: 1rem;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .declaration-block strong {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .audit-log-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.8rem;
+    }
+
+    .audit-log-table th, .audit-log-table td {
+      border: 1px solid #334155;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .audit-log-table th {
+      background: #f1f5f9;
+      font-weight: 800;
+    }
+
+    .signatures-container {
+      margin-top: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 10px;
+    }
+
+    .sig-block {
+      text-align: center;
+      width: 42%;
+      font-size: 0.85rem;
+    }
+
+    .sig-line {
+      border-top: 1.5px solid #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .sig-title {
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .sig-subtitle {
+      font-size: 0.75rem;
+      color: #475569;
+    }
+
+    .actions-panel {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: #1e293b;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .btn-action:hover {
+      background: #334155;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .actions-panel {
+        display: none !important;
+      }
+      .cert-sheet {
+        border: 3px double #000;
+        box-shadow: none;
+        max-width: 100%;
+        min-height: 98vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="actions-panel">
+    <button class="btn-action" onclick="window.print()">🖨️ Print Legal Certificate</button>
+    <button class="btn-action" onclick="window.close()">✕ Close</button>
+  </div>
+
+  <div class="cert-sheet">
+    <div class="sheet-inner-border">
+      
+      <!-- Top Title Block -->
+      <div class="cert-header">
+        <div class="govt-title">Department of School Education • Govt. of Assam</div>
+        <h1>Statutory Cash Book Volume Opening Certificate</h1>
+        <div class="sub-caption">Prescribed register volume opening declaration for statutory school accounts</div>
+      </div>
+
+      <!-- School Identification Metadata -->
+      <div class="school-profile-box">
+        <div class="profile-row">
+          <span class="profile-label">School Name:</span>
+          <span class="profile-value" id="disp-school-name">NO. 79 BETONI LPS</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-label">11-Digit U-DISE Code:</span>
+          <span class="profile-value" id="disp-udise">18150301501</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-label">School Category:</span>
+          <span class="profile-value" id="disp-category">LOWER PRIMARY (LP)</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-label">Block & District:</span>
+          <span class="profile-value" id="disp-block-dist">KHOWANG, DIBRUGARH (ASSAM)</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-label">Designated Account/Drawer:</span>
+          <span class="profile-value" id="disp-account-type">PM POSHAN (MDM) STATUTORY CASH BOOK</span>
+        </div>
+      </div>
+
+      <!-- Statutory Certification Declaration -->
+      <div class="declaration-block">
+        <p>
+          Certified that this Official Cash Book Volume contains exactly 
+          <strong>24 (Twenty-Four) consecutively machine-numbered ledger pages</strong>, 
+          arranged in standard two-page monthly spreads (Page 1 Receipts, Page 2 Payments) 
+          spanning from <strong>Page 1 to Page 24</strong> inclusive.
+        </p>
+        <p>
+          This register volume has been verified, initialed, and brought into official statutory service on this day for the recording of all financial receipts, bank transactions, contra adjustments, and sanctioned disbursements for the Financial Year 
+          <strong id="disp-fy">2026–2027</strong>, covering the twelve accounting months from 
+          <strong>1st April, 2026</strong> to <strong>31st March, 2027</strong>.
+        </p>
+        <p>
+          It is further certified that no pages have been removed, torn, or inserted, and that all entries made herein shall adhere strictly to double-entry ledger parity, physical voucher verification, and Assam Statutory School Accounting standards.
+        </p>
+      </div>
+
+      <!-- Initial Volume Inspection Register -->
+      <div>
+        <div style="font-size:0.85rem; font-weight:800; text-transform:uppercase; margin-bottom:4px;">
+          Statutory Verification & Periodic Audit Inspections Log:
+        </div>
+        <table class="audit-log-table">
+          <thead>
+            <tr>
+              <th style="width:18%;">Date of Inspection</th>
+              <th style="width:28%;">Inspecting Officer / Auditor</th>
+              <th style="width:34%;">Observations / Certification</th>
+              <th style="width:20%;">Signature & Stamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01/04/2026</td>
+              <td>Head Teacher & SMC President</td>
+              <td>Volume opening certificate executed. 24 pages intact.</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Signature Authority Block -->
+      <div class="signatures-container">
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div class="sig-title">Signature of SMC President</div>
+          <div class="sig-subtitle">School Management Committee (Seal)</div>
+        </div>
+
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div class="sig-title">Signature of Head Teacher / Member Secretary</div>
+          <div class="sig-subtitle">NO. 79 BETONI LPS (Official Seal)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Autofill metadata from parent window or localStorage if available
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const rawProfile = localStorage.getItem('dhk_anchored_profile');
+        if (rawProfile) {
+          const profile = JSON.parse(rawProfile);
+          if (profile.schoolName) document.getElementById('disp-school-name').textContent = profile.schoolName;
+          if (profile.udise) document.getElementById('disp-udise').textContent = profile.udise;
+          if (profile.category) document.getElementById('disp-category').textContent = profile.category === 'UP' ? 'UPPER PRIMARY (UP)' : 'LOWER PRIMARY (LP)';
+          if (profile.block || profile.district) {
+            document.getElementById('disp-block-dist').textContent = `${profile.block || ''}, ${profile.district || ''} (ASSAM)`.toUpperCase();
+          }
+        }
+      } catch (_) {}
+    });
+  </script>
+</body>
+</html>
 
