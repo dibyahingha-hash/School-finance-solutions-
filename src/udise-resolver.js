@@ -1,100 +1,103 @@
 /**
- * Resilient U-DISE Identity Resolver
+ * DHK PM POSHAN & School CashBook Pro
+ * Module: src/udise-resolver.js
+ * 
+ * Statutory School Profile & U-DISE Registry Resolver
+ * - Resolves and validates 11-digit Assam U-DISE identification codes
+ * - Anchors school metadata: Name, Category (LP/UP), Block, District, and Accounts
+ * - Ensures local persistence via storage engine
  */
+
+import { storage } from './storage.js';
 
 export class UdiseResolver {
   constructor() {
-    this.storageKey = 'dhk_anchored_profile';
-    this.modal = document.getElementById('view-onboarding');
-    this.inp = document.getElementById('input-udise');
-    this.btn = document.getElementById('btn-resolve-udise');
-    this.err = document.getElementById('udise-error');
-
-    this.headerName = document.getElementById('header-school-name');
-    this.headerMeta = document.getElementById('header-school-meta');
+    // Built-in registry cache for instant offline resolution
+    this.KNOWN_SCHOOLS = {
+      '18150301501': {
+        udise: '18150301501',
+        schoolName: 'NO. 79 BETONI LPS',
+        category: 'LP',
+        block: 'KHOWANG',
+        district: 'DIBRUGARH',
+        state: 'ASSAM',
+        accountMdm: 'PM POSHAN SNA / CANARA BANK',
+        accountSmc: 'SMC GENERAL SAVINGS'
+      }
+    };
   }
 
-  async init() {
-    const profile = this.getAnchoredProfile();
-    if (!profile) {
-      this.showModal();
-      return new Promise((resolve) => {
-        this.onProfileAnchored = resolve;
-      });
-    }
-    this.applyToUI(profile);
-    return profile;
+  /**
+   * Validates standard 11-digit Indian U-DISE code format
+   */
+  validateUdise(udiseStr) {
+    const cleaned = String(udiseStr || '').trim();
+    return /^\d{11}$/.test(cleaned);
   }
 
-  getAnchoredProfile() {
-    try {
-      const p = localStorage.getItem(this.storageKey);
-      return p ? JSON.parse(p) : null;
-    } catch (_) {
-      return null;
-    }
-  }
+  /**
+   * Resolves school metadata by U-DISE code from local cache or storage
+   */
+  async resolve(udiseInput) {
+    const cleanUdise = String(udiseInput || '').trim();
 
-  showModal() {
-    if (this.modal) this.modal.style.display = 'flex';
-    if (this.btn) this.btn.onclick = () => this.handleResolve();
-  }
-
-  async handleResolve() {
-    const code = (this.inp?.value || '').trim();
-    if (!/^\d{11}$/.test(code)) {
-      if (this.err) this.err.textContent = 'Please enter a valid 11-digit U-DISE code.';
-      return;
+    if (!this.validateUdise(cleanUdise)) {
+      throw new Error('Invalid U-DISE code: Must be exactly 11 numeric digits.');
     }
 
-    if (this.err) this.err.textContent = '';
-    if (this.btn) {
-      this.btn.textContent = 'Verifying...';
-      this.btn.disabled = true;
+    // 1. Check currently active saved profile
+    const activeProfile = storage.getProfile();
+    if (activeProfile && activeProfile.udise === cleanUdise) {
+      return activeProfile;
     }
 
-    let profile = {
-      udise: code,
-      schoolName: 'NO. 79 BETONI LPS',
-      district: 'DIBRUGARH',
-      block: 'KHOWANG',
-      category: 'LP'
+    // 2. Check local offline registry
+    if (this.KNOWN_SCHOOLS[cleanUdise]) {
+      const found = { ...this.KNOWN_SCHOOLS[cleanUdise] };
+      storage.saveProfile(found);
+      return found;
+    }
+
+    // 3. Fallback: Create structured institutional record from U-DISE prefix
+    const stateCode = cleanUdise.slice(0, 2);
+    const isAssam = stateCode === '18';
+
+    const fallbackProfile = {
+      udise: cleanUdise,
+      schoolName: `GOVT SCHOOL (${cleanUdise})`,
+      category: 'LP',
+      block: 'EDUCATIONAL BLOCK',
+      district: isAssam ? 'ASSAM DISTRICT' : 'DISTRICT',
+      state: isAssam ? 'ASSAM' : 'INDIA',
+      accountMdm: 'PM POSHAN SNA ACCOUNT',
+      accountSmc: 'SMC SAVINGS ACCOUNT'
     };
 
-    // Attempt live relay lookup
-    try {
-      const url = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent('https://src.udiseplus.gov.in/api/school-info/by-udise/' + code)}`;
-      const res = await fetch(url);
-      if (res.ok) {
-        const json = await res.json();
-        if (json.schoolName || json.school_name) {
-          profile.schoolName = (json.schoolName || json.school_name).toUpperCase();
-          profile.district = (json.districtName || json.district_name || 'ASSAM').toUpperCase();
-          profile.block = (json.blockName || json.block_name || '').toUpperCase();
-          profile.category = /Upper|Middle|ME|Composite/i.test(json.categoryName || '') ? 'UP' : 'LP';
-        }
-      }
-    } catch (_) {}
-
-    localStorage.setItem(this.storageKey, JSON.stringify(profile));
-    this.applyToUI(profile);
-    if (this.modal) this.modal.style.display = 'none';
-
-    if (this.btn) {
-      this.btn.textContent = 'Verify & Anchor Profile';
-      this.btn.disabled = false;
-    }
-
-    if (typeof this.onProfileAnchored === 'function') {
-      this.onProfileAnchored(profile);
-    }
+    storage.saveProfile(fallbackProfile);
+    return fallbackProfile;
   }
 
-  applyToUI(profile) {
-    if (this.headerName) this.headerName.textContent = profile.schoolName;
-    if (this.headerMeta) {
-      this.headerMeta.textContent = `UDISE: ${profile.udise} | Category: ${profile.category} | Block: ${profile.block} (${profile.district})`;
+  /**
+   * Saves or updates full institutional school profile manually
+   */
+  saveManualProfile(profileData) {
+    if (!this.validateUdise(profileData.udise)) {
+      throw new Error('Cannot save profile: Invalid 11-digit U-DISE code.');
     }
+
+    const cleanedData = {
+      udise: String(profileData.udise).trim(),
+      schoolName: String(profileData.schoolName || 'SCHOOL').trim().toUpperCase(),
+      category: profileData.category === 'UP' ? 'UP' : 'LP',
+      block: String(profileData.block || '').trim().toUpperCase(),
+      district: String(profileData.district || '').trim().toUpperCase(),
+      state: 'ASSAM',
+      accountMdm: String(profileData.accountMdm || '').trim(),
+      accountSmc: String(profileData.accountSmc || '').trim()
+    };
+
+    storage.saveProfile(cleanedData);
+    return cleanedData;
   }
 }
 
