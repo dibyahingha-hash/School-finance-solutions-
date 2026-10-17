@@ -131,6 +131,24 @@
       border-bottom: 1px solid var(--ledger-border-light);
       padding: 4px 2px;
     }
+    /* STRICT TABLE LAYOUT & LOCKED COLUMN SIZES */
+    .statutory-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed; /* Enforces strict non-collapsing column widths */
+      border: 1.5px solid var(--ledger-border-dark);
+      font-size: 0.70rem;
+      line-height: 1.2;
+      background: var(--ledger-paper);
+    }
+
+    .statutory-table th, .statutory-table td {
+      border-right: 1px solid var(--ledger-border-rule);
+      border-bottom: 1px solid var(--ledger-border-light);
+      padding: 3px 2px;
+      overflow: hidden;
+      word-wrap: break-word;
+    }
 
     .statutory-table th {
       border-top: 1.5px solid var(--ledger-border-dark);
@@ -141,7 +159,14 @@
       color: #0f172a;
     }
 
-    .statutory-table tr.empty-ruled-row { height: 22px; }
+    /* SPECIFIC RIGID COLUMN WIDTHS */
+    .col-dt { width: 55px; text-align: center; }
+    .col-particulars { width: auto; }
+    .col-folio { width: 28px; text-align: center; }
+    .col-rs { width: 52px; text-align: right; padding-right: 3px !important; border-right: 1px dotted var(--ledger-border-light) !important; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .col-p { width: 22px; text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+    .statutory-table tr.empty-ruled-row { height: 18px; }
 
     .statutory-table tr.subtotal-row td {
       border-top: 1.5px solid var(--ledger-border-dark);
@@ -156,34 +181,35 @@
       background: #e2e8f0;
     }
 
-    .cell-rs {
-      text-align: right;
-      padding-right: 4px !important;
-      border-right: 1px dotted var(--ledger-border-light) !important;
-    }
-
-    .cell-p { text-align: center; width: 22px; }
-
-    .ledger-page-card {
-      background: var(--ledger-paper);
-      border: 2px solid var(--ledger-border-dark);
-      padding: 14px;
-      margin-top: 16px;
-      font-family: "Courier New", Courier, monospace, serif;
-    }
-
+    /* PREVENT PAGE SPLIT ON PRINT */
     @media print {
-      @page { size: legal landscape; margin: 0.25in; }
+      @page {
+        size: legal landscape;
+        margin: 0.2in;
+      }
       body { background: #fff !important; }
       .no-print { display: none !important; }
       .physical-spread {
         background: transparent !important;
         padding: 0 !important;
+        display: grid !important;
         grid-template-columns: 1fr 1fr !important;
-        gap: 8px !important;
+        gap: 6px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
-      .physical-page { border: 2px solid #000 !important; min-height: 98vh; }
+      .physical-page {
+        border: 1.5px solid #000 !important;
+        box-shadow: none !important;
+        padding: 6px 8px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .statutory-table tr {
+        page-break-inside: avoid !important;
+      }
     }
+
   </style>
 </head>
 <body>
@@ -942,7 +968,7 @@
       alert('✅ Cash Book & Ledger Saved to Permanent Storage.');
     }
 
-    function recalculateCashbook() {
+        function recalculateCashbook() {
       const fy = document.getElementById('cb-sel-year').value.trim() || '2026-27';
       const m = document.getElementById('cb-sel-month').value;
       const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
@@ -951,11 +977,13 @@
 
       const mInt = parseInt(m, 10);
       const yInt = parseInt(fy.slice(0, 4), 10) || 2026;
-      const lastDay = new Date(yInt, mInt, 0).getDate();
       const shortYear = String(yInt).slice(2);
       const paddedMonth = String(mInt).padStart(2, '0');
 
-      // Build Vouchers Tray
+      // 1. Sort vouchers chronologically by day
+      vouchersList.sort((a, b) => (parseInt(a.day, 10) || 0) - (parseInt(b.day, 10) || 0));
+
+      // 2. Build Vouchers Tray & Tally Actual Payments
       const tray = document.getElementById('voucher-tray');
       tray.innerHTML = '';
       let totalVouchersBooked = 0;
@@ -973,8 +1001,10 @@
 
       document.getElementById('val-vouchers-booked').textContent = `₹${totalVouchersBooked.toFixed(2)}`;
 
-      // Compile Physical Ledgers
-      const receipts = [{ dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank, isOb: true }];
+      // 3. Build Receipts & Payments Ledgers
+      const receipts = [
+        { dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank, isOb: true }
+      ];
       const payments = [];
 
       const ledgers = {
@@ -989,8 +1019,10 @@
       let runningCash = opCash;
       let runningBank = opBank;
 
+      // 4. Process Each Voucher
       vouchersList.forEach(v => {
-        const vDate = `${v.day}/${paddedMonth}/${shortYear}`;
+        const vDate = `${String(v.day).padStart(2, '0')}/${paddedMonth}/${shortYear}`;
+
         if (v.type === 'WITHDRAWAL') {
           receipts.push({
             dt: vDate,
@@ -1004,21 +1036,26 @@
           });
           runningCash += v.amt;
           runningBank -= v.amt;
+
         } else if (v.type === 'RECEIPT') {
+          const cAmt = v.channel === 'CASH' ? v.amt : 0;
+          const bAmt = v.channel === 'BANK' ? v.amt : 0;
+
           receipts.push({
             dt: vDate,
-            p: v.desc,
+            p: v.desc.replace('\n', '<br><span style="font-size:0.65rem; color:#475569;">') + (v.desc.includes('\n') ? '</span>' : ''),
             f: v.folio || 'G',
-            c: v.channel === 'CASH' ? v.amt : 0,
-            b: v.channel === 'BANK' ? v.amt : 0,
-            t: v.amt
+            c: cAmt, b: bAmt, t: v.amt
           });
-          if (v.channel === 'CASH') runningCash += v.amt;
-          if (v.channel === 'BANK') runningBank += v.amt;
-        } else {
-          // Check Cash Deficit (Folio 8 Advance)
-          if (v.channel === 'CASH' && runningCash < v.amt) {
-            const deficit = Math.round((v.amt - runningCash) * 100) / 100;
+          runningCash += cAmt;
+          runningBank += bAmt;
+
+        } else if (v.type === 'PAYMENT') {
+          const cAmt = v.channel === 'CASH' ? v.amt : 0;
+          const bAmt = v.channel === 'BANK' ? v.amt : 0;
+
+          if (v.channel === 'CASH' && runningCash < cAmt) {
+            const deficit = Math.round((cAmt - runningCash) * 100) / 100;
             receipts.push({
               dt: vDate,
               p: 'To Temporary Advance from In-charge/Teacher (Out-of-pocket funding)',
@@ -1032,14 +1069,12 @@
             dt: vDate,
             p: v.desc.replace('\n', '<br><span style="font-size:0.65rem; color:#475569;">') + (v.desc.includes('\n') ? '</span>' : ''),
             f: v.folio,
-            c: v.channel === 'CASH' ? v.amt : 0,
-            b: v.channel === 'BANK' ? v.amt : 0,
-            t: v.amt,
+            c: cAmt, b: bAmt, t: v.amt,
             isRed: true
           });
 
-          if (v.channel === 'CASH') runningCash -= v.amt;
-          if (v.channel === 'BANK') runningBank -= v.amt;
+          runningCash -= cAmt;
+          runningBank -= bAmt;
 
           if (ledgers[v.folio]) {
             ledgers[v.folio].entries.push({ dt: vDate, p: v.desc.split('\n')[0], dr: v.amt, cr: 0 });
@@ -1047,22 +1082,31 @@
         }
       });
 
-      // Subtotals & Grand Totals
-      const trC = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.c, 0);
-      const trB = receipts.filter(r => !r.isOb).reduce((s, r) => s + r.b, 0);
+      // 5. Calculate Subtotals: T/R and T/P
+      const trC = receipts.filter(r => !r.isOb).reduce((sum, r) => sum + r.c, 0);
+      const trB = receipts.filter(r => !r.isOb).reduce((sum, r) => sum + r.b, 0);
       const trT = trC + trB;
 
-      const tpC = payments.reduce((s, p) => s + p.c, 0);
-      const tpB = payments.reduce((s, p) => s + p.b, 0);
+      const tpC = payments.reduce((sum, p) => sum + p.c, 0);
+      const tpB = payments.reduce((sum, p) => sum + p.b, 0);
       const tpT = tpC + tpB;
 
-      const closeCash = Math.max(0, Math.round(runningCash * 100) / 100);
+      // 6. Calculate Closing Balance (C/B)
+      const closeCash = Math.round(runningCash * 100) / 100;
       const closeBank = Math.round(runningBank * 100) / 100;
+      const closeTotal = closeCash + closeBank;
 
       payments.push({
-        dt: 'End', p: 'By Closing Balance (C/B)', f: '', c: closeCash, b: closeBank, t: closeCash + closeBank, isRed: true
+        dt: 'End',
+        p: 'By Closing Balance (C/B)',
+        f: '',
+        c: closeCash,
+        b: closeBank,
+        t: closeTotal,
+        isRed: true
       });
 
+      // 7. Grand Totals (G/T)
       const gtRecCash = opCash + trC;
       const gtRecBank = opBank + trB;
       const gtRecTotal = gtRecCash + gtRecBank;
@@ -1072,8 +1116,11 @@
       const gtPmtTotal = gtPmtCash + gtPmtBank;
 
       renderStatutoryCashBookHUD(mName, yInt, receipts, payments, {
-        trC, trB, trT, tpC, tpB, tpT, closeCash, closeBank,
-        gtRecCash, gtRecBank, gtRecTotal, gtPmtCash, gtPmtBank, gtPmtTotal
+        trC, trB, trT,
+        tpC, tpB, tpT,
+        closeCash, closeBank,
+        gtRecCash, gtRecBank, gtRecTotal,
+        gtPmtCash, gtPmtBank, gtPmtTotal
       });
 
       renderStatutoryGeneralLedgerHUD(ledgers);
@@ -1099,19 +1146,19 @@
 
           out += `
             <tr>
-              <td style="text-align:center; vertical-align:top; font-size:0.75rem; font-weight:700;">${r.dt || ''}</td>
-              <td class="${redClass}" style="padding:4px 6px; vertical-align:top;">${r.p}</td>
-              <td style="text-align:center; vertical-align:top; font-weight:800;">${r.f || ''}</td>
-              <td class="cell-rs ${redClass}">${c.rs}</td><td class="cell-p ${redClass}">${c.p}</td>
-              <td class="cell-rs ${redClass}">${b.rs}</td><td class="cell-p ${redClass}">${b.p}</td>
-              <td class="cell-rs ${redClass}">${tot.rs}</td><td class="cell-p ${redClass}">${tot.p}</td>
+              <td class="col-dt" style="vertical-align:top; font-weight:700;">${r.dt || ''}</td>
+              <td class="col-particulars ${redClass}" style="vertical-align:top;">${r.p}</td>
+              <td class="col-folio" style="vertical-align:top; font-weight:800;">${r.f || ''}</td>
+              <td class="col-rs ${redClass}">${c.rs}</td><td class="col-p ${redClass}">${c.p}</td>
+              <td class="col-rs ${redClass}">${b.rs}</td><td class="col-p ${redClass}">${b.p}</td>
+              <td class="col-rs ${redClass}">${tot.rs}</td><td class="col-p ${redClass}">${tot.p}</td>
             </tr>
           `;
         });
 
-        const remaining = Math.max(0, 14 - list.length);
+        const remaining = Math.max(0, 12 - list.length);
         for (let i = 0; i < remaining; i++) {
-          out += `<tr class="empty-ruled-row"><td></td><td></td><td></td><td class="cell-rs"></td><td class="cell-p"></td><td class="cell-rs"></td><td class="cell-p"></td><td class="cell-rs"></td><td class="cell-p"></td></tr>`;
+          out += `<tr class="empty-ruled-row"><td></td><td></td><td></td><td class="col-rs"></td><td class="col-p"></td><td class="col-rs"></td><td class="col-p"></td><td class="col-rs"></td><td class="col-p"></td></tr>`;
         }
         return out;
       };
@@ -1128,38 +1175,38 @@
             <div class="book-header-line">
               <span class="page-indicator">4</span>
               <span class="book-title">CASH BOOK</span>
-              <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
+              <span style="font-size:0.8rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
             </div>
-            <div class="subhead-row"><span style="font-size:0.9rem; font-weight:900;">RECEIPTS</span></div>
+            <div class="subhead-row"><span style="font-size:0.85rem; font-weight:900;">RECEIPTS</span></div>
             <table class="statutory-table">
               <thead>
                 <tr>
-                  <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
-                  <th rowspan="2">PARTICULARS</th>
-                  <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
+                  <th rowspan="2" class="col-dt">Month &amp;<br>Date</th>
+                  <th rowspan="2" class="col-particulars">PARTICULARS</th>
+                  <th rowspan="2" class="col-folio">Ledger<br>Folio</th>
                   <th colspan="2">Cash Amount</th>
                   <th colspan="2">Bank Amount</th>
                   <th colspan="2">Total Amount</th>
                 </tr>
                 <tr>
-                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
-                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
-                  <th style="width:52px;">Rs.</th><th style="width:22px;">P.</th>
+                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
+                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
+                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
                 </tr>
               </thead>
               <tbody>
                 ${renderRows(receipts)}
                 <tr class="subtotal-row">
                   <td colspan="3" style="text-align:center;">T/R (Total Receipts)</td>
-                  <td class="cell-rs">${trC.rs}</td><td class="cell-p">${trC.p}</td>
-                  <td class="cell-rs">${trB.rs}</td><td class="cell-p">${trB.p}</td>
-                  <td class="cell-rs">${trT.rs}</td><td class="cell-p">${trT.p}</td>
+                  <td class="col-rs">${trC.rs}</td><td class="col-p">${trC.p}</td>
+                  <td class="col-rs">${trB.rs}</td><td class="col-p">${trB.p}</td>
+                  <td class="col-rs">${trT.rs}</td><td class="col-p">${trT.p}</td>
                 </tr>
                 <tr class="total-row">
                   <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
-                  <td class="cell-rs">${gtRC.rs}</td><td class="cell-p">${gtRC.p}</td>
-                  <td class="cell-rs">${gtRB.rs}</td><td class="cell-p">${gtRB.p}</td>
-                  <td class="cell-rs">${gtRT.rs}</td><td class="cell-p">${gtRT.p}</td>
+                  <td class="col-rs">${gtRC.rs}</td><td class="col-p">${gtRC.p}</td>
+                  <td class="col-rs">${gtRB.rs}</td><td class="col-p">${gtRB.p}</td>
+                  <td class="col-rs">${gtRT.rs}</td><td class="col-p">${gtRT.p}</td>
                 </tr>
               </tbody>
             </table>
@@ -1172,50 +1219,50 @@
               <span class="page-indicator">5</span>
             </div>
             <div class="subhead-row">
-              <span style="font-size:0.85rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
-              <span style="font-size:0.9rem; font-weight:900; color:#b91c1c;">PAYMENTS</span>
+              <span style="font-size:0.8rem; font-weight:700;">For the month of <u>${mName} ${fullYear}</u></span>
+              <span style="font-size:0.85rem; font-weight:900; color:#b91c1c;">PAYMENTS</span>
             </div>
             <table class="statutory-table">
               <thead>
                 <tr>
-                  <th rowspan="2" style="width:75px;">Month &amp;<br>Date</th>
-                  <th rowspan="2">PARTICULARS</th>
-                  <th rowspan="2" style="width:30px;">Ledger<br>Folio</th>
+                  <th rowspan="2" class="col-dt">Month &amp;<br>Date</th>
+                  <th rowspan="2" class="col-particulars">PARTICULARS</th>
+                  <th rowspan="2" class="col-folio">Ledger<br>Folio</th>
                   <th colspan="2">Cash Amount</th>
                   <th colspan="2">Bank Amount</th>
                   <th colspan="2">Total Amount</th>
                 </tr>
                 <tr>
-                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
-                  <th style="width:46px;">Rs.</th><th style="width:22px;">P.</th>
-                  <th style="width:52px;">Rs.</th><th style="width:22px;">P.</th>
+                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
+                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
+                  <th class="col-rs">Rs.</th><th class="col-p">P.</th>
                 </tr>
               </thead>
               <tbody>
                 ${renderRows(payments)}
                 <tr class="subtotal-row">
                   <td colspan="3" style="text-align:center;">T/P (Total Payments)</td>
-                  <td class="cell-rs ink-payment">${tpC.rs}</td><td class="cell-p ink-payment">${tpC.p}</td>
-                  <td class="cell-rs ink-payment">${tpB.rs}</td><td class="cell-p ink-payment">${tpB.p}</td>
-                  <td class="cell-rs ink-payment">${tpT.rs}</td><td class="cell-p ink-payment">${tpT.p}</td>
+                  <td class="col-rs ink-payment">${tpC.rs}</td><td class="col-p ink-payment">${tpC.p}</td>
+                  <td class="col-rs ink-payment">${tpB.rs}</td><td class="col-p ink-payment">${tpB.p}</td>
+                  <td class="col-rs ink-payment">${tpT.rs}</td><td class="col-p ink-payment">${tpT.p}</td>
                 </tr>
                 <tr class="total-row">
                   <td colspan="3" style="text-align:center;">G/T (Grand Total)</td>
-                  <td class="cell-rs ink-payment">${gtPC.rs}</td><td class="cell-p ink-payment">${gtPC.p}</td>
-                  <td class="cell-rs ink-payment">${gtPB.rs}</td><td class="cell-p ink-payment">${gtPB.p}</td>
-                  <td class="cell-rs ink-payment">${gtPT.rs}</td><td class="cell-p ink-payment">${gtPT.p}</td>
+                  <td class="col-rs ink-payment">${gtPC.rs}</td><td class="col-p ink-payment">${gtPC.p}</td>
+                  <td class="col-rs ink-payment">${gtPB.rs}</td><td class="col-p ink-payment">${gtPB.p}</td>
+                  <td class="col-rs ink-payment">${gtPT.rs}</td><td class="col-p ink-payment">${gtPT.p}</td>
                 </tr>
               </tbody>
             </table>
 
-            <div style="border:1.5px solid var(--ledger-border-dark); padding:8px 12px; margin-top:10px; font-size:0.68rem; line-height:1.4; background:#fff;">
-              <div style="font-weight:800; text-decoration:underline; margin-bottom:4px; font-size:0.7rem;">
+            <div style="border:1.5px solid var(--ledger-border-dark); padding:6px 10px; margin-top:8px; font-size:0.65rem; line-height:1.35; background:#fff;">
+              <div style="font-weight:800; text-decoration:underline; margin-bottom:2px;">
                 STATUTORY PHYSICAL VERIFICATION &amp; AUDIT CERTIFICATE:
               </div>
               <div>1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.</div>
               <div>2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/SNA Portal statement for ${mName} ${fullYear}.</div>
               <div>3. Certified that all cooking cost expenditures billed under Folio 1 conform to sanctioned per-child per-day allocation rules.</div>
-              <div style="display:flex; justify-content:space-between; margin-top:24px; font-weight:800; font-size:0.72rem;">
+              <div style="display:flex; justify-content:space-between; margin-top:16px; font-weight:800; font-size:0.7rem;">
                 <span>Signature of SMC President</span>
                 <span>Signature of Head Teacher / Member Secretary</span>
               </div>
@@ -1252,6 +1299,11 @@
       });
       target.innerHTML = html || '<div class="card" style="margin-top:14px; color:#64748b;">No ledger postings recorded this month. Add payment vouchers to generate accounts.</div>';
     }
+    
+    
+
+      
+    
 
     // Tab Switcher
     function switchTab(tabId) {
