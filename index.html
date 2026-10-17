@@ -1184,7 +1184,7 @@
           const ink = r.isRed ? 'color:#b91c1c;' : 'color:#000;';
 
           out += `
-            <tr style="${rowBorder} height: 26px; ${ink}">
+            <tr style="${rowBorder} height: 21px; ${ink}">
               <td style="${bBorder} text-align:center; font-weight:700;">${r.dt || ''}</td>
               <td style="${bBorder} padding-left: 6px; padding-right: 6px; text-align:left; word-break:break-word;">${r.p}</td>
               <td style="${bBorder} text-align:center; font-weight:700;">${r.f || ''}</td>
@@ -1198,10 +1198,10 @@
           `;
         });
 
-        const remaining = Math.max(0, 16 - list.length);
+        const remaining = Math.max(0, 13 - list.length);
         for (let i = 0; i < remaining; i++) {
           out += `
-            <tr style="${rowBorder} height: 26px;">
+            <tr style="${rowBorder} height: 21px;">
               <td style="${bBorder}">&nbsp;</td>
               <td style="${bBorder}"></td>
               <td style="${bBorder}"></td>
