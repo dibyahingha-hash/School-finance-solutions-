@@ -381,7 +381,7 @@
           </div>
         </div>
 
-        <!-- Statutory Cooking Mandate Targets -->
+        <!-- Statutory Cooking Mandate Targets (MDM Drawer Only) -->
         <div id="box-mdm-mandate" style="background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:12px; margin:10px 0;">
           <b style="color:#166534; font-size:0.95rem; display:block; margin-bottom:8px;">🎯 Cooking Cost Mandate Targets</b>
           <div class="grid-2">
@@ -403,10 +403,10 @@
         <div id="voucher-gap-tracker" style="margin-top:10px; padding:10px; border-radius:6px; background:#eff6ff; border:1px solid #bfdbfe; font-size:0.9rem;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span><b>Vouchers Booked:</b> <span id="val-vouchers-booked">₹0.00</span></span>
-            <span><b>Mandate Target:</b> <span id="val-target-gap" style="font-weight:bold; color:#1e40af;">₹0.00</span></span>
+            <span><b>Target Mandate:</b> <span id="val-target-gap" style="font-weight:bold; color:#1e40af;">₹0.00</span></span>
           </div>
           <div id="msg-voucher-status" style="margin-top:5px; font-size:0.8rem; font-weight:600; color:#1e40af;">
-            Add itemized vouchers below to build the physical legal register.
+            Add itemized vouchers below to build the statutory cash book &amp; ledger.
           </div>
         </div>
         
@@ -449,7 +449,7 @@
           </div>
           <div>
             <label><b>Ledger Folio (L/F)</b></label>
-            <input type="text" id="v-folio-input" placeholder="e.g. 1, 4, C" oninput="refreshModalPreview()" style="padding:8px; width:100%;">
+            <input type="text" id="v-folio-input" placeholder="e.g. 1, 4, 5, C" oninput="refreshModalPreview()" style="padding:8px; width:100%;">
           </div>
         </div>
 
@@ -467,27 +467,15 @@
           </div>
         </div>
 
-        <!-- Statutory Category & Custom Input -->
-        <div class="form-group" style="margin-top:10px;">
-          <label><b>Accounting Head / Preset Category</b></label>
-          <select id="v-category-select" onchange="applyCategoryPreset()" style="margin-bottom:8px; padding:8px; width:100%; border:1px solid #ccc; border-radius:4px; font-weight:600;">
-            <option value="MDM_COOKING">Folio 1: MDM Cooking Cost (Groceries, Veg, Eggs)</option>
-            <option value="UTENSILS">Folio 4: Kitchen Devices &amp; Utensils</option>
-            <option value="REPAIRS">Folio 5: School Infrastructure Repairs</option>
-            <option value="CONTINGENCY">Folio 2: Contingency &amp; Misc Office</option>
-            <option value="GRANT">Folio G: Grant / Sanction Received</option>
-            <option value="CUSTOM">-- Custom Purpose / Open Entry --</option>
-          </select>
-        </div>
-
+        <!-- Open Purpose Entry Fields (No Dropdown) -->
         <div class="form-group" id="party-purpose-fields" style="margin-bottom:10px;">
-          <label style="font-size:0.85rem; font-weight:bold; color:#1e3a8a;">Grant Name / Custom Purpose / Particulars</label>
-          <input type="text" id="v-purpose-input" placeholder="e.g. Cooking Cost for 450 meals" oninput="refreshModalPreview()" style="padding:8px; width:100%; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:4px;">
+          <label style="font-size:0.85rem; font-weight:bold; color:#1e3a8a;">Particulars / Item / Head (Type 1-2 words)</label>
+          <input type="text" id="v-purpose-input" placeholder="e.g. Eggs & Vegetables, Steel plates, Minor repair, Stationery" oninput="refreshModalPreview()" style="padding:8px; width:100%; margin-bottom:8px; border:1px solid #cbd5e1; border-radius:4px;">
           
           <div class="grid-2 form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
             <div>
               <label style="font-size:0.75rem;">Payee / Vendor Name</label>
-              <input type="text" id="v-payee-input" placeholder="e.g. Vendor / Self" oninput="refreshModalPreview()" style="padding:6px; width:100%; border:1px solid #cbd5e1; border-radius:4px;">
+              <input type="text" id="v-payee-input" placeholder="e.g. Local Vendor / Self" oninput="refreshModalPreview()" style="padding:6px; width:100%; border:1px solid #cbd5e1; border-radius:4px;">
             </div>
             <div>
               <label style="font-size:0.75rem;">Voucher / Sub-Voucher No.</label>
@@ -498,7 +486,7 @@
 
         <div class="form-group">
           <label><b>Audit-Compliant Narration (Auto-generated &amp; Fully Editable)</b></label>
-          <textarea id="v-narration-preview" rows="3" style="width:100%; padding:8px; font-size:12px; font-family:monospace; background:#fff; border:1px solid #94a3b8; border-radius:4px;" placeholder="Live narration will generate here..."></textarea>
+          <textarea id="v-narration-preview" rows="3" style="width:100%; padding:8px; font-size:12px; font-family:monospace; background:#fff; border:1px solid #94a3b8; border-radius:4px;" placeholder="Statutory narration will generate here automatically..."></textarea>
         </div>
 
         <button type="button" class="btn btn-secondary" onclick="addCompleteTransaction()" style="width:100%; padding:11px; font-weight:bold; font-size:0.95rem; background:#0f172a; color:#fff; border:none; border-radius:4px; margin-top:4px; cursor:pointer;">
@@ -758,7 +746,7 @@
         document.getElementById('v-folio-input').value = 'C';
       } else {
         bP.style.background = '#dc2626'; bP.style.color = '#fff'; bP.style.border = '2px solid #dc2626';
-        document.getElementById('v-folio-input').value = '1';
+        document.getElementById('v-folio-input').value = (activeDrawer === 'mdm') ? '1' : (activeDrawer === 'smc' ? '2' : 'V');
       }
       refreshModalPreview();
     }
@@ -772,47 +760,109 @@
       recalculateCashbook();
     }
 
-    function applyCategoryPreset() {
-      const cat = document.getElementById('v-category-select').value;
-      const purpose = document.getElementById('v-purpose-input');
-      const folio = document.getElementById('v-folio-input');
-      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
-
-      if (cat === 'MDM_COOKING') {
-        folio.value = '1';
-        purpose.value = `Cooking cost for the month of ${mName}`;
-      } else if (cat === 'UTENSILS') {
-        folio.value = '4';
-        purpose.value = 'Purchase of Kitchen Devices & Utensils';
-      } else if (cat === 'REPAIRS') {
-        folio.value = '5';
-        purpose.value = 'School Infrastructure Repairs';
-      } else if (cat === 'CONTINGENCY') {
-        folio.value = '2';
-        purpose.value = 'Contingency & Miscellaneous expenses';
-      } else if (cat === 'GRANT') {
-        folio.value = 'G';
-        purpose.value = `Grant Received for ${mName}`;
-      }
-      refreshModalPreview();
-    }
-
+    // Smart Statutory Narration & Strict Account Isolation
     function refreshModalPreview() {
-      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
       const purpose = document.getElementById('v-purpose-input').value.trim();
       const payee = document.getElementById('v-payee-input').value.trim();
       const ref = document.getElementById('v-ref-input').value.trim();
+      const channel = document.getElementById('tx-channel').value;
+      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
+      const folioInput = document.getElementById('v-folio-input');
       const preview = document.getElementById('v-narration-preview');
+      const pLower = purpose.toLowerCase();
 
+      // 1. BANK WITHDRAWAL (CONTRA FOLIO C)
       if (currentTxType === 'WITHDRAWAL') {
-        preview.value = `By Cash in Hand (Contra)\n(Contra cash withdrawn from bank for school expenses)`;
-      } else if (currentTxType === 'RECEIPT') {
-        preview.value = `To ${purpose || 'Grant / Sanction Received into Bank'}`;
-      } else {
-        const payeeText = payee ? ` to ${payee}` : '';
-        const vText = ref ? ` vide Sub-Voucher No. ${ref}` : '';
-        preview.value = `By ${purpose || 'Expenditure'}${payeeText}${vText}`;
+        folioInput.value = 'C';
+        const vText = ref ? ` vide Cheque/Advice No. ${ref}` : '';
+        preview.value = `By Cash in Hand (Contra)\n(Contra cash withdrawn from bank for school expenses${vText})`;
+        return;
       }
+
+      // 2. RECEIPTS (To...)
+      if (currentTxType === 'RECEIPT') {
+        let defaultFolio = 'G';
+        let header = `To ${purpose || 'Grant / Sanction Received'}`;
+        let being = `Being funds credited into ${channel === 'BANK' ? 'Bank Account' : 'Cash in Hand'} for ${mName}`;
+
+        if (activeDrawer === 'mdm') {
+          if (pLower.includes('advance') || pLower.includes('teacher') || pLower.includes('in-charge') || pLower.includes('out of pocket')) {
+            defaultFolio = '8';
+            header = `To Temporary Advance from In-charge/Teacher`;
+            being = `Being out-of-pocket funding advanced to meet urgent cooking cost expenditure`;
+          } else {
+            defaultFolio = 'G';
+            header = `To PM POSHAN Cooking Cost Grant`;
+            being = `Being cooking cost grant sanction credited into account for ${mName}`;
+          }
+        } else if (activeDrawer === 'smc') {
+          if (pLower.includes('advance') || pLower.includes('teacher')) {
+            defaultFolio = '8';
+            header = `To Advance from SMC Member/Teacher`;
+            being = `Being temporary advance for urgent school requirements`;
+          } else {
+            defaultFolio = 'G';
+            header = `To Composite School Grant / SMC Fund`;
+            being = `Being grant installment received for ${mName}`;
+          }
+        } else if (activeDrawer === 'sna') {
+          defaultFolio = 'G';
+          header = `To SNA Limit Allocation / Central-State Release`;
+          being = `Being zero-balance subsidiary account limit credit on SNA portal`;
+        }
+
+        folioInput.value = (folioInput.value && folioInput.value !== '1') ? folioInput.value : defaultFolio;
+        const refText = ref ? ` vide Sanction/Advice No. ${ref}` : '';
+        preview.value = `${header}\n(${being}${refText})`;
+        return;
+      }
+
+      // 3. PAYMENTS (By...) - STRICTLY ISOLATED BY ACCOUNT DRAWER
+      let itemTitle = purpose ? (purpose.charAt(0).toUpperCase() + purpose.slice(1)) : 'Expenditure';
+      let assignedFolio = '2';
+      let vText = ref ? ` vide Sub-Voucher No. ${ref}` : '';
+
+      if (activeDrawer === 'mdm') {
+        // MDM STRICT VOCABULARY
+        if (pLower.includes('utensil') || pLower.includes('plate') || pLower.includes('glass') || pLower.includes('dish') || pLower.includes('kadai') || pLower.includes('spoon') || pLower.includes('cookware')) {
+          assignedFolio = '4';
+          itemTitle = purpose || 'Kitchen Devices & Utensils';
+        } else if (pLower.includes('advance') || pLower.includes('refund') || pLower.includes('repay')) {
+          assignedFolio = '8';
+          itemTitle = 'Refund of Teacher Advance';
+        } else {
+          // Cooking ingredients, eggs, veggies, groceries, fuel/gas default to Folio 1
+          assignedFolio = '1';
+          itemTitle = purpose || `Cooking Cost for ${mName}`;
+        }
+      } else if (activeDrawer === 'smc') {
+        // SMC STRICT VOCABULARY
+        if (pLower.includes('repair') || pLower.includes('plumb') || pLower.includes('paint') || pLower.includes('elect') || pLower.includes('roof') || pLower.includes('door') || pLower.includes('window') || pLower.includes('whitewash')) {
+          assignedFolio = '5';
+          itemTitle = purpose || 'Minor School Repairs';
+        } else if (pLower.includes('stationery') || pLower.includes('tlm') || pLower.includes('print') || pLower.includes('xerox') || pLower.includes('sport') || pLower.includes('electric') || pLower.includes('bill')) {
+          assignedFolio = '2';
+          itemTitle = purpose || 'Contingency / TLM Expense';
+        } else if (pLower.includes('advance') || pLower.includes('refund')) {
+          assignedFolio = '8';
+          itemTitle = 'Refund of Advance';
+        } else {
+          assignedFolio = '2';
+          itemTitle = purpose || 'School Contingency Expenditure';
+        }
+      } else if (activeDrawer === 'sna') {
+        // CANARA SNA STRICT VOCABULARY
+        assignedFolio = 'V';
+        vText = ref ? ` vide PFMS / SNA Debit Advice No. ${ref}` : '';
+        itemTitle = purpose || 'Vendor Payment through SNA Portal';
+      }
+
+      folioInput.value = assignedFolio;
+
+      const payeeText = payee ? ` to ${payee}` : '';
+      const channelText = channel === 'BANK' ? ' through Bank transfer' : ' in cash';
+
+      preview.value = `By ${itemTitle}${vText}\n(Being payment incurred towards ${itemTitle}${payeeText}${channelText}${vText ? ' ' + vText : ''})`;
     }
 
     function addCompleteTransaction() {
@@ -916,7 +966,8 @@
         '4': { title: 'Folio 4: Kitchen Devices & Utensils Account', entries: [] },
         '5': { title: 'Folio 5: School Infrastructure Repairs Account', entries: [] },
         '2': { title: 'Folio 2: Contingency & Miscellaneous Account', entries: [] },
-        '8': { title: 'Folio 8: Advances / Deficit In-charge Funding', entries: [] }
+        '8': { title: 'Folio 8: Advances / Deficit In-charge Funding', entries: [] },
+        'V': { title: 'Folio V: Canara SNA Vendor Account', entries: [] }
       };
 
       let runningCash = opCash;
@@ -949,7 +1000,7 @@
           if (v.channel === 'CASH') runningCash += v.amt;
           if (v.channel === 'BANK') runningBank += v.amt;
         } else {
-          // Check Cash Deficit
+          // Check Cash Deficit (Folio 8 Advance)
           if (v.channel === 'CASH' && runningCash < v.amt) {
             const deficit = Math.round((v.amt - runningCash) * 100) / 100;
             receipts.push({
@@ -1166,8 +1217,10 @@
         if (led.entries.length > 0) {
           let rows = '';
           let totalDr = 0;
+          let totalCr = 0;
           led.entries.forEach(e => {
             totalDr += e.dr || 0;
+            totalCr += e.cr || 0;
             rows += `<tr><td>${e.dt}</td><td>${e.p}</td><td style="text-align:right;">₹${(e.dr||0).toFixed(2)}</td><td style="text-align:right;">₹${(e.cr||0).toFixed(2)}</td></tr>`;
           });
           html += `
@@ -1175,7 +1228,7 @@
               <h3 style="border-bottom:1.5px solid #1e293b; padding-bottom:4px; margin-bottom:8px; font-size:0.95rem;">${led.title}</h3>
               <table class="statutory-table">
                 <thead><tr><th style="width:90px;">Date</th><th>Particulars / Narration</th><th style="width:120px;">Debit (Exp ₹)</th><th style="width:120px;">Credit (Grant/Adv ₹)</th></tr></thead>
-                <tbody>${rows}<tr style="font-weight:bold; background:#edf2f7;"><td colspan="2" style="text-align:center;">Folio Balance Total</td><td style="text-align:right;">₹${totalDr.toFixed(2)}</td><td></td></tr></tbody>
+                <tbody>${rows}<tr style="font-weight:bold; background:#edf2f7;"><td colspan="2" style="text-align:center;">Folio Balance Total</td><td style="text-align:right;">₹${totalDr.toFixed(2)}</td><td style="text-align:right;">₹${totalCr.toFixed(2)}</td></tr></tbody>
               </table>
             </div>
           `;
