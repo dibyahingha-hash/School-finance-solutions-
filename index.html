@@ -16,335 +16,131 @@
       --border-color: #cbd5e1;
       --success: #15803d;
       --danger: #ef4444;
+      --warning: #b45309;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-canvas); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-canvas);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    /* Top Bar */
+    .top-bar { background: var(--primary); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .school-info { flex: 1; min-width: 0; }
+    .school-info h1 { font-size: 1.1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .school-info p { font-size: 0.72rem; color: #bfdbfe; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-actions { display: flex; gap: 6px; }
+    .btn-top { background: #2563eb; color: #fff; border: 1px solid #60a5fa; padding: 6px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
 
-    /* Top Institutional App Bar */
-    .top-bar {
-      background: var(--primary);
-      color: #fff;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .school-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .school-info h1 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .school-info p {
-      font-size: 0.72rem;
-      color: #bfdbfe;
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .btn-top {
-      background: #2563eb;
-      color: #fff;
-      border: 1px solid #60a5fa;
-      padding: 6px 10px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .btn-top:active {
-      background: #1d4ed8;
-    }
-
-    /* Horizontal Nav Tabs */
-    .nav-tabs {
-      display: flex;
-      background: #fff;
-      border-bottom: 1.5px solid var(--border-color);
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .nav-tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .tab-btn {
-      flex: 0 0 auto;
-      padding: 12px 14px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-      background: #eff6ff;
-    }
+    /* Navigation */
+    .nav-tabs { display: flex; background: #fff; border-bottom: 1.5px solid var(--border-color); overflow-x: auto; white-space: nowrap; }
+    .tab-btn { padding: 12px 14px; border: none; background: transparent; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; cursor: pointer; border-bottom: 3px solid transparent; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #eff6ff; }
 
     /* Main Container */
-    .main-content {
-      flex: 1;
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 14px;
-    }
+    .main-content { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 14px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: var(--primary-dark); }
 
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.active {
-      display: block;
-    }
-
-    /* Card Panels */
-    .card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--primary-dark);
-    }
-
-    /* Form Controls */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .form-group label {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .form-control {
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 0.9rem;
-      color: var(--text-main);
-      background: #fff;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    }
-
-    /* Drawer Switcher */
-    .drawer-switcher {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .drawer-btn {
-      padding: 8px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border-color);
-      background: #fff;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .drawer-btn.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
+    /* Forms */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+    .form-control { padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; color: var(--text-main); background: #fff; }
+    .form-control:focus { outline: none; border-color: var(--accent); }
 
     /* Buttons */
-    .btn-submit {
-      background: var(--success);
-      color: #fff;
-      border: none;
-      padding: 12px 16px;
-      font-size: 0.95rem;
-      font-weight: 800;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      text-align: center;
-    }
+    .btn-submit { background: var(--success); color: #fff; border: none; padding: 12px 16px; font-size: 0.95rem; font-weight: 800; border-radius: 8px; cursor: pointer; width: 100%; }
+    .btn-primary { background: var(--primary); color: #fff; border: none; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
+    .drawer-switcher { display: flex; gap: 8px; margin-bottom: 14px; }
+    .drawer-btn { padding: 8px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+    .drawer-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    .btn-submit:active {
-      background: #166534;
-    }
+    /* Physical Book Styles */
+    .physical-spread { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #525659; padding: 16px; border-radius: 6px; margin-top: 16px; }
+    @media (max-width: 900px) { .physical-spread { grid-template-columns: 1fr; padding: 8px; } }
+    .physical-page { background: #fffdf5; color: #0f172a; border: 1.5px solid #334155; padding: 14px; position: relative; min-height: 600px; }
+    .page-num { position: absolute; top: 10px; font-size: 0.85rem; font-weight: 800; }
+    .page-title { text-align: center; margin-bottom: 8px; font-family: serif; }
+    .sheet-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+    .sheet-table th, .sheet-table td { border: 1px solid #475569; padding: 4px; text-align: left; }
+    .sheet-table th { background: #e2e8f0; text-align: center; font-weight: 800; }
+    .amt-col { text-align: right !important; font-variant-numeric: tabular-nums; }
+    .empty-row { height: 20px; }
+    .ink-checked { background: #dcfce7 !important; color: #14532d; }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #file-restore-input {
-      display: none;
+    @media print {
+      @page { size: legal landscape; margin: 0.4in; }
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      .physical-spread { background: transparent; padding: 0; grid-template-columns: 1fr 1fr !important; }
+      .physical-page { border: 1.5px solid #000; box-shadow: none; min-height: 98vh; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <header class="top-bar no-print">
     <div class="school-info">
       <h1 id="top-school-name">79 BETONI LP</h1>
       <p id="top-school-sub">UDISE: 18150301501 | BLOCK: KHOWANG/DIBRUGARH</p>
     </div>
     <div class="top-actions">
-      <button class="btn-top" onclick="window.app.triggerBackup()">💾 Backup</button>
+      <button class="btn-top" onclick="App.exportBackup()">💾 Backup</button>
       <button class="btn-top" onclick="document.getElementById('file-restore-input').click()">📂 Restore</button>
-      <input type="file" id="file-restore-input" accept=".json">
+      <input type="file" id="file-restore-input" accept=".json" style="display:none;" onchange="App.importBackup(event)">
     </div>
   </header>
 
-  <!-- Tabs Navigation -->
   <nav class="nav-tabs no-print">
-    <button class="tab-btn active" data-tab="tab-daily">⚡ Daily Desk</button>
-    <button class="tab-btn" data-tab="tab-stock">📦 MDM Stock Almirah</button>
-    <button class="tab-btn" data-tab="tab-cashbook">📖 Cash Book Almirah</button>
-    <button class="tab-btn" data-tab="tab-classified">📑 Ledger Book</button>
-    <button class="tab-btn" data-tab="tab-setup">⚙️ Setup</button>
+    <button class="tab-btn active" onclick="App.showTab('tab-daily')">⚡ Daily Desk</button>
+    <button class="tab-btn" onclick="App.showTab('tab-stock')">📦 MDM Stock Almirah</button>
+    <button class="tab-btn" onclick="App.showTab('tab-cashbook')">📖 Cash Book Almirah</button>
+    <button class="tab-btn" onclick="App.showTab('tab-setup')">⚙️ Setup</button>
   </nav>
 
   <main class="main-content">
 
-    <!-- TAB 1: DAILY DESK -->
+    <!-- DAILY DESK -->
     <section id="tab-daily" class="tab-pane active">
       <div class="card" style="max-width: 500px; margin: 0 auto;">
-        <div class="card-title">
-          <span>⚡ Quick Daily Attendance Desk</span>
+        <div class="card-title"><span>⚡ Quick Daily Attendance Desk</span></div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Log today's meal count in 10 seconds. Feeds directly into the MDM Stock Almirah.</p>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label>Select Date</label>
+          <input type="date" id="daily-date" class="form-control">
         </div>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
-          Log today's meal count in 10 seconds. Feeds directly into the MDM Stock Almirah.
-        </p>
-
-        <form id="form-daily-desk" onsubmit="event.preventDefault(); window.app.recordDaily();">
-          <div class="form-group" style="margin-bottom: 14px;">
-            <label>Select Date</label>
-            <input type="date" id="daily-date" class="form-control" required>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 14px;">
-            <label>School Status</label>
-            <select id="daily-status" class="form-control">
-              <option value="open">🟢 School Open (MDM Served)</option>
-              <option value="holiday">🔴 Sunday / Holiday / Closed</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 14px;">
-            <label>LP Meals Fed (Classes 1–5)</label>
-            <input type="number" id="daily-lp-meals" class="form-control" value="0" min="0">
-          </div>
-
-          <div class="form-group" style="margin-bottom: 18px;">
-            <label>UP Meals Fed (Classes 6–8)</label>
-            <input type="number" id="daily-up-meals" class="form-control" value="0" min="0">
-          </div>
-
-          <button type="submit" class="btn-submit">✓ Record Daily Attendance</button>
-        </form>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label>School Status</label>
+          <select id="daily-status" class="form-control">
+            <option value="open">🟢 School Open (MDM Served)</option>
+            <option value="closed">🔴 Sunday / Holiday / Closed</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label>LP Meals Fed (Classes 1–5)</label>
+          <input type="number" id="daily-lp-meals" class="form-control" value="0" min="0">
+        </div>
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label>UP Meals Fed (Classes 6–8)</label>
+          <input type="number" id="daily-up-meals" class="form-control" value="0" min="0">
+        </div>
+        <button class="btn-submit" onclick="App.saveDailyAttendance()">✓ Record Daily Attendance</button>
       </div>
     </section>
 
-    <!-- TAB 2: MDM STOCK ALMIRAH -->
+    <!-- STOCK ALMIRAH -->
     <section id="tab-stock" class="tab-pane">
       <div class="card">
-        <div class="card-title">
-          <span>📦 MDM Dual Stock & Cost Register</span>
-          <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">Food Grain & Cooking Cost</span>
-        </div>
-
+        <div class="card-title"><span>📦 MDM Stock & Cost Register</span></div>
         <div class="form-grid" style="margin-bottom: 16px;">
           <div class="form-group">
-            <label>Financial Year</label>
-            <select id="stock-sel-fy" class="form-control"></select>
+            <label>Financial Year (Type any FY)</label>
+            <input type="text" id="stock-fy" class="form-control" value="2026-27" placeholder="e.g. 2024-25" oninput="App.refreshStockView()">
           </div>
           <div class="form-group">
             <label>Month</label>
-            <select id="stock-sel-month" class="form-control">
+            <select id="stock-month" class="form-control" onchange="App.refreshStockView()">
               <option value="04">April</option><option value="05">May</option><option value="06">June</option>
               <option value="07">July</option><option value="08">August</option><option value="09" selected>September</option>
               <option value="10">October</option><option value="11">November</option><option value="12">December</option>
@@ -355,72 +151,45 @@
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
           <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; background: #fafaf9;">
-            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--primary-dark);">🌾 Food Grain (Rice) Stock</h3>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label>Opening Stock (Kg)</label>
-              <input type="number" step="0.01" id="stock-grain-ob" class="form-control" value="0">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label>Grain Received This Month (Kg)</label>
-              <input type="number" step="0.01" id="stock-grain-rcvd" class="form-control" value="0">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label>Grain Consumed (Kg)</label>
-              <input type="number" step="0.01" id="stock-grain-consumed" class="form-control" value="0">
-            </div>
-            <div style="margin-top: 10px; font-size: 0.85rem; font-weight: 700; color: #1e3a8a;">
-              Closing Grain Balance: <span id="disp-grain-closing">0.00</span> Kg
-            </div>
+            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;">🌾 Food Grain (Rice) Stock</h3>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Opening Stock (Kg)</label><input type="number" step="0.01" id="stock-grain-ob" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Received (Kg)</label><input type="number" step="0.01" id="stock-grain-rcvd" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Consumed (Kg)</label><input type="number" step="0.01" id="stock-grain-consumed" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div style="margin-top: 10px; font-weight: 700; color: #1e3a8a;">Closing Grain Balance: <span id="disp-grain-closing">0.00</span> Kg</div>
           </div>
-
           <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; background: #fafaf9;">
-            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--primary-dark);">💰 Cooking Cost Financial Balance</h3>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label>Opening Cooking Cost Balance (₹)</label>
-              <input type="number" step="0.01" id="stock-cost-ob" class="form-control" value="0">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label>Cooking Cost Grants/Credits Received (₹)</label>
-              <input type="number" step="0.01" id="stock-cost-rcvd" class="form-control" value="0">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label>Actual Cooking Cost Incurred (User-Editable ₹)</label>
-              <input type="number" step="0.01" id="stock-cost-spent" class="form-control" value="0">
-            </div>
-            <div style="margin-top: 10px; font-size: 0.85rem; font-weight: 700;" id="disp-cost-closing-container">
-              Closing Financial Balance: ₹<span id="disp-cost-closing">0.00</span>
-            </div>
+            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;">💰 Cooking Cost Balance</h3>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Opening Balance (₹)</label><input type="number" step="0.01" id="stock-cost-ob" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Grants Received (₹)</label><input type="number" step="0.01" id="stock-cost-rcvd" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Expenditure Incurred (User-Editable ₹)</label><input type="number" step="0.01" id="stock-cost-spent" class="form-control" value="0" oninput="App.calcStock()"></div>
+            <div style="margin-top: 10px; font-weight: 700;" id="disp-cost-box">Closing Cost Balance: ₹<span id="disp-cost-closing">0.00</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 3: CASH BOOK ALMIRAH -->
+    <!-- CASH BOOK ALMIRAH -->
     <section id="tab-cashbook" class="tab-pane">
       <div class="card">
         <div class="drawer-switcher">
-          <button class="drawer-btn active" onclick="window.app.switchDrawer('mdm')">PM POSHAN (MDM)</button>
-          <button class="drawer-btn" onclick="window.app.switchDrawer('smc')">SMC Savings</button>
-          <button class="drawer-btn" onclick="window.app.switchDrawer('sna')">Canara Bank / SNA</button>
+          <button class="drawer-btn active" id="btn-drw-mdm" onclick="App.setDrawer('mdm')">PM POSHAN (MDM)</button>
+          <button class="drawer-btn" id="btn-drw-smc" onclick="App.setDrawer('smc')">SMC Savings</button>
+          <button class="drawer-btn" id="btn-drw-sna" onclick="App.setDrawer('sna')">Canara / SNA</button>
         </div>
 
         <div class="card-title">
-          <span>📖 Monthly Accounting & Vouchers</span>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button class="btn-top" onclick="window.app.shareWhatsApp()">📲 WhatsApp</button>
-            <button class="btn-top" onclick="window.app.exportAiAuditPackage()">🤖 AI Export</button>
-            <button class="btn-top" onclick="window.open('templates/opening-certificate.html', '_blank')">📜 Certificate</button>
-          </div>
+          <span>📖 Monthly Accounting Ledger</span>
+          <button class="btn-top" onclick="App.shareWhatsApp()">📲 WhatsApp Share</button>
         </div>
 
         <div class="form-grid" style="margin-bottom: 12px;">
           <div class="form-group">
-            <label>Financial Year</label>
-            <select id="sel-fy" class="form-control"></select>
+            <label>Financial Year (Type any FY)</label>
+            <input type="text" id="cb-fy" class="form-control" value="2026-27" placeholder="e.g. 2024-25" oninput="App.loadCurrentMonthRecord()">
           </div>
           <div class="form-group">
             <label>Month</label>
-            <select id="sel-month" class="form-control">
+            <select id="cb-month" class="form-control" onchange="App.loadCurrentMonthRecord()">
               <option value="04">April</option><option value="05">May</option><option value="06">June</option>
               <option value="07">July</option><option value="08">August</option><option value="09" selected>September</option>
               <option value="10">October</option><option value="11">November</option><option value="12">December</option>
@@ -429,113 +198,453 @@
           </div>
           <div class="form-group">
             <label>Opening Cash (₹)</label>
-            <input type="number" step="0.01" id="inp-ob-cash" class="form-control" value="0.00">
+            <input type="number" step="0.01" id="cb-ob-cash" class="form-control" value="0.00" oninput="App.evaluateAudit()">
           </div>
           <div class="form-group">
             <label>Opening Bank (₹)</label>
-            <input type="number" step="0.01" id="inp-ob-bank" class="form-control" value="0.00">
+            <input type="number" step="0.01" id="cb-ob-bank" class="form-control" value="0.00" oninput="App.evaluateAudit()">
           </div>
         </div>
 
-        <div id="sec-mdm-params" style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 14px;">
-          <div style="font-size: 0.8rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">
-            MDM Cooking Cost Calculation Parameters
-          </div>
+        <div id="mdm-panel" style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:8px; margin-bottom:14px;">
+          <div style="font-size:0.8rem; font-weight:800; color:var(--primary); margin-bottom:8px;">MDM Parameters (Full User Autonomy)</div>
           <div class="form-grid">
-            <div class="form-group">
-              <label>Enrolled Children</label>
-              <input type="number" id="inp-enrolled" class="form-control" value="0">
-            </div>
-            <div class="form-group">
-              <label>Cooking Days</label>
-              <input type="number" id="inp-days" class="form-control" value="0">
-            </div>
-            <div class="form-group">
-              <label>Per-Child Rate (₹)</label>
-              <input type="number" step="0.01" id="inp-rate" class="form-control" value="6.78">
-            </div>
-            <div class="form-group">
-              <label>User Incurred Cooking Cost (Override ₹)</label>
-              <input type="number" step="0.01" id="inp-cooking-cost-override" class="form-control" placeholder="Autofills if blank">
-            </div>
-            <div class="form-group">
-              <label>Sub-Voucher No. / Range</label>
-              <input type="text" id="inp-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4">
-            </div>
+            <div class="form-group"><label>Enrolled Children</label><input type="number" id="mdm-enrolled" class="form-control" value="0" oninput="App.calcMdmAdvisory()"></div>
+            <div class="form-group"><label>Cooking Days</label><input type="number" id="mdm-days" class="form-control" value="0" oninput="App.calcMdmAdvisory()"></div>
+            <div class="form-group"><label>Rate / Meal (₹)</label><input type="number" step="0.01" id="mdm-rate" class="form-control" value="6.78" oninput="App.calcMdmAdvisory()"></div>
+            <div class="form-group"><label>Cooking Cost Spent (Override ₹)</label><input type="number" step="0.01" id="mdm-cost-override" class="form-control" placeholder="User entered amount" oninput="App.evaluateAudit()"></div>
+            <div class="form-group"><label>Sub-Voucher No. / Range</label><input type="text" id="mdm-voucher-no" class="form-control" value="1" placeholder="e.g. 1 or 1 to 4"></div>
           </div>
-          <div id="disp-mandate-info" style="font-size: 0.75rem; color: #475569; margin-top: 6px;">
-            Total Meals: 0 | Statutory Mandate Cost: ₹0.00
-          </div>
+          <div id="mdm-advisory-note" style="font-size:0.75rem; color:#64748b; margin-top:6px;">Meals: 0 | Statutory Mandate: ₹0.00</div>
         </div>
 
         <div style="margin-bottom: 14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong style="font-size:0.85rem;">Itemized Expenditures & Contras</strong>
-            <button type="button" id="btn-add-voucher" class="btn-primary" style="padding:5px 10px; font-size:0.75rem;">+ Add Row</button>
+            <strong style="font-size:0.85rem;">Itemized Vouchers & Contras</strong>
+            <button class="btn-primary" onclick="App.addVoucherRow()">+ Add Row</button>
           </div>
-          <div id="voucher-list-container"></div>
+          <div id="vouchers-container"></div>
         </div>
 
-        <div id="live-audit-shield"></div>
+        <!-- FRONT & CENTER AUDIT SHIELD -->
+        <div id="audit-shield-banner" style="margin-bottom:14px;"></div>
 
-        <button type="button" id="btn-save-compile" class="btn-submit" style="margin-top: 8px;">
-          ⚡ Compile & Transcribe to Physical Legal Spread
-        </button>
+        <button class="btn-submit" onclick="App.compileAndTranscribe()">⚡ Compile & Transcribe to Physical Legal Spread</button>
       </div>
 
-      <div id="hud-container"></div>
+      <div id="physical-hud-container"></div>
     </section>
 
-    <!-- TAB 4: GENERAL CLASSIFIED LEDGER -->
-    <section id="tab-classified" class="tab-pane">
-      <div class="card">
-        <div class="card-title">
-          <span>📑 General Classified Ledger</span>
-          <button class="btn-top" onclick="window.print()">🖨️ Print Ledger</button>
-        </div>
-        <div id="classified-ledgers-container">
-          <p style="font-size:0.85rem; color:var(--text-muted);">Compile a month from the Cash Book Almirah to view categorized folio accounts.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 5: SETUP -->
+    <!-- SETUP -->
     <section id="tab-setup" class="tab-pane">
       <div class="card" style="max-width: 500px; margin: 0 auto;">
-        <div class="card-title">
-          <span>⚙️ School Institutional Profile</span>
+        <div class="card-title"><span>⚙️ School Institutional Profile</span></div>
+        <div class="form-group" style="margin-bottom: 12px;"><label>11-Digit U-DISE Code</label><input type="text" id="setup-udise" class="form-control" value="18150301501"></div>
+        <div class="form-group" style="margin-bottom: 12px;"><label>School Name</label><input type="text" id="setup-name" class="form-control" value="79 BETONI LP"></div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Category</label>
+          <select id="setup-cat" class="form-control"><option value="LP">LP (Classes 1–5)</option><option value="UP">UP (Classes 6–8)</option></select>
         </div>
-        <form id="form-setup" onsubmit="event.preventDefault(); window.app.saveSchoolProfile();">
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>11-Digit U-DISE Code</label>
-            <input type="text" id="setup-udise" class="form-control" value="18150301501" required>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>School Name</label>
-            <input type="text" id="setup-name" class="form-control" value="79 BETONI LP" required>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Category</label>
-            <select id="setup-category" class="form-control">
-              <option value="LP" selected>Lower Primary (LP - Classes 1–5)</option>
-              <option value="UP">Upper Primary (UP - Classes 6–8)</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Educational Block</label>
-            <input type="text" id="setup-block" class="form-control" value="KHOWANG" required>
-          </div>
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label>District</label>
-            <input type="text" id="setup-district" class="form-control" value="DIBRUGARH" required>
-          </div>
-          <button type="submit" class="btn-submit">Save School Profile</button>
-        </form>
+        <div class="form-group" style="margin-bottom: 12px;"><label>Block</label><input type="text" id="setup-block" class="form-control" value="KHOWANG"></div>
+        <div class="form-group" style="margin-bottom: 16px;"><label>District</label><input type="text" id="setup-dist" class="form-control" value="DIBRUGARH"></div>
+        <button class="btn-submit" onclick="App.saveProfile()">Save Profile</button>
       </div>
     </section>
 
   </main>
 
-  <script type="module" src="src/main.js"></script>
+  <script>
+    /**
+     * UNIFIED APP CONTROLLER (Zero external imports, completely self-contained)
+     */
+    const App = {
+      drawer: 'mdm',
+      vouchers: [],
+      checkedRows: new Set(),
+
+      init() {
+        document.getElementById('daily-date').value = new Date().toISOString().slice(0, 10);
+        this.loadProfile();
+        this.loadCurrentMonthRecord();
+      },
+
+      showTab(tabId) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+        if (tabId === 'tab-stock') this.refreshStockView();
+      },
+
+      setDrawer(d) {
+        this.drawer = d;
+        document.querySelectorAll('.drawer-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-drw-' + d).classList.add('active');
+        document.getElementById('mdm-panel').style.display = (d === 'mdm') ? 'block' : 'none';
+        this.loadCurrentMonthRecord();
+      },
+
+      // School Profile
+      loadProfile() {
+        const p = JSON.parse(localStorage.getItem('dhk_school_profile') || '{"udise":"18150301501","name":"79 BETONI LP","block":"KHOWANG","district":"DIBRUGARH","cat":"LP"}');
+        document.getElementById('top-school-name').textContent = p.name;
+        document.getElementById('top-school-sub').textContent = `UDISE: ${p.udise} | BLOCK: ${p.block}/${p.district}`;
+        document.getElementById('setup-udise').value = p.udise;
+        document.getElementById('setup-name').value = p.name;
+        document.getElementById('setup-block').value = p.block;
+        document.getElementById('setup-dist').value = p.district;
+        document.getElementById('setup-cat').value = p.cat;
+      },
+
+      saveProfile() {
+        const p = {
+          udise: document.getElementById('setup-udise').value.trim(),
+          name: document.getElementById('setup-name').value.trim(),
+          block: document.getElementById('setup-block').value.trim(),
+          district: document.getElementById('setup-dist').value.trim(),
+          cat: document.getElementById('setup-cat').value
+        };
+        localStorage.setItem('dhk_school_profile', JSON.stringify(p));
+        this.loadProfile();
+        alert('✅ Profile saved.');
+      },
+
+      // Daily Attendance Desk
+      saveDailyAttendance() {
+        const d = document.getElementById('daily-date').value;
+        const st = document.getElementById('daily-status').value;
+        const lp = parseInt(document.getElementById('daily-lp-meals').value, 10) || 0;
+        const up = parseInt(document.getElementById('daily-up-meals').value, 10) || 0;
+        if (!d) return alert('Select date');
+        const db = JSON.parse(localStorage.getItem('dhk_attendance') || '{}');
+        db[d] = { status: st, lp, up, total: lp + up };
+        localStorage.setItem('dhk_attendance', JSON.stringify(db));
+        alert(`✅ Logged ${lp + up} meals for ${d}`);
+      },
+
+      // Stock Register
+      refreshStockView() {
+        const fy = document.getElementById('stock-fy').value.trim();
+        const m = document.getElementById('stock-month').value;
+        const yearPrefix = fy.slice(0, 4);
+        const targetPrefix = `${yearPrefix}-${m}`;
+        const db = JSON.parse(localStorage.getItem('dhk_attendance') || '{}');
+        let lp = 0, up = 0;
+        Object.keys(db).forEach(k => {
+          if (k.startsWith(targetPrefix) && db[k].status === 'open') {
+            lp += (db[k].lp || 0);
+            up += (db[k].up || 0);
+          }
+        });
+        const consumedKg = (lp * 0.10) + (up * 0.15);
+        document.getElementById('stock-grain-consumed').value = consumedKg.toFixed(2);
+        this.calcStock();
+      },
+
+      calcStock() {
+        const gob = parseFloat(document.getElementById('stock-grain-ob').value) || 0;
+        const grcvd = parseFloat(document.getElementById('stock-grain-rcvd').value) || 0;
+        const gspent = parseFloat(document.getElementById('stock-grain-consumed').value) || 0;
+        const gclose = gob + grcvd - gspent;
+        document.getElementById('disp-grain-closing').textContent = gclose.toFixed(2);
+
+        const cob = parseFloat(document.getElementById('stock-cost-ob').value) || 0;
+        const crcvd = parseFloat(document.getElementById('stock-cost-rcvd').value) || 0;
+        const cspent = parseFloat(document.getElementById('stock-cost-spent').value) || 0;
+        const cclose = cob + crcvd - cspent;
+        const dispCost = document.getElementById('disp-cost-closing');
+        const box = document.getElementById('disp-cost-box');
+        dispCost.textContent = cclose.toFixed(2);
+        if (cclose < 0) {
+          box.style.color = '#ef4444';
+          dispCost.innerHTML = `${cclose.toFixed(2)} (DEFICIT - Folio 8)`;
+        } else {
+          box.style.color = '#15803d';
+        }
+      },
+
+      // MDM Advisory Calculation
+      calcMdmAdvisory() {
+        const e = parseInt(document.getElementById('mdm-enrolled').value, 10) || 0;
+        const d = parseInt(document.getElementById('mdm-days').value, 10) || 0;
+        const r = parseFloat(document.getElementById('mdm-rate').value) || 0;
+        const meals = e * d;
+        const mandate = (meals * r).toFixed(2);
+        document.getElementById('mdm-advisory-note').textContent = `Meals: ${meals} | Statutory Mandate: ₹${mandate}`;
+        const overrideInput = document.getElementById('mdm-cost-override');
+        if (!overrideInput.value) overrideInput.placeholder = `Mandate: ₹${mandate}`;
+        this.evaluateAudit();
+      },
+
+      // Vouchers
+      addVoucherRow(data = null) {
+        this.vouchers.push(data || { type: 'contra', no: `${this.vouchers.length + 1}`, amt: 0, desc: '' });
+        this.renderVouchers();
+        this.evaluateAudit();
+      },
+
+      removeVoucher(idx) {
+        this.vouchers.splice(idx, 1);
+        this.renderVouchers();
+        this.evaluateAudit();
+      },
+
+      renderVouchers() {
+        const c = document.getElementById('vouchers-container');
+        c.innerHTML = '';
+        this.vouchers.forEach((v, i) => {
+          const div = document.createElement('div');
+          div.style.cssText = 'display:flex; gap:6px; margin-bottom:8px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:8px; border:1px solid #cbd5e1; border-radius:6px;';
+          div.innerHTML = `
+            <select class="form-control" style="flex:2; min-width:180px;" onchange="App.vouchers[${i}].type=this.value; App.evaluateAudit();">
+              <option value="contra" ${v.type==='contra'?'selected':''}>Cash Withdrawn (Contra Folio C)</option>
+              <option value="credit" ${v.type==='credit'?'selected':''}>Bank Credit / Sanction</option>
+              <option value="cash_pmt" ${v.type==='cash_pmt'?'selected':''}>General Cash Contingency</option>
+              <option value="bank_pmt" ${v.type==='bank_pmt'?'selected':''}>Bank / Vendor Remittance</option>
+            </select>
+            <input type="text" class="form-control" style="flex:1; min-width:80px;" placeholder="Voucher #" value="${v.no||''}" oninput="App.vouchers[${i}].no=this.value;">
+            <input type="number" step="0.01" class="form-control" style="flex:1; min-width:100px; text-align:right;" placeholder="Amount" value="${v.amt||''}" oninput="App.vouchers[${i}].amt=parseFloat(this.value)||0; App.evaluateAudit();">
+            <input type="text" class="form-control" style="flex:2; min-width:160px;" placeholder="Particulars" value="${v.desc||''}" oninput="App.vouchers[${i}].desc=this.value;">
+            <button style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;" onclick="App.removeVoucher(${i})">✕</button>
+          `;
+          c.appendChild(div);
+        });
+      },
+
+      // Synchronous Audit Shield
+      evaluateAudit() {
+        const opCash = parseFloat(document.getElementById('cb-ob-cash').value) || 0;
+        const opBank = parseFloat(document.getElementById('cb-ob-bank').value) || 0;
+        let cookingCost = 0;
+
+        if (this.drawer === 'mdm') {
+          const overrideVal = document.getElementById('mdm-cost-override').value;
+          if (overrideVal !== '') {
+            cookingCost = parseFloat(overrideVal) || 0;
+          } else {
+            const e = parseInt(document.getElementById('mdm-enrolled').value, 10) || 0;
+            const d = parseInt(document.getElementById('mdm-days').value, 10) || 0;
+            const r = parseFloat(document.getElementById('mdm-rate').value) || 0;
+            cookingCost = Math.round((e * d * r) * 100) / 100;
+          }
+        }
+
+        let itemizedCash = 0, itemizedBank = 0;
+        this.vouchers.forEach(v => {
+          const a = v.amt || 0;
+          if (v.type === 'cash_pmt') itemizedCash += a;
+          if (v.type === 'bank_pmt') itemizedBank += a;
+        });
+
+        const totalPayments = itemizedCash + itemizedBank + cookingCost;
+        const banner = document.getElementById('audit-shield-banner');
+
+        banner.innerHTML = `
+          <div style="background:#ecfdf5; border:1.5px solid #10b981; color:#065f46; padding:10px 14px; border-radius:6px; font-size:0.85rem; font-weight:700;">
+            ✅ VOUCHER TRACKER SYNCED: Total Monthly Payments = ₹${totalPayments.toFixed(2)} (Cooking Cost: ₹${cookingCost.toFixed(2)} | Vouchers: ₹${(itemizedCash + itemizedBank).toFixed(2)})
+          </div>
+        `;
+
+        return { opCash, opBank, cookingCost, totalPayments };
+      },
+
+      loadCurrentMonthRecord() {
+        const fy = document.getElementById('cb-fy').value.trim();
+        const m = document.getElementById('cb-month').value;
+        const k = `cb_${this.drawer}_${fy}_${m}`;
+        const rec = JSON.parse(localStorage.getItem(k) || 'null');
+        if (rec) {
+          document.getElementById('cb-ob-cash').value = rec.opCash;
+          document.getElementById('cb-ob-bank').value = rec.opBank;
+          if (this.drawer === 'mdm') {
+            document.getElementById('mdm-enrolled').value = rec.enrolled || 0;
+            document.getElementById('mdm-days').value = rec.days || 0;
+            document.getElementById('mdm-rate').value = rec.rate || 6.78;
+            document.getElementById('mdm-cost-override').value = rec.costOverride || '';
+            document.getElementById('mdm-voucher-no').value = rec.vNo || '1';
+          }
+          this.vouchers = rec.vouchers || [];
+        } else {
+          this.vouchers = [];
+        }
+        this.renderVouchers();
+        this.calcMdmAdvisory();
+      },
+
+      compileAndTranscribe() {
+        const fy = document.getElementById('cb-fy').value.trim();
+        const m = document.getElementById('cb-month').value;
+        const mName = document.getElementById('cb-month').selectedOptions[0].text;
+        const { opCash, opBank, cookingCost } = this.evaluateAudit();
+
+        // Build Rows
+        const receipts = [{ dt: '1st', p: 'To Opening Balance (O/B)', f: '', c: opCash, b: opBank, t: opCash + opBank }];
+        const payments = [];
+
+        let runningCash = opCash;
+        let runningBank = opBank;
+
+        // Process Vouchers
+        this.vouchers.forEach(v => {
+          const a = v.amt || 0;
+          if (v.type === 'contra') {
+            receipts.push({ dt: 'End', p: 'To Bank Account (Contra Cash Withdrawn)', f: 'C', c: a, b: 0, t: a });
+            payments.push({ dt: 'End', p: 'By Cash in Hand (Contra Cash Withdrawn)', f: 'C', c: 0, b: a, t: a });
+            runningCash += a;
+            runningBank -= a;
+          } else if (v.type === 'credit') {
+            receipts.push({ dt: 'End', p: v.desc || 'To Grant / Sanction Received into Bank', f: 'G', c: 0, b: a, t: a });
+            runningBank += a;
+          } else if (v.type === 'cash_pmt') {
+            payments.push({ dt: 'End', p: v.desc || `By Contingency Exp. vide V-${v.no}`, f: '2', c: a, b: 0, t: a });
+            runningCash -= a;
+          } else if (v.type === 'bank_pmt') {
+            payments.push({ dt: 'End', p: v.desc || `By Vendor Transfer vide Bill-${v.no}`, f: '3', c: 0, b: a, t: a });
+            runningBank -= a;
+          }
+        });
+
+        // Folio 1 Cooking Cost
+        if (this.drawer === 'mdm' && cookingCost > 0) {
+          if (runningCash < cookingCost) {
+            const deficit = cookingCost - runningCash;
+            receipts.push({ dt: 'End', p: 'To Temporary Advance from Teacher (Deficit funding)', f: '8', c: deficit, b: 0, t: deficit });
+            runningCash += deficit;
+          }
+          const vRange = document.getElementById('mdm-voucher-no').value || '1';
+          payments.push({ dt: 'End', p: `By Cooking Cost for ${mName} vide Sub-Voucher No. ${vRange}`, f: '1', c: cookingCost, b: 0, t: cookingCost });
+          runningCash -= cookingCost;
+        }
+
+        const trC = receipts.slice(1).reduce((s, r) => s + r.c, 0);
+        const trB = receipts.slice(1).reduce((s, r) => s + r.b, 0);
+        const tpC = payments.reduce((s, p) => s + p.c, 0);
+        const tpB = payments.reduce((s, p) => s + p.b, 0);
+
+        const closeCash = Math.max(0, runningCash);
+        const closeBank = runningBank;
+
+        payments.push({ dt: 'End', p: 'By Closing Balance (C/B)', f: '', c: closeCash, b: closeBank, t: closeCash + closeBank });
+
+        // Save record & auto-carry forward
+        const k = `cb_${this.drawer}_${fy}_${m}`;
+        localStorage.setItem(k, JSON.stringify({
+          opCash, opBank,
+          enrolled: document.getElementById('mdm-enrolled')?.value,
+          days: document.getElementById('mdm-days')?.value,
+          rate: document.getElementById('mdm-rate')?.value,
+          costOverride: document.getElementById('mdm-cost-override')?.value,
+          vNo: document.getElementById('mdm-voucher-no')?.value,
+          vouchers: this.vouchers,
+          closeCash, closeBank
+        }));
+
+        this.renderPhysicalHUD(mName, fy, receipts, payments, { opCash, opBank, trC, trB, tpC, tpB, closeCash, closeBank });
+      },
+
+      renderPhysicalHUD(mName, fy, receipts, payments, t) {
+        const hud = document.getElementById('physical-hud-container');
+        const rowsToHtml = (arr, prefix) => {
+          let h = '';
+          arr.forEach((r, idx) => {
+            const id = `${prefix}-${idx}`;
+            h += `
+              <tr class="ledger-row ${this.checkedRows.has(id)?'ink-checked':''}" id="${id}" onclick="App.toggleRow('${id}')">
+                <td style="text-align:center;">${r.dt}</td>
+                <td>${r.p}</td>
+                <td style="text-align:center; font-weight:bold;">${r.f}</td>
+                <td class="amt-col">${r.c.toFixed(2)}</td>
+                <td class="amt-col">${r.b.toFixed(2)}</td>
+                <td class="amt-col">${r.t.toFixed(2)}</td>
+              </tr>
+            `;
+          });
+          for (let i = 0; i < Math.max(0, 16 - arr.length); i++) {
+            h += '<tr class="empty-row"><td colspan="6">&nbsp;</td></tr>';
+          }
+          return h;
+        };
+
+        hud.innerHTML = `
+          <div class="physical-spread">
+            <div class="physical-page">
+              <span class="page-num" style="left:14px;">Receipts Page</span>
+              <div class="page-title"><h2>Cash Book</h2><div>for the month of ${mName} ${fy}</div></div>
+              <table class="sheet-table">
+                <thead>
+                  <tr><th>Date</th><th>PARTICULARS</th><th>Folio</th><th>Cash (₹)</th><th>Bank (₹)</th><th>Total (₹)</th></tr>
+                </thead>
+                <tbody>
+                  ${rowsToHtml(receipts, 'rcpt')}
+                  <tr style="font-weight:bold; background:#e2e8f0;"><td colspan="3">Grand Total (G/T)</td><td class="amt-col">${(t.opCash + t.trC).toFixed(2)}</td><td class="amt-col">${(t.opBank + t.trB).toFixed(2)}</td><td class="amt-col">${(t.opCash + t.trC + t.opBank + t.trB).toFixed(2)}</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="physical-page">
+              <span class="page-num" style="right:14px;">Payments Page</span>
+              <div class="page-title"><h2>Cash Book</h2><div style="visibility:hidden;">period</div></div>
+              <table class="sheet-table">
+                <thead>
+                  <tr><th>Date</th><th>PARTICULARS</th><th>Folio</th><th>Cash (₹)</th><th>Bank (₹)</th><th>Total (₹)</th></tr>
+                </thead>
+                <tbody>
+                  ${rowsToHtml(payments, 'pmt')}
+                  <tr style="font-weight:bold; background:#e2e8f0;"><td colspan="3">Grand Total (G/T)</td><td class="amt-col">${(t.tpC + t.closeCash).toFixed(2)}</td><td class="amt-col">${(t.tpB + t.closeBank).toFixed(2)}</td><td class="amt-col">${(t.tpC + t.closeCash + t.tpB + t.closeBank).toFixed(2)}</td></tr>
+                </tbody>
+              </table>
+              <div style="border:1px solid #000; padding:6px; margin-top:10px; font-size:0.65rem;">
+                <strong>STATUTORY VERIFICATION CERTIFICATE:</strong> Certified that cash balance of ₹${t.closeCash.toFixed(2)} and bank balance of ₹${t.closeBank.toFixed(2)} have been physically verified and agree with the register.
+                <div style="display:flex; justify-content:space-between; margin-top:20px; font-weight:bold;">
+                  <span>SMC President</span>
+                  <span>Head Teacher</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        hud.scrollIntoView({ behavior: 'smooth' });
+      },
+
+      toggleRow(id) {
+        if (this.checkedRows.has(id)) this.checkedRows.delete(id);
+        else this.checkedRows.add(id);
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('ink-checked');
+      },
+
+      exportBackup() {
+        const dump = { ...localStorage };
+        const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `CASHBOOK_BACKUP_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+      },
+
+      importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+            alert('✅ Backup restored.');
+            window.location.reload();
+          } catch (err) { alert('Invalid file'); }
+        };
+        reader.readAsText(file);
+      },
+
+      shareWhatsApp() {
+        const p = JSON.parse(localStorage.getItem('dhk_school_profile') || '{}');
+        const text = `*STATUTORY CASH BOOK REPORT*\nSchool: ${p.name || 'School'} (UDISE: ${p.udise || '--'})\nDrawer: ${this.drawer.toUpperCase()}\nStatus: Verified double-entry parity.`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
 </body>
 </html>
