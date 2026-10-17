@@ -117,47 +117,76 @@
       letter-spacing: 0.5px;
     }
 
-    .statutory-table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1.5px solid var(--ledger-border-dark);
-      font-size: 0.72rem;
-      line-height: 1.25;
-      background: var(--ledger-paper);
-    }
+    /* RIGID, PROPORTIONAL LEDGER COLUMNS */
+    .col-dt { width: 8%; text-align: center; }
+    .col-particulars { width: 44%; } /* GIVES HUGE PROPORTIONAL ROOM FOR NARRATION */
+    .col-folio { width: 6%; text-align: center; white-space: nowrap; }
+    .col-rs { width: 10%; text-align: right; padding-right: 3px !important; border-right: 1px dotted var(--ledger-border-light) !important; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .col-p { width: 4%; text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
-    .statutory-table th, .statutory-table td {
-      border-right: 1px solid var(--ledger-border-rule);
-      border-bottom: 1px solid var(--ledger-border-light);
-      padding: 4px 2px;
-    }
-    /* STRICT TABLE LAYOUT & LOCKED COLUMN SIZES */
-    .statutory-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed; /* Enforces strict non-collapsing column widths */
-      border: 1.5px solid var(--ledger-border-dark);
-      font-size: 0.70rem;
-      line-height: 1.2;
-      background: var(--ledger-paper);
-    }
+    /* HARD LANDSCAPE ENFORCEMENT */
+    @media print {
+      @page {
+        size: legal landscape; /* Forces legal landscape */
+        margin: 0.25in 0.35in;
+      }
+      *, *:before, *:after {
+        box-sizing: border-box !important;
+      }
+      html, body {
+        width: 100% !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      
+      .physical-spread {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+      }
 
-    .statutory-table th, .statutory-table td {
-      border-right: 1px solid var(--ledger-border-rule);
-      border-bottom: 1px solid var(--ledger-border-light);
-      padding: 3px 2px;
-      overflow: hidden;
-      word-wrap: break-word;
-    }
+      .physical-page {
+        display: block !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        border: 2px solid #000 !important;
+        padding: 8px 12px !important;
+        margin-bottom: 0 !important;
+        background: #fff !important;
+      }
 
-    .statutory-table th {
-      border-top: 1.5px solid var(--ledger-border-dark);
-      border-bottom: 1.5px solid var(--ledger-border-dark);
-      background: var(--ledger-header-bg);
-      text-align: center;
-      font-weight: 800;
-      color: #0f172a;
+      .physical-page:first-child {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .statutory-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        font-size: 0.76rem !important;
+        line-height: 1.25 !important;
+      }
+
+      .statutory-table th {
+        font-size: 0.75rem !important;
+        padding: 4px 2px !important;
+      }
+
+      .statutory-table td {
+        padding: 3px 4px !important;
+      }
+
+      .statutory-table tr.empty-ruled-row {
+        height: 20px !important;
+      }
     }
+    
 
     /* SPECIFIC RIGID COLUMN WIDTHS */
     .col-dt { width: 55px; text-align: center; }
