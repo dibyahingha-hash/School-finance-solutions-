@@ -2,27 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DHK PM POSHAN & Statutory School CashBook Pro</title>
   <style>
     :root {
       --primary: #1e3a8a;
       --primary-dark: #172554;
-      --accent: #0284c7;
-      --bg-canvas: #f1f5f9;
+      --accent: #2563eb;
+      --bg-canvas: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #cbd5e1;
-      --success: #10b981;
+      --success: #15803d;
       --danger: #ef4444;
-      --warning: #f59e0b;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -34,77 +34,94 @@
       flex-direction: column;
     }
 
-    /* Top Institution App Bar */
+    /* Top Institutional App Bar */
     .top-bar {
       background: var(--primary);
       color: #fff;
-      padding: 12px 18px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .school-info {
+      flex: 1;
+      min-width: 0;
     }
 
     .school-info h1 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .school-info p {
-      font-size: 0.75rem;
-      color: #93c5fd;
+      font-size: 0.72rem;
+      color: #bfdbfe;
       margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .top-actions {
       display: flex;
-      gap: 10px;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .btn-top {
       background: #2563eb;
       color: #fff;
       border: 1px solid #60a5fa;
-      padding: 6px 12px;
-      font-size: 0.78rem;
+      padding: 6px 10px;
+      font-size: 0.75rem;
       font-weight: 700;
       border-radius: 6px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
-    .btn-top:hover {
+    .btn-top:active {
       background: #1d4ed8;
     }
 
-    /* Main Navigation Tabs */
+    /* Horizontal Nav Tabs */
     .nav-tabs {
       display: flex;
       background: #fff;
-      border-bottom: 2px solid var(--border-color);
+      border-bottom: 1.5px solid var(--border-color);
       overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
     }
 
     .tab-btn {
-      flex: 1;
-      min-width: 130px;
-      padding: 12px 10px;
+      flex: 0 0 auto;
+      padding: 12px 14px;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       border-bottom: 3px solid transparent;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
+      gap: 5px;
     }
 
     .tab-btn.active {
@@ -116,10 +133,10 @@
     /* Main Container */
     .main-content {
       flex: 1;
-      max-width: 1300px;
+      max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-      padding: 16px;
+      padding: 14px;
     }
 
     .tab-pane {
@@ -133,9 +150,9 @@
     /* Card Panels */
     .card {
       background: var(--card-bg);
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       padding: 16px;
       margin-bottom: 16px;
     }
@@ -153,7 +170,7 @@
     /* Form Controls */
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 12px;
     }
 
@@ -164,17 +181,18 @@
     }
 
     .form-group label {
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       color: var(--text-muted);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .form-control {
-      padding: 8px 10px;
+      padding: 10px 12px;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-main);
       background: #fff;
     }
@@ -182,18 +200,20 @@
     .form-control:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     }
 
-    /* Drawer Switcher Buttons */
+    /* Drawer Switcher */
     .drawer-switcher {
       display: flex;
       gap: 8px;
       margin-bottom: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
     }
 
     .drawer-btn {
-      padding: 7px 14px;
+      padding: 8px 14px;
       border-radius: 20px;
       border: 1px solid var(--border-color);
       background: #fff;
@@ -201,6 +221,7 @@
       font-weight: 700;
       cursor: pointer;
       color: var(--text-muted);
+      white-space: nowrap;
     }
 
     .drawer-btn.active {
@@ -209,44 +230,35 @@
       border-color: var(--primary);
     }
 
-    /* Synchronous Audit Shield Banner */
-    #live-audit-shield {
-      margin-top: 14px;
-      margin-bottom: 14px;
+    /* Buttons */
+    .btn-submit {
+      background: var(--success);
+      color: #fff;
+      border: none;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
     }
 
-    /* Action Buttons */
+    .btn-submit:active {
+      background: #166534;
+    }
+
     .btn-primary {
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 10px 18px;
+      padding: 10px 16px;
       font-size: 0.85rem;
       font-weight: 700;
       border-radius: 6px;
       cursor: pointer;
     }
 
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .btn-success {
-      background: #15803d;
-      color: #fff;
-      border: none;
-      padding: 10px 18px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .btn-success:hover {
-      background: #166534;
-    }
-
-    /* Hidden File Input for Restore */
     #file-restore-input {
       display: none;
     }
@@ -254,66 +266,65 @@
 </head>
 <body>
 
-  <!-- Top Institutional Bar -->
+  <!-- Header -->
   <header class="top-bar no-print">
     <div class="school-info">
-      <h1 id="top-school-name">79 BETONI LP[span_4](start_span)[span_4](end_span)</h1>
-      <p id="top-school-sub">UDISE: 18150301501 | BLOCK: KHOWANG/DIBRUGARH[span_5](start_span)[span_5](end_span)</p>
+      <h1 id="top-school-name">79 BETONI LP</h1>
+      <p id="top-school-sub">UDISE: 18150301501 | BLOCK: KHOWANG/DIBRUGARH</p>
     </div>
     <div class="top-actions">
-      <button class="btn-top" onclick="window.app.triggerBackup()">💾 Backup[span_6](start_span)[span_6](end_span)</button>
+      <button class="btn-top" onclick="window.app.triggerBackup()">💾 Backup</button>
       <button class="btn-top" onclick="document.getElementById('file-restore-input').click()">📂 Restore</button>
       <input type="file" id="file-restore-input" accept=".json">
     </div>
   </header>
 
-  <!-- Navigation Tabs -->
+  <!-- Tabs Navigation -->
   <nav class="nav-tabs no-print">
-    <button class="tab-btn active" data-tab="tab-daily">⚡ Daily Desk[span_7](start_span)[span_7](end_span)</button>
-    <button class="tab-btn" data-tab="tab-stock">📦 MDM Stock Almirah[span_8](start_span)[span_8](end_span)</button>
-    <button class="tab-btn" data-tab="tab-cashbook">📖 Cash Book Almirah[span_9](start_span)[span_9](end_span)</button>
+    <button class="tab-btn active" data-tab="tab-daily">⚡ Daily Desk</button>
+    <button class="tab-btn" data-tab="tab-stock">📦 MDM Stock Almirah</button>
+    <button class="tab-btn" data-tab="tab-cashbook">📖 Cash Book Almirah</button>
     <button class="tab-btn" data-tab="tab-classified">📑 Ledger Book</button>
-    <button class="tab-btn" data-tab="tab-setup">⚙️ Setup[span_10](start_span)[span_10](end_span)</button>
+    <button class="tab-btn" data-tab="tab-setup">⚙️ Setup</button>
   </nav>
 
-  <!-- Main Container -->
   <main class="main-content">
 
-    <!-- TAB 1: QUICK DAILY ATTENDANCE DESK -->
+    <!-- TAB 1: DAILY DESK -->
     <section id="tab-daily" class="tab-pane active">
-      <div class="card" style="max-width: 580px; margin: 0 auto;">
+      <div class="card" style="max-width: 500px; margin: 0 auto;">
         <div class="card-title">
-          <span>⚡ Quick Daily Attendance Desk[span_11](start_span)[span_11](end_span)</span>
+          <span>⚡ Quick Daily Attendance Desk</span>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">
-          Log today's meal count in 10 seconds. Feeds directly into the MDM Stock Almirah[span_12](start_span)[span_12](end_span).
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+          Log today's meal count in 10 seconds. Feeds directly into the MDM Stock Almirah.
         </p>
 
         <form id="form-daily-desk" onsubmit="event.preventDefault(); window.app.recordDaily();">
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Select Date[span_13](start_span)[span_13](end_span)</label>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label>Select Date</label>
             <input type="date" id="daily-date" class="form-control" required>
           </div>
 
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>School Status[span_14](start_span)[span_14](end_span)</label>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label>School Status</label>
             <select id="daily-status" class="form-control">
-              <option value="open">🟢 School Open (MDM Served)[span_15](start_span)[span_15](end_span)</option>
+              <option value="open">🟢 School Open (MDM Served)</option>
               <option value="holiday">🔴 Sunday / Holiday / Closed</option>
             </select>
           </div>
 
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>LP Meals Fed (Classes 1–5)[span_16](start_span)[span_16](end_span)</label>
-            <input type="number" id="daily-lp-meals" class="form-control" value="0" min="0">[span_17](start_span)[span_17](end_span)
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label>LP Meals Fed (Classes 1–5)</label>
+            <input type="number" id="daily-lp-meals" class="form-control" value="0" min="0">
           </div>
 
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label>UP Meals Fed (Classes 6–8)[span_18](start_span)[span_18](end_span)</label>
-            <input type="number" id="daily-up-meals" class="form-control" value="0" min="0">[span_19](start_span)[span_19](end_span)
+          <div class="form-group" style="margin-bottom: 18px;">
+            <label>UP Meals Fed (Classes 6–8)</label>
+            <input type="number" id="daily-up-meals" class="form-control" value="0" min="0">
           </div>
 
-          <button type="submit" class="btn-success" style="width: 100%;">✓ Record Daily Attendance[span_20](start_span)[span_20](end_span)</button>
+          <button type="submit" class="btn-submit">✓ Record Daily Attendance</button>
         </form>
       </div>
     </section>
@@ -322,8 +333,8 @@
     <section id="tab-stock" class="tab-pane">
       <div class="card">
         <div class="card-title">
-          <span>📦 MDM Dual Stock & Cost Register[span_21](start_span)[span_21](end_span)</span>
-          <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Food Grain & Cooking Cost Ledger</span>
+          <span>📦 MDM Dual Stock & Cost Register</span>
+          <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">Food Grain & Cooking Cost</span>
         </div>
 
         <div class="form-grid" style="margin-bottom: 16px;">
@@ -342,9 +353,8 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
-          <!-- Grain Section -->
-          <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 6px; background: #fafaf9;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+          <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; background: #fafaf9;">
             <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--primary-dark);">🌾 Food Grain (Rice) Stock</h3>
             <div class="form-group" style="margin-bottom: 8px;">
               <label>Opening Stock (Kg)</label>
@@ -355,7 +365,7 @@
               <input type="number" step="0.01" id="stock-grain-rcvd" class="form-control" value="0">
             </div>
             <div class="form-group" style="margin-bottom: 8px;">
-              <label>Grain Consumed (Calculated / Entered Kg)</label>
+              <label>Grain Consumed (Kg)</label>
               <input type="number" step="0.01" id="stock-grain-consumed" class="form-control" value="0">
             </div>
             <div style="margin-top: 10px; font-size: 0.85rem; font-weight: 700; color: #1e3a8a;">
@@ -363,8 +373,7 @@
             </div>
           </div>
 
-          <!-- Cooking Cost Section -->
-          <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 6px; background: #fafaf9;">
+          <div style="border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; background: #fafaf9;">
             <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--primary-dark);">💰 Cooking Cost Financial Balance</h3>
             <div class="form-group" style="margin-bottom: 8px;">
               <label>Opening Cooking Cost Balance (₹)</label>
@@ -389,7 +398,6 @@
     <!-- TAB 3: CASH BOOK ALMIRAH -->
     <section id="tab-cashbook" class="tab-pane">
       <div class="card">
-        <!-- Drawer Selector -->
         <div class="drawer-switcher">
           <button class="drawer-btn active" onclick="window.app.switchDrawer('mdm')">PM POSHAN (MDM)</button>
           <button class="drawer-btn" onclick="window.app.switchDrawer('smc')">SMC Savings</button>
@@ -398,14 +406,13 @@
 
         <div class="card-title">
           <span>📖 Monthly Accounting & Vouchers</span>
-          <div style="display:flex; gap:8px;">
-            <button class="btn-top" onclick="window.app.shareWhatsApp()">📲 WhatsApp Share</button>
-            <button class="btn-top" onclick="window.app.exportAiAuditPackage()">🤖 AI Inspection Package</button>
-            <button class="btn-top" onclick="window.open('templates/opening-certificate.html', '_blank')">📜 Opening Certificate</button>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn-top" onclick="window.app.shareWhatsApp()">📲 WhatsApp</button>
+            <button class="btn-top" onclick="window.app.exportAiAuditPackage()">🤖 AI Export</button>
+            <button class="btn-top" onclick="window.open('templates/opening-certificate.html', '_blank')">📜 Certificate</button>
           </div>
         </div>
 
-        <!-- Period Selectors & Opening Balances -->
         <div class="form-grid" style="margin-bottom: 12px;">
           <div class="form-group">
             <label>Financial Year</label>
@@ -430,8 +437,7 @@
           </div>
         </div>
 
-        <!-- PM POSHAN Specific Parameters -->
-        <div id="sec-mdm-params" style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+        <div id="sec-mdm-params" style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 14px;">
           <div style="font-size: 0.8rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">
             MDM Cooking Cost Calculation Parameters
           </div>
@@ -462,33 +468,30 @@
           </div>
         </div>
 
-        <!-- Itemized Transactions & Vouchers -->
         <div style="margin-bottom: 14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong style="font-size:0.85rem;">Itemized Expenditures, Bank Credits & Contras</strong>
-            <button type="button" id="btn-add-voucher" class="btn-primary" style="padding:5px 10px; font-size:0.75rem;">+ Add Voucher Row</button>
+            <strong style="font-size:0.85rem;">Itemized Expenditures & Contras</strong>
+            <button type="button" id="btn-add-voucher" class="btn-primary" style="padding:5px 10px; font-size:0.75rem;">+ Add Row</button>
           </div>
           <div id="voucher-list-container"></div>
         </div>
 
-        <!-- Real-Time Synchronous Audit Shield Banner -->
         <div id="live-audit-shield"></div>
 
-        <button type="button" id="btn-save-compile" class="btn-success" style="width: 100%; padding: 12px; font-size: 0.95rem;">
+        <button type="button" id="btn-save-compile" class="btn-submit" style="margin-top: 8px;">
           ⚡ Compile & Transcribe to Physical Legal Spread
         </button>
       </div>
 
-      <!-- Physical Register Replica HUD Container -->
       <div id="hud-container"></div>
     </section>
 
-    <!-- TAB 4: GENERAL CLASSIFIED LEDGER BOOK -->
+    <!-- TAB 4: GENERAL CLASSIFIED LEDGER -->
     <section id="tab-classified" class="tab-pane">
       <div class="card">
         <div class="card-title">
-          <span>📑 General Classified Ledger (Account Heads by Folio)</span>
-          <button class="btn-top" onclick="window.print()">🖨️ Print Ledger Book</button>
+          <span>📑 General Classified Ledger</span>
+          <button class="btn-top" onclick="window.print()">🖨️ Print Ledger</button>
         </div>
         <div id="classified-ledgers-container">
           <p style="font-size:0.85rem; color:var(--text-muted);">Compile a month from the Cash Book Almirah to view categorized folio accounts.</p>
@@ -496,11 +499,11 @@
       </div>
     </section>
 
-    <!-- TAB 5: SETUP & INSTITUTIONAL SETTINGS -->
+    <!-- TAB 5: SETUP -->
     <section id="tab-setup" class="tab-pane">
-      <div class="card" style="max-width: 600px; margin: 0 auto;">
+      <div class="card" style="max-width: 500px; margin: 0 auto;">
         <div class="card-title">
-          <span>⚙️ School Institutional Profile[span_22](start_span)[span_22](end_span)</span>
+          <span>⚙️ School Institutional Profile</span>
         </div>
         <form id="form-setup" onsubmit="event.preventDefault(); window.app.saveSchoolProfile();">
           <div class="form-group" style="margin-bottom: 12px;">
@@ -509,7 +512,7 @@
           </div>
           <div class="form-group" style="margin-bottom: 12px;">
             <label>School Name</label>
-            <input type="text" id="setup-name" class="form-control" value="NO. 79 BETONI LPS" required>
+            <input type="text" id="setup-name" class="form-control" value="79 BETONI LP" required>
           </div>
           <div class="form-group" style="margin-bottom: 12px;">
             <label>Category</label>
@@ -526,14 +529,13 @@
             <label>District</label>
             <input type="text" id="setup-district" class="form-control" value="DIBRUGARH" required>
           </div>
-          <button type="submit" class="btn-primary" style="width: 100%;">Save School Profile</button>
+          <button type="submit" class="btn-submit">Save School Profile</button>
         </form>
       </div>
     </section>
 
   </main>
 
-  <!-- ES6 App Controller Loader -->
   <script type="module" src="src/main.js"></script>
 </body>
 </html>
