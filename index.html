@@ -870,13 +870,14 @@
     if (bW) { bW.style.background = '#0284c7'; bW.style.color = '#fff'; bW.style.border = '2px solid #0284c7'; }
     const f = document.getElementById('v-folio-input'); 
     if (f) f.value = 'C';
-  } else {
+    } else {
     if (bP) { bP.style.background = '#dc2626'; bP.style.color = '#fff'; bP.style.border = '2px solid #dc2626'; }
     const f = document.getElementById('v-folio-input');
     if (f) f.value = (typeof activeDrawer !== 'undefined' && activeDrawer === 'mdm') ? '1' : '2';
   }
   if (typeof refreshModalPreview === 'function') refreshModalPreview();
     }
+    
     
 
     function calculateMandate() {
