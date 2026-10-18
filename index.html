@@ -1017,8 +1017,8 @@
       document.getElementById('v-payee-input').value = '';
       document.getElementById('v-ref-input').value = '';
       document.getElementById('v-narration-preview').value = '';
-      if (window.resetNarrationEditLock) {
-        window.resetNarrationEditLock();
+      isNarrationManuallyEdited = false;
+          
       }
           
       // Reset default folio based on current transaction type and active drawer
