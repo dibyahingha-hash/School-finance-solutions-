@@ -1410,20 +1410,16 @@ if (!isNilMonth) {
 
     // --- TWO-PAGE PHYSICAL HUD RENDERING ---
     function renderStatutoryCashBookHUD(mName, fullYear, receipts, actualPayments, t) {
-  const target = document.getElementById('cashbook-printable-area');
+  
+        let target = document.getElementById('cashbook-printable-area');
   if (!target) {
-    alert("CRITICAL ERROR: Element #cashbook-printable-area does not exist in HTML!");
-    return;
+    // If missing from HTML, create it dynamically right above Save & Seal Month!
+    target = document.createElement('div');
+    target.id = 'cashbook-printable-area';
+    const sealBtn = document.querySelector('button[onclick*="sealMonth"], .btn-seal') || document.querySelector('.card:last-of-type') || document.body;
+    sealBtn.parentNode.insertBefore(target, sealBtn);
   }
-  let parent = target;
-  while (parent && parent !== document.body) {
-    parent.style.display = 'block';
-    parent.style.visibility = 'visible';
-    parent.style.opacity = '1';
-    parent = parent.parentElement;
-  }
-      
-      
+
 
       const split = (val) => {
         if (val === undefined || val === null || val === '') return { rs: '', p: '' };
