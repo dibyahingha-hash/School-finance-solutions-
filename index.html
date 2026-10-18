@@ -1231,7 +1231,10 @@
       localStorage.setItem(advStorageKey, totalOutstandingAdvance.toFixed(2));
 
       // Notification HUD for Reimbursements and Audit Warnings
-      renderAuditAndReimbursementNotifications(totalOutstandingAdvance, incomingGrantBank, runningBank, runningCash);
+if (!isNilMonth) {
+  renderAuditAndReimbursementNotifications(totalOutstandingAdvance, incomingGrantBank, runningBank, runningCash);
+}
+      
 
       // Statutory Subtotals (Excluding Opening Balance from Total Receipts)
       const trC = receipts.filter(r => !r.isOb).reduce((sum, r) => sum + (r.c || 0), 0);
@@ -1395,8 +1398,11 @@
 
     // --- TWO-PAGE PHYSICAL HUD RENDERING ---
     function renderStatutoryCashBookHUD(mName, fullYear, receipts, actualPayments, t) {
-      const target = document.getElementById('cashbook-printable-area');
-      if (!target) return;
+  const wrap = document.getElementById('subview-cashbook-wrap');
+  if (wrap) wrap.style.display = 'block';
+  const target = document.getElementById('cashbook-printable-area');
+  if (!target) return;
+      
 
       const split = (val) => {
         if (val === undefined || val === null || val === '') return { rs: '', p: '' };
