@@ -1259,22 +1259,34 @@ if (!isNilMonth) {
       const gtPmtBank = tpB + closeBank;
       const gtPmtTotal = gtPmtCash + gtPmtBank;
 
-      // Auto-forward closing balances to next month storage
+        // Auto-forward closing balances to next month storage
+  try {
+    if (typeof saveNextMonthOpeningBalances === 'function') {
       saveNextMonthOpeningBalances(activeDrawer, fy, mInt, closeCash, closeBank);
-
-      renderStatutoryCashBookHUD(mName, yInt, receipts, actualPayments, {
-        trC, trB, trT,
-        tpC, tpB, tpT,
-        closeCash, closeBank, closeTotal,
-        gtRecCash, gtRecBank, gtRecTotal,
-        gtPmtCash, gtPmtBank, gtPmtTotal
-      });
-
-      if (typeof renderStatutoryGeneralLedgerHUD === 'function') {
-        renderStatutoryGeneralLedgerHUD(dynamicLedgers);
-      }
     }
+  } catch(e) {
+    console.error("Save error:", e);
+  }
 
+  try {
+    renderStatutoryCashBookHUD(mName, yInt, receipts, actualPayments, {
+      trC, trB, trT,
+      tpC, tpB, tpT,
+      closeCash, closeBank, closeTotal,
+      gtRecCash, gtRecBank, gtRecTotal,
+      gtPmtCash, gtPmtBank, gtPmtTotal
+    });
+  } catch(err) {
+    alert("RENDER CRASHED: " + err.message);
+  }
+
+  if (typeof renderStatutoryGeneralLedgerHUD === 'function') {
+    try {
+      renderStatutoryGeneralLedgerHUD(dynamicLedgers);
+    } catch(e) {}
+  }
+    }
+    
     // --- REIMBURSEMENT & AUDIT NOTIFICATION SYSTEM ---
     function renderAuditAndReimbursementNotifications(pendingAdv, grantArrived, curBank, curCash) {
       const target = document.getElementById('statutory-notification-hud');
