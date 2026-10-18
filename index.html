@@ -1497,20 +1497,21 @@ window.onerror = function(msg, url, line) { alert("CRASH at line " + line + ": "
       const gtRC = split(t.gtRecCash); const gtRB = split(t.gtRecBank); const gtRT = split(t.gtRecTotal);
       const gtPC = split(t.gtPmtCash); const gtPB = split(t.gtPmtBank); const gtPT = split(t.gtPmtTotal);
 
-      // Strict 55% allocation for Particulars column
-      const colgroupDef = `
-        <colgroup>
-          <col style="width: 7%;">
-          <col style="width: 55%;">
-          <col style="width: 5%;">
-          <col style="width: 9%;">
-          <col style="width: 3.5%;">
-          <col style="width: 9%;">
-          <col style="width: 3.5%;">
-          <col style="width: 5%;">
-          <col style="width: 3%;">
-        </colgroup>
-      `;
+      // Strict allocation matching physical Assam cash book
+const colgroupDef = `
+  <colgroup>
+    <col style="width: 8%;">
+    <col style="width: 44%;">
+    <col style="width: 6%;">
+    <col style="width: 10%;">
+    <col style="width: 4%;">
+    <col style="width: 10%;">
+    <col style="width: 4%;">
+    <col style="width: 10%;">
+    <col style="width: 4%;">
+  </colgroup>
+`;
+      
       
       target.innerHTML = `
         <div class="physical-spread" style="display:block; width:100%;">
@@ -1570,13 +1571,14 @@ window.onerror = function(msg, url, line) { alert("CRASH at line " + line + ": "
 
           <!-- PAGE 5: PAYMENTS -->
           <div class="physical-page" style="page-break-inside:avoid; break-inside:avoid; border:2px solid #000; padding:10px 12px; background:#fff; box-sizing:border-box;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:6px;">
-              <span style="font-size:0.9rem; font-weight:700;">for the month of <u>${mName} ${fullYear}</u></span>
-              <span style="font-size:1.5rem; font-weight:900; letter-spacing:2px; font-family:Georgia,serif;">Cash Book</span>
-              <span style="font-size:1.3rem; font-weight:900;">5</span>
-            </div>
-            <div style="font-size:0.95rem; font-weight:900; color:#b91c1c; text-align:right; margin-bottom:4px;">PAYMENTS</div>
-            
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+  <span style="font-size: 1rem; font-weight: 800; letter-spacing: 1px; color: #b91c1c;">PAYMENTS</span>
+  <div style="text-align: center; flex: 1;">
+    <span style="font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; font-family: Georgia, serif; text-decoration: underline;">Cash Book</span>
+  </div>
+  <span style="font-size: 1.1rem; font-weight: 900; letter-spacing: 1px;">5</span>
+</div>
+
             <table style="width:100%; border-collapse:collapse; table-layout:fixed; border:2px solid #000; font-size:0.75rem; background:#fff;">
               ${colgroupDef}
               <thead>
@@ -1636,9 +1638,11 @@ window.onerror = function(msg, url, line) { alert("CRASH at line " + line + ": "
               <div style="font-weight:800; text-decoration:underline; margin-bottom:2px;">
                 STATUTORY PHYSICAL VERIFICATION &amp; AUDIT CERTIFICATE:
               </div>
-              <div>1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.</div>
-              <div>2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/Statement for ${mName} ${fullYear}.</div>
-              <div style="display:flex; justify-content:space-between; margin-top:12px; font-weight:800; font-size:0.72rem;">
+              
+                   <div>1. Certified that the closing cash-in-hand balance of <strong>Rs. ${t.closeCash.toFixed(2)}</strong> has been physically verified by the undersigned and found correct.</div>
+      <div>2. Certified that the closing bank balance of <strong>Rs. ${t.closeBank.toFixed(2)}</strong> agrees with the entries in the Bank Passbook/Statement for ${mName} ${fullYear}.</div>
+      
+ style="display:flex; justify-content:space-between; margin-top:12px; font-weight:800; font-size:0.72rem;">
                 <span>Signature of SMC President</span>
                                 <span>Signature of Head Teacher / Member Secretary</span>
               </div>
