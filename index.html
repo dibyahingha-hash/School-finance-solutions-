@@ -1409,7 +1409,8 @@ if (!isNilMonth) {
       }
       recalculateCashbook();
     }
-
+window.onerror = function(msg, url, line) { alert("CRASH at line " + line + ": " + msg); };
+    
     // --- TWO-PAGE PHYSICAL HUD RENDERING ---
     function renderStatutoryCashBookHUD(mName, fullYear, receipts, actualPayments, t) {
   
