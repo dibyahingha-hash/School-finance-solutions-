@@ -585,10 +585,15 @@
         </div>
       </div>
 
-      <!-- STANDALONE CASHBOOK & LEDGER PRINTABLE CONTAINERS -->
-      <div id="subview-cashbook-wrap">
+            <!-- STANDALONE CASHBOOK & LEDGER PRINTABLE CONTAINERS -->
+      <div id="subview-cashbook-wrap" style="display: block !important;">
         <!-- STATUTORY NOTIFICATION & COMPOSITE CHEQUE MODAL HUD -->
-<div id="statutory-notification-hud" style="margin-bottom: 12px;"></div>
+        <div id="statutory-notification-hud" style="margin-bottom: 12px;"></div>
+
+        <!-- THE STATUTORY CASH BOOK MOUNT TARGET -->
+        <div id="cashbook-printable-area" style="display: block !important; width: 100%;"></div>
+      </div>
+      
 
 <div id="composite-cheque-modal" style="display:none; position:fixed; z-index:99999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.55); justify-content:center; align-items:center;">
   <div style="background:#fff; border-radius:8px; padding:22px; max-width:480px; width:92%; box-shadow:0 12px 30px rgba(0,0,0,0.35); font-family:system-ui, -apple-system, sans-serif;">
@@ -614,9 +619,6 @@
     </div>
   </div>
 </div>
-
-        <div id="cashbook-printable-area"></div>
-      </div>
 
       <div id="subview-ledger-wrap" style="display:none;">
         <div id="ledger-printable-area"></div>
