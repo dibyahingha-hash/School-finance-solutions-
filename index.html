@@ -1398,10 +1398,19 @@ if (!isNilMonth) {
 
     // --- TWO-PAGE PHYSICAL HUD RENDERING ---
     function renderStatutoryCashBookHUD(mName, fullYear, receipts, actualPayments, t) {
-  const wrap = document.getElementById('subview-cashbook-wrap');
-  if (wrap) wrap.style.display = 'block';
   const target = document.getElementById('cashbook-printable-area');
-  if (!target) return;
+  if (!target) {
+    alert("CRITICAL ERROR: Element #cashbook-printable-area does not exist in HTML!");
+    return;
+  }
+  let parent = target;
+  while (parent && parent !== document.body) {
+    parent.style.display = 'block';
+    parent.style.visibility = 'visible';
+    parent.style.opacity = '1';
+    parent = parent.parentElement;
+  }
+      
       
 
       const split = (val) => {
