@@ -857,7 +857,8 @@
       [bR, bW, bP].forEach(b => { b.style.background = '#f1f5f9'; b.style.border = '2px solid transparent'; });
 
       if (type === 'RECEIPT') {
-        bR.style.background = '#15803d'; b.style.color = '#fff'; b.style.border = '2px solid #15803d';
+        bR.style.background = '#15803d'; bR.style.color = '#fff'; bR.style.border = '2px solid #15803d';
+        
         document.getElementById('v-folio-input').value = 'G';
       } else if (type === 'WITHDRAWAL') {
         bW.style.background = '#0284c7'; bW.style.color = '#fff'; bW.style.border = '2px solid #0284c7';
