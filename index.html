@@ -890,108 +890,133 @@
     }
 
     // Smart Statutory Narration & Strict Account Isolation
-    function refreshModalPreview() {
-      const purpose = document.getElementById('v-purpose-input').value.trim();
-      const payee = document.getElementById('v-payee-input').value.trim();
-      const ref = document.getElementById('v-ref-input').value.trim();
-      const channel = document.getElementById('tx-channel').value;
-      const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
-      const folioInput = document.getElementById('v-folio-input');
-      const preview = document.getElementById('v-narration-preview');
-      const pLower = purpose.toLowerCase();
+      // Flag to protect manual user edits inside the narration box
+  let isNarrationManuallyEdited = false;
 
-      // 1. BANK WITHDRAWAL (CONTRA FOLIO C)
-      if (currentTxType === 'WITHDRAWAL') {
-        folioInput.value = 'C';
-        const vText = ref ? ` vide Cheque/Advice No. ${ref}` : '';
-        preview.value = `By Cash in Hand (Contra)\n(Contra cash withdrawn from bank for school expenses${vText})`;
-        return;
+  function refreshModalPreview() {
+    const purpose = document.getElementById('v-purpose-input').value.trim();
+    const payee = document.getElementById('v-payee-input').value.trim();
+    const ref = document.getElementById('v-ref-input').value.trim();
+    const channel = document.getElementById('tx-channel').value;
+    const mName = document.getElementById('cb-sel-month').selectedOptions[0].text;
+    const folioInput = document.getElementById('v-folio-input');
+    const preview = document.getElementById('v-narration-preview');
+    const plower = purpose.toLowerCase();
+
+    // Capitalize first character of user input
+    const titleCasePurpose = purpose ? (purpose.charAt(0).toUpperCase() + purpose.slice(1)) : '';
+
+    // ==========================================
+    // 1. BANK WITHDRAWAL (CONTRA - FOLIO C)
+    // ==========================================
+    if (currentTxType === 'WITHDRAWAL') {
+      folioInput.value = 'C';
+      const vText = ref ? ` vide Cheque/Advice No. ${ref}` : '';
+      const note = purpose ? ` for ${titleCasePurpose}` : ' for school expenses';
+      if (!isNarrationManuallyEdited) {
+        preview.value = `By Cash in Hand (Contra)\n(Contra cash withdrawn from bank${note}${vText})`;
       }
-
-            // 2. RECEIPTS (To...)
-      if (currentTxType === 'RECEIPT') {
-        const titleCasePurpose = purpose ? (purpose.charAt(0).toUpperCase() + purpose.slice(1)) : '';
-        let defaultFolio = 'G';
-        let header = '';
-        let being = '';
-
-        if (pLower.includes('interest') || pLower.includes('int')) {
-          defaultFolio = 'INT';
-          header = 'To Bank Interest Credited';
-          being = `Being savings bank interest credited into account for ${mName}`;
-        } else if (pLower.includes('advance') || pLower.includes('teacher') || pLower.includes('in-charge') || pLower.includes('out of pocket')) {
-          defaultFolio = '8';
-          header = 'To Temporary Advance from In-charge/Teacher';
-          being = `Being out-of-pocket temporary advance funded for ${mName}`;
-        } else if (pLower.includes('grant') || pLower.includes('cooking cost') || pLower.includes('pm poshan') || pLower.includes('mdm') || pLower.includes('sanction')) {
-          defaultFolio = 'G';
-          header = activeDrawer === 'mdm' ? 'To PM POSHAN Cooking Cost Grant' : (activeDrawer === 'smc' ? 'To Composite School Grant' : 'To SNA Limit Allocation');
-          being = `Being sanction allocation credited into account for ${mName}`;
-        } else if (purpose) {
-          defaultFolio = 'G';
-          header = `To ${titleCasePurpose}`;
-          being = `Being funds received towards ${titleCasePurpose} for ${mName}`;
-        } else {
-          defaultFolio = 'G';
-          header = activeDrawer === 'mdm' ? 'To PM POSHAN Cooking Cost Grant' : (activeDrawer === 'smc' ? 'To Composite School Grant' : 'To SNA Limit Allocation');
-          being = `Being grant funds credited for ${mName}`;
-        }
-
-        folioInput.value = defaultFolio;
-        const refText = ref ? ` vide Sanction/Advice No. ${ref}` : '';
-        preview.value = `${header}\n(${being}${refText})`;
-        return;
-      }
-      
-
-      // 3. PAYMENTS (By...) - STRICTLY ISOLATED BY ACCOUNT DRAWER
-      let itemTitle = purpose ? (purpose.charAt(0).toUpperCase() + purpose.slice(1)) : 'Expenditure';
-      let assignedFolio = '2';
-      let vText = ref ? ` vide Sub-Voucher No. ${ref}` : '';
-
-      if (activeDrawer === 'mdm') {
-        // MDM STRICT VOCABULARY
-        if (pLower.includes('utensil') || pLower.includes('plate') || pLower.includes('glass') || pLower.includes('dish') || pLower.includes('kadai') || pLower.includes('spoon') || pLower.includes('cookware')) {
-          assignedFolio = '4';
-          itemTitle = purpose || 'Kitchen Devices & Utensils';
-        } else if (pLower.includes('advance') || pLower.includes('refund') || pLower.includes('repay')) {
-          assignedFolio = '8';
-          itemTitle = 'Refund of Teacher Advance';
-        } else {
-          // Cooking ingredients, eggs, veggies, groceries, fuel/gas default to Folio 1
-          assignedFolio = '1';
-          itemTitle = purpose || `Cooking Cost for ${mName}`;
-        }
-      } else if (activeDrawer === 'smc') {
-        // SMC STRICT VOCABULARY
-        if (pLower.includes('repair') || pLower.includes('plumb') || pLower.includes('paint') || pLower.includes('elect') || pLower.includes('roof') || pLower.includes('door') || pLower.includes('window') || pLower.includes('whitewash')) {
-          assignedFolio = '5';
-          itemTitle = purpose || 'Minor School Repairs';
-        } else if (pLower.includes('stationery') || pLower.includes('tlm') || pLower.includes('print') || pLower.includes('xerox') || pLower.includes('sport') || pLower.includes('electric') || pLower.includes('bill')) {
-          assignedFolio = '2';
-          itemTitle = purpose || 'Contingency / TLM Expense';
-        } else if (pLower.includes('advance') || pLower.includes('refund')) {
-          assignedFolio = '8';
-          itemTitle = 'Refund of Advance';
-        } else {
-          assignedFolio = '2';
-          itemTitle = purpose || 'School Contingency Expenditure';
-        }
-      } else if (activeDrawer === 'sna') {
-        // CANARA SNA STRICT VOCABULARY
-        assignedFolio = 'V';
-        vText = ref ? ` vide PFMS / SNA Debit Advice No. ${ref}` : '';
-        itemTitle = purpose || 'Vendor Payment through SNA Portal';
-      }
-
-      folioInput.value = assignedFolio;
-
-      const payeeText = payee ? ` to ${payee}` : '';
-      const channelText = channel === 'BANK' ? ' through Bank transfer' : ' in cash';
-
-      preview.value = `By ${itemTitle}${vText}\n(Being payment incurred towards ${itemTitle}${payeeText}${channelText}${vText ? ' ' + vText : ''})`;
+      return;
     }
 
+    // ==========================================
+    // 2. RECEIPTS (To...)
+    // ==========================================
+    if (currentTxType === 'RECEIPT') {
+      let defaultFolio = 'G';
+      let header = '';
+      let being = '';
+
+      if (plower.includes('interest') || plower.includes('int')) {
+        defaultFolio = 'INT';
+        header = 'To Bank Interest Credited';
+        being = `Being savings bank interest credited into account for ${mName}`;
+      } else if (plower.includes('advance') || plower.includes('teacher') || plower.includes('in-charge')) {
+        defaultFolio = '8';
+        header = titleCasePurpose ? `To ${titleCasePurpose}` : 'To Temporary Advance from In-charge/Teacher';
+        being = `Being out-of-pocket temporary advance funded for ${mName}`;
+      } else if (purpose) {
+        // Universal Handler: Accepts any receipt type entered by user
+        if (plower.includes('transport')) {
+          defaultFolio = 'T';
+        } else if (plower.includes('cooking') || plower.includes('pm poshan') || plower.includes('mdm')) {
+          defaultFolio = '1';
+        } else {
+          defaultFolio = 'G';
+        }
+        header = `To ${titleCasePurpose}`;
+        being = `Being funds received towards ${titleCasePurpose} for ${mName}`;
+      } else {
+        // Fallback only if input is completely blank
+        defaultFolio = 'G';
+        if (activeDrawer === 'mdm') {
+          header = 'To PM POSHAN Cooking Cost Grant';
+        } else if (activeDrawer === 'smc') {
+          header = 'To General School Grant';
+        } else {
+          header = 'To SNA Grant Allocation';
+        }
+        being = `Being grant allocation received for ${mName}`;
+      }
+
+      folioInput.value = defaultFolio;
+      const refText = ref ? ` vide Sanction/Advice No. ${ref}` : '';
+      if (!isNarrationManuallyEdited) {
+        preview.value = `${header}\n(${being}${refText})`;
+      }
+      return;
+    }
+
+    // ==========================================
+    // 3. PAYMENTS (By...) - ACCEPTS ANY ITEM HEAD
+    // ==========================================
+    let itemTitle = titleCasePurpose || 'School Expenditure';
+    let assignedFolio = '2';
+    let vText = ref ? ` vide Sub-Voucher No. ${ref}` : '';
+
+    if (activeDrawer === 'mdm') {
+      if (plower.includes('utensil') || plower.includes('plate') || plower.includes('glass') || plower.includes('dish')) {
+        assignedFolio = '4';
+      } else if (plower.includes('transport') || plower.includes('carriage') || plower.includes('fare')) {
+        assignedFolio = '3';
+      } else if (plower.includes('cook') || plower.includes('honorarium') || plower.includes('cch')) {
+        assignedFolio = '2';
+      } else if (plower.includes('advance') || plower.includes('refund') || plower.includes('repay')) {
+        assignedFolio = '8';
+      } else {
+        // Default to Folio 1 for groceries, or any custom grocery item entered
+        assignedFolio = '1';
+      }
+    } else if (activeDrawer === 'smc') {
+      if (plower.includes('repair') || plower.includes('plumb') || plower.includes('paint') || plower.includes('elect')) {
+        assignedFolio = '5';
+      } else if (plower.includes('stationery') || plower.includes('tlm') || plower.includes('print') || plower.includes('xerox')) {
+        assignedFolio = '2';
+      } else if (plower.includes('uniform')) {
+        assignedFolio = '6';
+      } else if (plower.includes('sports')) {
+        assignedFolio = '7';
+      } else if (plower.includes('advance') || plower.includes('refund')) {
+        assignedFolio = '8';
+      } else {
+        // Universal SMC fallback for any novel purchase/expenditure
+        assignedFolio = '2';
+      }
+    } else if (activeDrawer === 'sna') {
+      assignedFolio = 'V';
+      vText = ref ? ` vide PFMS / SNA Debit Advice No. ${ref}` : '';
+    }
+
+    folioInput.value = assignedFolio;
+
+    const payeeText = payee ? ` to ${payee}` : '';
+    const channelText = channel === 'BANK' ? ' through Bank transfer' : ' in cash';
+
+    if (!isNarrationManuallyEdited) {
+      preview.value = `By ${itemTitle}${vText}\n(Being payment incurred towards ${itemTitle}${payeeText}${channelText}${vText})`;
+    }
+                   }
+    
         function addCompleteTransaction() {
       const day = document.getElementById('tx-date-day').value.trim() || '30';
       const folio = document.getElementById('v-folio-input').value.trim();
