@@ -893,7 +893,107 @@
       // Flag to protect manual user edits inside the narration box
   let isNarrationManuallyEdited = false;
 
-    
+        // Narration protection flag: true once user types in preview box
+    let isNarrationManuallyEdited = false;
+
+    function refreshModalPreview() {
+      const preview = document.getElementById('v-narration-preview');
+      const folioInput = document.getElementById('v-folio-input');
+      if (!preview) return;
+
+      // STRICT GUARD: If manually typed or edited, never overwrite it
+      if (isNarrationManuallyEdited) return;
+
+      const purpose = (document.getElementById('v-purpose-input')?.value || '').trim();
+      const payee = (document.getElementById('v-payee-input')?.value || '').trim();
+      const ref = (document.getElementById('v-ref-input')?.value || '').trim();
+      const channel = document.getElementById('tx-channel')?.value || 'CASH';
+      const mSelect = document.getElementById('cb-sel-month');
+      const mName = (mSelect && mSelect.selectedOptions.length > 0) ? mSelect.selectedOptions[0].text : '';
+      const plower = purpose.toLowerCase();
+      const titleCasePurpose = purpose ? (purpose.charAt(0).toUpperCase() + purpose.slice(1)) : '';
+
+      // Format voucher reference text
+      let vText = '';
+      if (ref) {
+        if (/cheque|chq|advice|pfms|rtgs|neft/i.test(ref)) {
+          vText = ` vide ${ref}`;
+        } else if (typeof activeDrawer !== 'undefined' && activeDrawer === 'sna') {
+          vText = ` vide PFMS / SNA Debit Advice No. ${ref}`;
+        } else {
+          vText = ` vide Sub-Voucher No. ${ref}`;
+        }
+      }
+
+      // 1. BANK WITHDRAWAL (CONTRA)
+      if (currentTxType === 'WITHDRAWAL') {
+        if (folioInput) folioInput.value = 'C';
+        const note = purpose ? ` for ${titleCasePurpose}` : ' for school expenses';
+        preview.value = `By Cash in Hand (Contra)\n(Contra cash withdrawn from bank${note}${vText})`;
+        return;
+      }
+
+      // 2. RECEIPTS (TO...)
+      if (currentTxType === 'RECEIPT') {
+        let defaultFolio = 'G';
+        let header = '';
+        let being = '';
+
+        if (plower.includes('interest') || plower.includes('int')) {
+          defaultFolio = 'INT';
+          header = 'To Bank Interest Credited';
+          being = `Being savings bank interest credited into account for ${mName}`;
+        } else if (plower.includes('advance') || plower.includes('teacher') || plower.includes('in-charge')) {
+          defaultFolio = '8';
+          header = titleCasePurpose ? `To ${titleCasePurpose}` : 'To Temporary Advance from In-charge/Teacher';
+          being = `Being out-of-pocket temporary advance funded for ${mName}`;
+        } else if (purpose) {
+          if (plower.includes('transport')) defaultFolio = 'T';
+          else if (plower.includes('cooking') || plower.includes('pm poshan') || plower.includes('mdm')) defaultFolio = '1';
+          header = `To ${titleCasePurpose}`;
+          being = `Being funds received towards ${titleCasePurpose} for ${mName}`;
+        } else {
+          if (typeof activeDrawer !== 'undefined' && activeDrawer === 'mdm') {
+            header = 'To PM POSHAN Cooking Cost Grant';
+          } else if (typeof activeDrawer !== 'undefined' && activeDrawer === 'smc') {
+            header = 'To General School Grant';
+          } else {
+            header = 'To SNA Grant Allocation';
+          }
+          being = `Being grant allocation received for ${mName}`;
+        }
+
+        if (folioInput) folioInput.value = defaultFolio;
+        preview.value = `${header}\n(${being}${vText})`;
+        return;
+      }
+
+      // 3. PAYMENTS (BY...)
+      let assignedFolio = '2';
+      if (typeof activeDrawer !== 'undefined' && activeDrawer === 'mdm') {
+        if (plower.includes('utensil') || plower.includes('plate') || plower.includes('glass')) assignedFolio = '4';
+        else if (plower.includes('transport') || plower.includes('carriage')) assignedFolio = '3';
+        else if (plower.includes('cook') || plower.includes('honorarium') || plower.includes('cch')) assignedFolio = '2';
+        else if (plower.includes('advance') || plower.includes('refund')) assignedFolio = '8';
+        else assignedFolio = '1';
+      } else if (typeof activeDrawer !== 'undefined' && activeDrawer === 'smc') {
+        if (plower.includes('repair') || plower.includes('plumb') || plower.includes('paint')) assignedFolio = '5';
+        else if (plower.includes('stationery') || plower.includes('tlm')) assignedFolio = '2';
+        else if (plower.includes('uniform')) assignedFolio = '6';
+        else if (plower.includes('sports')) assignedFolio = '7';
+        else assignedFolio = '2';
+      } else if (typeof activeDrawer !== 'undefined' && activeDrawer === 'sna') {
+        assignedFolio = 'V';
+      }
+
+      if (folioInput) folioInput.value = assignedFolio;
+      const itemTitle = titleCasePurpose || 'School Expenditure';
+      const payeeText = payee ? ` to ${payee}` : '';
+      const channelText = channel === 'BANK' ? ' through Bank transfer' : ' in cash';
+
+      preview.value = `By ${itemTitle}${vText}\n(Being payment incurred towards ${itemTitle}${payeeText}${channelText}${vText})`;
+    }
+
         function addCompleteTransaction() {
       const day = document.getElementById('tx-date-day').value.trim() || '30';
       const folio = document.getElementById('v-folio-input').value.trim();
@@ -1690,6 +1790,5 @@ if (typeof recalculateCashbook === 'function') {
 }
     
   </script>
-    <script type="module" src="src/main.js"></script>
 </body>
 </html>
