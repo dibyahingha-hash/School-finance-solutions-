@@ -854,32 +854,33 @@
   const bR = document.getElementById('btn-type-rcpt');
   const bW = document.getElementById('btn-type-with');
   const bP = document.getElementById('btn-type-pmt');
-  [bR, bW, bP].forEach(b => { 
-    if (b) { 
-      b.style.background = '#f1f5f9'; 
-      b.style.color = '#334155'; 
-      b.style.border = '2px solid transparent'; 
-    } 
+  [bR, bW, bP].forEach(b => {
+    if (b) {
+      b.style.background = '#f1f5f9';
+      b.style.color = '#334155';
+      b.style.border = '2px solid transparent';
+    }
   });
 
   if (type === 'RECEIPT') {
     if (bR) { bR.style.background = '#15803d'; bR.style.color = '#fff'; bR.style.border = '2px solid #15803d'; }
-    const f = document.getElementById('v-folio-input'); 
+    const f = document.getElementById('v-folio-input');
     if (f) f.value = 'G';
   } else if (type === 'WITHDRAWAL') {
     if (bW) { bW.style.background = '#0284c7'; bW.style.color = '#fff'; bW.style.border = '2px solid #0284c7'; }
-    const f = document.getElementById('v-folio-input'); 
+    const f = document.getElementById('v-folio-input');
     if (f) f.value = 'C';
-    } else {
+  } else {
     if (bP) { bP.style.background = '#dc2626'; bP.style.color = '#fff'; bP.style.border = '2px solid #dc2626'; }
     const f = document.getElementById('v-folio-input');
     if (f) f.value = (typeof activeDrawer !== 'undefined' && activeDrawer === 'mdm') ? '1' : '2';
   }
-  if (typeof refreshModalPreview === 'function') refreshModalPreview();
+
+  if (typeof refreshModalPreview === 'function') {
+    refreshModalPreview();
+  }
     }
     
-    
-
     function calculateMandate() {
       const meals = parseInt(document.getElementById('tx-total-meals').value, 10) || 0;
       const rate = parseFloat(document.getElementById('tx-meal-rate').value) || 0;
