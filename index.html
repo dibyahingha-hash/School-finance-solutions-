@@ -1118,7 +1118,8 @@
       let runningBank = opBank;
 
       // Scheme Advance Tracking Key
-      const activeDrawer = typeof activeDrawer !== 'undefined' ? activeDrawer : 'MDM';
+const advStorageKey = 'school_pending_adv_' + (typeof activeDrawer !== 'undefined' ? activeDrawer : 'mdm');
+      
       const advStorageKey = `school_pending_adv_${activeDrawer}`;
       let priorAdvanceDue = parseFloat(localStorage.getItem(advStorageKey)) || 0;
       let currentMonthAdvanceIncurred = 0;
