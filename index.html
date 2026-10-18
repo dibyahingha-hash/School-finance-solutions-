@@ -1736,6 +1736,16 @@ if (!isNilMonth) {
       setTransactionType('RECEIPT');
       onCashbookPeriodChange();
     });
+    // Ensure cashbook recalculates and renders immediately on page load
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof recalculateCashbook === 'function') recalculateCashbook();
+});
+
+// Immediate invocation fallback
+if (typeof recalculateCashbook === 'function') {
+  recalculateCashbook();
+}
+    
   </script>
 </body>
 </html>
