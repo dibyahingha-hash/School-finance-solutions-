@@ -893,9 +893,6 @@
       // Flag to protect manual user edits inside the narration box
   let isNarrationManuallyEdited = false;
 
-        // Narration protection flag: true once user types in preview box
-    let isNarrationManuallyEdited = false;
-
     function refreshModalPreview() {
       const preview = document.getElementById('v-narration-preview');
       const folioInput = document.getElementById('v-folio-input');
@@ -1019,7 +1016,7 @@
       document.getElementById('v-narration-preview').value = '';
       isNarrationManuallyEdited = false;
           
-      }
+      
           
       // Reset default folio based on current transaction type and active drawer
       if (currentTxType === 'RECEIPT') {
